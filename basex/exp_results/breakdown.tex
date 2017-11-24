@@ -1,0 +1,43 @@
+\begin{table}[tbp]
+\caption{Breakdown of execution time for client-side implementation}
+\label{table:breakdown-c}
+\small
+\setlength{\doublerulesep}{.4pt}
+\centering\begin{tabular}{l|r|rrrrr@{~~(}c@{)}|r}
+\hline
+\hline
+Key     & prefix        & \multicolumn{6}{c|}{suffix \raisebox{-.7pt}{$t^P$}}                                                   		& merge\\
+	& 		& \makebox[4.2em][c]{P=1}	& \makebox[4.2em][c]{P=2}	& \makebox[4.2em][c]{P=3}	& \makebox[4.2em][c]{P=6}	& \makebox[4.2em][c]{P=12} & $t^{1}/t^{12}$ & \\
+\hline
+XM1(a)	& 4.63		& 27569.07	& 20756.44	& 20270.44	& 11758.00	&		& 2.34		& 287.08 \\
+XM3(c)	& 66.57		& 938.62	& 505.57	& 376.84	& 259.64	& 229.03	& 4.10		& 6.34 \\
+XM4(c)	& 14.64		& 895.02	& 550.90	& 399.07	& 215.49	& 172.66	& 5.18		& 9.12 \\
+XM5(b)	& 68.24		& 927.22	& 668.38	& 533.90	& 452.73	& 424.29	& 2.19		& 3.70 \\
+XM6(b)	& 17.00		& 842.94	& 488.21	& 360.93	& 194.28	& 157.65	& 5.35		& 8.17 \\
+DBLP1(a) & 772.518  & 8412.663 & 5358.734 & 3512.645 & 2017.838 & 1413.355 & 5.95   & 33.222  \\ 
+DBLP2(a) & 2006.868 & 29261.43 & 17381.72 & 12747    & 7843.271 & 7194.168 & 4.07   & 272.906 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[tbp]
+\caption{Breakdown of execution time for server-side implementation}
+\label{table:breakdown-s}
+\small
+\setlength{\doublerulesep}{.4pt}
+\centering\begin{tabular}{l|r|rrrrr@{~~(}c@{)}|r}
+\hline
+\hline
+Key  & prefix        & \multicolumn{6}{c|}{suffix \raisebox{-.7pt}{$t^P$}}                                                   		& merge\\
+	& 		& \makebox[4.2em][c]{P=1}	& \makebox[4.2em][c]{P=2}	& \makebox[4.2em][c]{P=3}	& \makebox[4.2em][c]{P=6}	& \makebox[4.2em][c]{P=12} & $t^{1}/t^{12}$ & \\
+\hline
+XM1(a)	&  5.09		& 27798.44	& 21155.57	& 20121.32	& 11047.99	&		& 2.52		& 192.27 \\
+XM3(c)	& 72.34		& 631.65	& 380.00	& 284.87	& 202.25	& 210.98	& 2.99		&   3.43 \\
+XM4(c)	& 16.20		& 840.24	& 530.57	& 376.44	& 198.55	& 170.17	& 4.94		&  10.46 \\
+XM5(b)	& 65.27		& 744.58	& 526.82	& 435.24	& 407.45	& 423.56	& 1.76		&   4.99 \\
+XM6(b)	& 17.22		& 776.99	& 450.99	& 323.49	& 176.92	& 157.47	& 4.93		&   5.98 \\
+\hline
+DBLP1(a) & 814.872  & 5298.603 & 2954.788 & 2092.14  & 1245.178 & 1039.821 & 5.10   & 40.475  \\ 
+DBLP2(a) & 1911.724 & 13437.98 & 9223.007 & 6787.181 & 3812.572 & 3459.338 & 3.88   & 347.2   \\ 
+\hline
+\end{tabular}
+\end{table}

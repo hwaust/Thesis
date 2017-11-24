@@ -1,0 +1,451 @@
+\begin{thebibliography}{10}
+
+\bibitem{wiki}
+``Wikipedia.'' https://en.wikipedia.org/wiki/Main\_Page.
+
+\bibitem{wikipediadump}
+``Wikipedia dump service.'' https://dumps.wikimedia.org/.
+
+\bibitem{wikisize}
+``Size of wikipedia.''
+  https://en.wikipedia.org/wiki/Wikipedia:Size\_of\_Wikipedia.
+
+\bibitem{UniProtKB}
+{The UniProt Consortium}, ``{UniProt}: a hub for protein information,'' {\em
+  Nucleic Acids Research}, vol.~43, no.~D1, pp.~D204--D212, 2015.
+
+\bibitem{Skil97}
+D.~B. Skillicorn, ``Structured parallel computation in structured documents,''
+  {\em Journal of Univarsal Computer Science}, vol.~3, no.~1, pp.~42--68, 1997.
+
+\bibitem{AlJYK02}
+S.~Al-Khalifa, H.~Jagadish, N.~Koudas, J.~M. Patel, D.~Srivastava, and Y.~Wu,
+  ``Structural joins: A primitive for efficient xml query pattern matching,''
+  in {\em Proceedings of the 12th International Conference on Data
+  Engineering}, pp.~141--152, ACM, 2002.
+
+\bibitem{Ne02}
+M.~Neumüller, ``Compact data structures for querying xml,'' in {\em
+  Proceedings of the {EDBT/ICDT} 2002 Joint Conference}, 2002.
+
+\bibitem{ToGr02}
+T.~Grust, ``Accelerating xpath location steps,'' in {\em Proceedings of the
+  2002 {ACM} {SIGMOD} international conference on Management of data}, 2002.
+
+\bibitem{HAJR03}
+A.~Halverson, J.~Burger, L.~Galanis, A.~Kini, R.~Krishnamurthy, and Rao,
+  ``Mixed mode xml query processing,'' {\em Proceedings {VLDB} Conference},
+  pp.~225--–236, 2003.
+
+\bibitem{SAFu05}
+F.~E. Sevilgena, S.~Alurub, and N.~Futamurac, ``Parallel algorithms for tree
+  accumulations,'' {\em Journal of Parallel and Distributed Computing},
+  vol.~65, no.~1, pp.~85--93, 2005.
+
+\bibitem{PaZC08}
+Y.~Pan, Y.~Zhang, and K.~Chiu, ``Parsing {XML} using parallel traversal of
+  streaming trees,'' in {\em Proceedings of 15th International Conference on
+  High Performance Computing (HiPC 2008)}, pp.~142--156, Springer Berlin
+  Heidelberg, 2008.
+
+\bibitem{LFLQ08}
+L.~Liu, J.~Feng, G.~Li, Q.~Qian, and J.~Li, ``Parallel structural join
+  algorithm on shared-memory multi-core systems,'' in {\em Ninth International
+  Conference on Web-Age Information Management (WAIM '08)}, pp.~70--77, 2008.
+
+\bibitem{ZhPC10}
+Y.~Zhang, Y.~Pan, and K.~Chiu, ``A parallel {XPath} engine based on concurrent
+  {NFA} execution,'' in {\em Proceedings of the 2010 IEEE 16th International
+  Conference on Parallel and Distributed Systems (ICPADS '10)}, pp.~314--321,
+  IEEE Computer Society, 2010.
+
+\bibitem{xpath}
+``{XML} path lanugage ({XPath}) 3.1.'' \url{https://www.w3.org/TR/xpath-31/},
+  2015.
+
+\bibitem{JLWO03}
+H.~Jiang, H.~Lu, W.~Wang, and B.~C. Ooi, ``Xr-tree: Indexing xml data for
+  efficient structural joins,'' in {\em The 19th International Conference on
+  Data Engineering (ICDE’03)}, pp.~253--264, 2003.
+
+\bibitem{NEMH07}
+Y.~Nomura, K.~Emoto, K.~Matsuzaki, Z.~Hu, and M.~Takeichi, ``Parallelization of
+  {XPath} queries with tree skeletons,'' {\em Computer Software}, vol.~24,
+  no.~3, pp.~51--62, 2007.
+\newblock (in Japanese).
+
+\bibitem{BuLM08}
+G.~Busatto, M.~Lohrey, and S.~Maneth, ``Efficient memory representation of xml
+  document trees,'' {\em Information Systems}, pp.~1073--1082, 2008.
+
+\bibitem{Mats09}
+K.~Matsuzaki, {\em Parallel Programming with Tree Skeleton}.
+\newblock PhD thesis, University of Tokyo, 2009.
+
+\bibitem{ChLW13}
+R.~Chen, H.~Liao, and Z.~Wang, ``Parallel xpath evaluation based on node
+  relation matrix,'' {\em Journal of Computational Information Systems},
+  vol.~9, no.~19, pp.~7583--7592, 2013.
+
+\bibitem{HaMa16}
+W.~Hao and K.~Matsuzaki, ``A partial-tree-based approach for {XPath} query on
+  large {XML} trees,'' {\em Journal of Information Processing}, vol.~24, no.~2,
+  pp.~425--438, 2016.
+
+\bibitem{fong2001converting}
+J.~Fong, F.~Pang, and C.~Bloor, ``Converting relational database into xml
+  document,'' in {\em Database and Expert Systems Applications, 2001.
+  Proceedings. 12th International Workshop on}, pp.~61--65, IEEE, 2001.
+
+\bibitem{meier2002exist}
+W.~Meier, ``exist: An open source native xml database,'' in {\em Net.
+  ObjectDays: International Conference on Object-Oriented and Internet-Based
+  Technologies, Concepts, and Applications for a Networked World},
+  pp.~169--183, Springer, 2002.
+
+\bibitem{jagadish2002timber}
+H.~V. Jagadish, S.~Al-Khalifa, A.~Chapman, L.~V. Lakshmanan, A.~Nierman,
+  S.~Paparizos, J.~M. Patel, D.~Srivastava, N.~Wiwatwattana, Y.~Wu, {\em
+  et~al.}, ``Timber: A native xml database,'' {\em The VLDB Journal—The
+  International Journal on Very Large Data Bases}, vol.~11, no.~4,
+  pp.~274--291, 2002.
+
+\bibitem{jiang2002xparent}
+H.~Jiang, H.~Lu, W.~Wang, and J.~X. Yu, ``Xparent: An efficient rdbms-based xml
+  database system,'' in {\em Data Engineering, 2002. Proceedings. 18th
+  International Conference on}, pp.~335--336, IEEE, 2002.
+
+\bibitem{PCSS04}
+S.~Pal, I.~Cseri, O.~Seeliger, G.~Schaller, L.~Giakoumakis, and V.~Zolotov,
+  ``Indexing {XML} data stored in a relational database,'' in {\em Proceedings
+  of the Thirtieth International Conference on Very Large Data Bases (VLDB
+  '04)}, pp.~1146--1157, VLDB Endowment, 2004.
+
+\bibitem{kha2001xml}
+D.~D. Kha, M.~Yoshikawa, and S.~Uemura, ``An xml indexing structure with
+  relative region coordinate,'' in {\em Data Engineering, 2001. Proceedings.
+  17th International Conference on}, pp.~313--320, IEEE, 2001.
+
+\bibitem{wang2005sequencing}
+H.~Wang and X.~Meng, ``On the sequencing of tree structures for xml indexing,''
+  in {\em Data Engineering, 2005. ICDE 2005. Proceedings. 21st International
+  Conference on}, pp.~372--383, IEEE, 2005.
+
+\bibitem{popovici2005sirius}
+E.~Popovici, G.~M{\'e}nier, and P.-F. Marteau, ``Sirius: a lightweight xml
+  indexing and approximate search system at inex 2005,'' in {\em International
+  Workshop of the Initiative for the Evaluation of XML Retrieval},
+  pp.~321--335, Springer, 2005.
+
+\bibitem{liang2005lax}
+W.~Liang and H.~Yokota, ``Lax: An efficient approximate xml join based on
+  clustered leaf nodes for xml data integration,'' in {\em British National
+  Conference on Databases}, pp.~82--97, Springer, 2005.
+
+\bibitem{liang2006slax}
+W.~Liang and H.~Yokota, ``Slax: An improved leaf-clustering based approximate
+  xml join algorithm for integrating xml data at subtree classes,'' {\em
+  Information and Media Technologies}, vol.~1, no.~2, pp.~918--928, 2006.
+
+\bibitem{guha2003index}
+S.~Guha, N.~Koudas, D.~Srivastava, and T.~Yu, ``Index-based approximate xml
+  joins,'' in {\em Data Engineering, 2003. Proceedings. 19th International
+  Conference on}, pp.~708--710, IEEE, 2003.
+
+\bibitem{BoLS09}
+R.~Bordawekar, L.~Lim, and O.~Shmueli, ``Parallelization of {XPath} queries
+  using multi-core processors: Challenges and experiences,'' in {\em
+  Proceedings of the 12th International Conference on Extending Database
+  Technology: Advances in Database Technology (EDBT '09)}, pp.~180--191, ACM,
+  2009.
+
+\bibitem{Bord10}
+R.~Bordawekar, L.~Lim, A.~Kementsietsidis, and B.~W.-L. Kok, ``Statistics-based
+  parallelization of {XPath} queries in shared memory systems,'' in {\em
+  Proceedings of the 13th International Conference on Extending Database
+  Technology (EDBT '10)}, pp.~159--170, ACM, 2010.
+
+\bibitem{xalan}
+``Xalanprocessor.'' https://xml.apache.org/xalan-j/.
+
+\bibitem{basex864}
+``Basex officail documentation.'' http://docs.basex.org/, 5 2017.
+
+\bibitem{ARBM06}
+A.~Andrade, G.~Ruberg, F.~Baião, V.~P. Braganholo, and M.~Mattoso,
+  ``Efficiently processing xml queries over fragmented repositories with
+  partix,'' in {\em Current Trends in Database Technology}, pp.~150--163, 2006.
+
+\bibitem{DaGP14}
+M.~Damigos, M.~Gergatsoulis, and S.~Plitsos, ``Distributed processing of
+  {XPath} queries using {MapReduce},'' in {\em New Trends in Databases and
+  Information Systems: 17th East European Conference on Advances in Databases
+  and Information Systems}, pp.~69--77, Springer International Publishing,
+  2014.
+
+\bibitem{CFKL12}
+G.~Cong, W.~Fan, A.~Kementsietsidis, J.~Li, and X.~Liu, ``Partial evaluation
+  for distributed {XPath} query processing and beyond,'' {\em ACM Transactions
+  on Database Systems}, vol.~37, no.~4, pp.~32:1--32:43, 2012.
+
+\bibitem{OgTP13}
+P.~Ogden, D.~Thomas, and P.~Pietzuch, ``Scalable {XML} query processing using
+  parallel pushdown transducers,'' {\em Proceedings of the VLDB Endowment},
+  vol.~6, no.~14, pp.~1738--1749, 2013.
+
+\bibitem{LiZZ17}
+L.~Jiang and Z.~Zhao, ``Grammar-aware parallelization for scalable {XPath}
+  querying,'' in {\em Proceedings of the 22nd ACM SIGPLAN Symposium on
+  Principles and Practice of Parallel Programming (PPoPP '17)}, pp.~371--383,
+  ACM, 2017.
+
+\bibitem{BrMa14}
+V.~Braganholo and M.~Mattoso, ``A survey on {XML} fragmentation,'' {\em ACM
+  SIGMOD Record}, vol.~43, no.~3, pp.~24--35, 2014.
+
+\bibitem{kling11:dist_xml}
+P.~Kling, M.~T. \"{O}zsu, and K.~Daudjee, ``Scaling {XML} query processing:
+  Distribution, localization and pruning,'' {\em Distributed and Parallel
+  Databases}, vol.~29, no.~5--6, pp.~445--490, 2011.
+
+\bibitem{schema}
+``Xml schema.'' https://www.w3.org/standards/xml/schema.
+
+\bibitem{AfDG15}
+F.~N. Afrati, M.~Damigos, and M.~Gergatsoulis, ``Lower bounds on the
+  communication of {XPath} queries in {MapReduce},'' in {\em Proceedings of the
+  Workshops of the {EDBT/ICDT} 2015 Joint Conference}, pp.~38--41, CEUR-WS.org,
+  2015.
+
+\bibitem{CCMN15}
+J.~Camacho-Rodr\'{\i}guez, D.~Colazzo, I.~Manolescu, and J.~A. Naranjo,
+  ``{PAXQuery}: Parallel analytical {XML} processing,'' in {\em Proceedings of
+  the 2015 ACM SIGMOD International Conference on Management of Data (SIGMOD
+  '15)}, pp.~1117--1122, ACM, 2015.
+
+\bibitem{KlOD10}
+P.~Kling, M.~T. \"{O}zsu, and K.~Daudjee, ``Generating efficient execution
+  plans for vertically partitioned {XML} databases,'' {\em Proceedings of the
+  VLDB Endowment}, vol.~4, no.~1, pp.~1--11, 2010.
+
+\bibitem{dfs}
+``Distributed file systems.''
+  \url{https://en.wikipedia.org/wiki/Clustered\_file\_system#Distributed\_file\_systems}.
+
+\bibitem{ChLL14}
+H.~Choi, K.-H. Lee, and Y.-J. Lee, ``Parallel labeling of massive {XML} data
+  with {MapReduce},'' {\em Journal of Supercomputing}, vol.~67, no.~2,
+  pp.~408--437, 2014.
+
+\bibitem{bose2003query}
+S.~Bose, L.~Fegaras, D.~Levine, and V.~Chaluvadi, ``A query algebra for
+  fragmented xml stream data,'' in {\em International Workshop on Database
+  Programming Languages}, pp.~195--215, Springer, 2003.
+
+\bibitem{bose2005xfrag}
+S.~Bose and L.~Fegaras, ``Xfrag: A query processing framework for fragmented
+  xml data.,'' in {\em WebDB}, pp.~97--102, 2005.
+
+\bibitem{LuGa08}
+W.~Lu and D.~Gannon, ``{ParaXML}: A parallel {XML} processing model on the
+  multicore {CPUs},'' {\em Techincal Report}, 2008.
+
+\bibitem{KaME07}
+K.~Kakehi, K.~Matsuzaki, and K.~Emoto, ``Efficient parallel tree reductions on
+  distributed memory environments,'' in {\em ICCS 2007: 7th International
+  Conference, Beijing, China, May 27--30, 2007, Proceedings, Part II},
+  pp.~601--608, Springer, 2007.
+
+\bibitem{EmIm12}
+K.~Emoto and H.~Imachi, ``Parallel tree reduction on {MapReduce},'' in {\em
+  Proceedings of the International Conference on Computational Science (ICCS
+  2012)}, vol.~9 of {\em Procedia Computer Science}, pp.~1827--1836, Elsevier,
+  2012.
+
+\bibitem{MaMi16}
+K.~Matsuzaki and R.~Miyazaki, ``Parallel tree accumulations on {MapReduce},''
+  {\em International Journal of Parallel Programming}, vol.~44, no.~3,
+  pp.~466--485, 2016.
+
+\bibitem{AGGR02}
+I.~Avila-Campillo, T.~J. Green, A.~Gupta, M.~Onizuka, and D.~Raven, ``Xmltk: An
+  {XML} toolkit for scalable {XML} stream processing,'' tech. rep., Department
+  of Computer and Information Science , University of Pennsylvania Scholarly
+  Commons, 2002.
+
+\bibitem{DeGh04}
+J.~Dean and S.~Ghemawat, ``{MapReduce}: Simplified data processing on large
+  clusters,'' in {\em 6th Symposium on Operating System Design and
+  Implementation (OSDI2004), December 6--8, 2004, San Francisco, California,
+  USA}, pp.~137--150, 2004.
+
+\bibitem{HadoopWhit12}
+T.~White, {\em {Hadoop}: The Definitive Guide}.
+\newblock O'Reilly Media / Yahoo Press, 2012.
+
+\bibitem{BCMU13}
+N.~Bidoit, D.~Colazzo, N.~Malla, F.~Ulliana, M.~Nol\`{e}, and C.~Sartiani,
+  ``Processing {XML} queries and updates on {Map/Reduce} clusters,'' in {\em
+  Proceedings of the 16th International Conference on Extending Database
+  Technology (EDBT '13)}, pp.~745--748, ACM, 2013.
+
+\bibitem{CLKL12}
+H.~Choi, K.-H. Lee, S.-H. Kim, Y.-J. Lee, and B.~Moon, ``{HadoopXML}: A suite
+  for parallel processing of massive {XML} data with multiple twig pattern
+  queries,'' in {\em Proceedings of the 21st ACM International Conference on
+  Information and Knowledge Management (CIKM'12)}, pp.~2737--2739, ACM, 2012.
+
+\bibitem{sax}
+``Simple api for xml.'' https://en.wikipedia.org/wiki/Simple\_API\_for\_XML.
+
+\bibitem{DaGK14}
+M.~Damigos, M.~Gergatsoulis, and E.~Kalogeros, ``Distributed evaluation of
+  {XPath} queries over large integrated {XML} data,'' in {\em Proceedings of
+  the 18th Panhellenic Conference on Informatics (PCI '14)}, pp.~61:1--61:6,
+  ACM, 2014.
+
+\bibitem{comon2007tree}
+H.~Comon, M.~Dauchet, R.~Gilleron, C.~L{\"o}ding, F.~Jacquemard, D.~Lugiez,
+  S.~Tison, and M.~Tommasi, ``Tree automata techniques and applications,''
+  2007.
+
+\bibitem{KrYa10}
+M.~Krulis and J.~Yaghob, ``Efficient implementation of xpath processor on
+  multi-core cpus,'' in {\em the Dateso 2010 Annual International Workshop on
+  DAtabases (DATESO' 10)}, pp.~60--71, 2010.
+
+\bibitem{PLZC07}
+Y.~Pan, W.~Lu, Y.~Zhang, and K.~Chiu, ``A static load-balancing scheme for
+  parallel {XML} parsing on multicore {CPUs},'' in {\em Proceedings of the
+  Seventh IEEE International Symposium on Cluster Computing and the Grid
+  (CCGrid '07)}, pp.~351--362, IEEE Computer Society, 2007.
+
+\bibitem{AAHa11}
+G.~H. Emil-mircea Andriescu, Anis~Azzabi, ``Parallel processing of forward
+  xpath queries: an experiment with bsml,'' in {\em Technical report
+  TR-LACL-2010-11, Université Paris-Est}, 2010.
+
+\bibitem{ZaBS15}
+E.~Zamanian, C.~Binnig, and A.~Salama, ``Locality-aware partitioning in
+  parallel database systems,'' in {\em Proceedings of the 2015 ACM SIGMOD
+  International Conference on Management of Data (SIGMOD '15)}, pp.~17--30,
+  ACM, 2015.
+
+\bibitem{CVZZ08}
+S.-Y. Chien, Z.~Vagena, D.~Zhang, V.~J. Tsotras, and C.~Zaniolo, ``Efficient
+  structural joins on indexed xml documents,'' in {\em the 28th international
+  conference on Very Large Data Bases (VLDB' 08)}, pp.~263--274, 2008.
+
+\bibitem{OOPC04}
+P.~O'Neil, E.~O'Neil, S.~Pal, I.~Cseri, G.~Schaller, and N.~Westbury,
+  ``{ORDPATHs}: Insert-friendly {XML} node labels,'' in {\em Proceedings of the
+  2004 ACM SIGMOD International Conference on Management of Data (SIGMOD '04)},
+  pp.~903--908, ACM, 2004.
+
+\bibitem{LiLi05}
+C.~Li and T.~W. Ling, ``Qed: a novel quaternary encoding to completely avoid
+  re-labeling in xml updates,'' in {\em Proceedings of the 14th ACM
+  international conference on Information and knowledge management (CIKM '05)},
+  pp.~501--508, 2005.
+
+\bibitem{MLCh07}
+J.-K. Min, J.~Lee, and C.-W. Chung, ``An efficient encoding and labeling for
+  dynamic xml data,'' in {\em Advances in Databases: Concepts, Systems and
+  Applications (DASFAA '07)}, no.~715--726, 2007.
+
+\bibitem{FBKF15}
+J.~Finis, R.~Brunel, A.~Kemper, T.~Neumann, N.~May, and F.~Faerber, ``Indexing
+  highly dynamic hierarchical data,'' {\em Proceedings of the VLDB Endowment},
+  vol.~8, no.~10, pp.~986--997, 2015.
+
+\bibitem{graefe1993query}
+G.~Graefe, ``Query evaluation techniques for large databases,'' {\em ACM
+  Computing Surveys (CSUR)}, vol.~25, no.~2, pp.~73--169, 1993.
+
+\bibitem{numbering}
+T.~Amagasa, M.~Yoshikawa, and S.~Uemura, ``Qrs: a robust numbering scheme for
+  xml documents,'' in {\em the 19th International Conference on Data
+  Engineering (ICDE’03)}, pp.~705--707.
+
+\bibitem{ZNDI01}
+C.~Zhang, J.~Naughton, D.~Dewitt, Q.~Luo, and G.~Lohman, ``On supporting
+  containment queries in relational database management systems,'' {\em
+  Proceedings of the 2001 ACM SIGMOD international conference on Management of
+  data - SIGMOD 01}, pp.~425--436, 2001.
+
+\bibitem{LiMo01}
+Q.~Li and B.~Moon, ``Indexing and querying xml data for regular path
+  expressions,'' in {\em Proceedings of the 27th International Conference on
+  Very Large Data Bases}, no.~361--370, 2001.
+
+\bibitem{jiang2003holistic}
+H.~Jiang, W.~Wang, H.~Lu, and J.~X. Yu, ``Holistic twig joins on indexed xml
+  documents,'' in {\em Proceedings of the 29th international conference on Very
+  large data bases-Volume 29}, pp.~273--284, VLDB Endowment, 2003.
+
+\bibitem{lu2005efficient}
+J.~Lu, T.~W. Ling, T.~Yu, C.~Li, and W.~Ni, ``Efficient processing of ordered
+  xml twig pattern,'' in {\em International Conference on Database and Expert
+  Systems Applications}, pp.~300--309, Springer, 2005.
+
+\bibitem{lu2005tjfast}
+J.~Lu, T.~Chen, and T.~W. Ling, ``Tjfast: effective processing of xml twig
+  pattern matching,'' in {\em Special interest tracks and posters of the 14th
+  international conference on World Wide Web}, pp.~1118--1119, ACM, 2005.
+
+\bibitem{fontoura2005optimizing}
+M.~Fontoura, V.~Josifovski, E.~Shekita, and B.~Yang, ``Optimizing cursor
+  movement in holistic twig joins,'' in {\em Proceedings of the 14th ACM
+  international conference on Information and knowledge management},
+  pp.~784--791, ACM, 2005.
+
+\bibitem{BrKS02}
+N.~Bruno, N.~Koudas, and D.~Srivastava, ``Holistic twig joins: optimal xml
+  pattern matching,'' in {\em the 2002 ACM SIGMOD international conference on
+  Management of data}, pp.~310--321, 2002.
+
+\bibitem{CLTH06}
+S.~Chen, H.-G. Li, J.~Tatemura, W.-P. Hsiung, D.~Agrawal, and K.~S. Candan,
+  ``{Twig$^2$Stack}: Bottom-up processing of generalized-tree-pattern queries
+  over {XML} documents,'' in {\em Proceedings of the 32Nd International
+  Conference on Very Large Data Bases (VLDB '06)}, pp.~283--294, VLDB
+  Endowment, 2006.
+
+\bibitem{QiYD07}
+L.~Qin, J.~X. Yu, and B.~Ding, ``Twiglist: Make twig pattern matching fast,''
+  in {\em the 12th International Conference on Database Systems for Advanced
+  Applications}, pp.~850--862, Springer International Publishing, 2007.
+
+\bibitem{MaAK09}
+I.~Machdi, T.~Amagasa, and H.~Kitagawa, ``Executing parallel {TwigStack}
+  algorithm on a multi-core system,'' in {\em Proceedings of the 11th
+  International Conference on Information Integration and Web-based
+  Applications \& Services (iiWAS '09)}, pp.~176--184, ACM, 2009.
+
+\bibitem{XML}
+``Extensible markup language ({XML}) 1.0 (fifth edition).''
+  https://www.w3.org/TR/REC-xml/.
+
+\bibitem{XQuery3_1}
+``Xquery 3.1: An xml query language.'' https://www.w3.org/TR/xquery-31/.
+
+\bibitem{XMark}
+``{XMark} --- {An} {XML} benchmark project.''
+  http://www.xml-benchmark.org/generator.html.
+
+\bibitem{DBLP}
+M.~Ley, ``{DBLP}: Some lessons learned,'' {\em Proceedings of the VLDB
+  Endowment}, vol.~2, no.~2, pp.~1493--1500, 2009.
+
+\bibitem{AgKS15}
+R.~Agarwal, A.~Khandelwal, and I.~Stoica, ``Succinct: Enabling queries on
+  compressed data,'' in {\em 12th {USENIX} Conference on Networked Systems
+  Design and Implementation}, pp.~337--350, 2015.
+
+\bibitem{BGvM06}
+P.~Boncz, T.~Grust, M.~{van Keulen}, S.~Manegold, J.~Rittinger, and J.~Teubner,
+  ``{MonetDB/XQuery}: A fast {XQuery} processor powered by a relational
+  engine,'' in {\em Proceedings of the 2006 ACM SIGMOD International Conference
+  on Management of Data (SIGMOD '06)}, pp.~479--490, ACM, 2006.
+
+\end{thebibliography}

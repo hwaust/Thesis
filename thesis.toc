@@ -1,0 +1,81 @@
+\select@language {english}
+\contentsline {chapter}{List of Figures}{ix}{chapter*.2}
+\contentsline {chapter}{List of Tables}{xi}{chapter*.3}
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}Background}{1}{section.1.1}
+\contentsline {section}{\numberline {1.2}A Short Tour}{3}{section.1.2}
+\contentsline {section}{\numberline {1.3}Contributions}{5}{section.1.3}
+\contentsline {section}{\numberline {1.4}Outline}{6}{section.1.4}
+\contentsline {chapter}{\numberline {2}Related Work}{9}{chapter.2}
+\contentsline {section}{\numberline {2.1}XML Fragmentation}{9}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Fragmentation of Trees}{9}{subsection.2.1.1}
+\contentsline {subsubsection}{\numberline {2.1.1.1}Horizontal Fragmentation}{9}{subsubsection.2.1.1.1}
+\contentsline {subsubsection}{\numberline {2.1.1.2}Vertical Fragmentation}{10}{subsubsection.2.1.1.2}
+\contentsline {subsection}{\numberline {2.1.2}Fragmentation of XML Text}{10}{subsection.2.1.2}
+\contentsline {subsection}{\numberline {2.1.3}Holes and Fillers}{10}{subsection.2.1.3}
+\contentsline {section}{\numberline {2.2}Parallel XML Processing}{11}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Tree Accumulation and Reduction}{11}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}XML Streaming}{11}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}MapReduce-based XML Processing}{11}{subsection.2.2.3}
+\contentsline {subsection}{\numberline {2.2.4}Parallel Processing of queries}{12}{subsection.2.2.4}
+\contentsline {section}{\numberline {2.3}XML Database Techniques}{13}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}Indexing and Labeling Schemes}{13}{subsection.2.3.1}
+\contentsline {subsubsection}{\numberline {2.3.1.1}Joins Algorithms}{13}{subsubsection.2.3.1.1}
+\contentsline {chapter}{\numberline {3}XML and Query Languages}{15}{chapter.3}
+\contentsline {section}{\numberline {3.1}XML}{15}{section.3.1}
+\contentsline {section}{\numberline {3.2}XPath Language}{17}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Definition of XPath}{17}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Evaluting XPath query}{18}{subsection.3.2.2}
+\contentsline {section}{\numberline {3.3}XQuery}{19}{section.3.3}
+\contentsline {section}{\numberline {3.4}Summary}{19}{section.3.4}
+\contentsline {chapter}{\numberline {4}Parallelization Of XPath Queries on Top of BaseX}{21}{chapter.4}
+\contentsline {section}{\numberline {4.1}BaseX: An XML Database Engine}{22}{section.4.1}
+\contentsline {section}{\numberline {4.2}Implementing Data Partitioning with BaseX}{24}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Client-side Implementation}{24}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Server-side Implementation}{25}{subsection.4.2.2}
+\contentsline {section}{\numberline {4.3}Implementing Query Partitioning with BaseX}{26}{section.4.3}
+\contentsline {section}{\numberline {4.4}Integration with Query Optimization}{29}{section.4.4}
+\contentsline {section}{\numberline {4.5}Experiments and Evaluations}{31}{section.4.5}
+\contentsline {subsection}{\numberline {4.5.1}Experimental Setting}{31}{subsection.4.5.1}
+\contentsline {subsection}{\numberline {4.5.2}Evaluation on Implementations of Data Partitioning Strategy}{32}{subsection.4.5.2}
+\contentsline {subsubsection}{\numberline {4.5.2.1}Total Execution Time}{32}{subsubsection.4.5.2.1}
+\contentsline {subsubsection}{\numberline {4.5.2.2}Breakdown of Execution Time}{33}{subsubsection.4.5.2.2}
+\contentsline {subsubsection}{\numberline {4.5.2.3}Scalability Analysis}{35}{subsubsection.4.5.2.3}
+\contentsline {subsection}{\numberline {4.5.3}Evaluation on Implementation of Query Partitioning Strategy}{36}{subsection.4.5.3}
+\contentsline {subsubsection}{\numberline {4.5.3.1}Total Execution Times and Speedups}{37}{subsubsection.4.5.3.1}
+\contentsline {subsubsection}{\numberline {4.5.3.2}Breakdown of Execution Time}{39}{subsubsection.4.5.3.2}
+\contentsline {section}{\numberline {4.6}Observations and Perspectives}{39}{section.4.6}
+\contentsline {subsection}{\numberline {4.6.1}BaseX Extensions Desirable}{39}{subsection.4.6.1}
+\contentsline {subsection}{\numberline {4.6.2}Further Perspectives}{40}{subsection.4.6.2}
+\contentsline {section}{\numberline {4.7}Summary}{41}{section.4.7}
+\contentsline {chapter}{\numberline {5}Partial Tree}{43}{chapter.5}
+\contentsline {section}{\numberline {5.1}Definitions}{43}{section.5.1}
+\contentsline {section}{\numberline {5.2}Characteristics of Partial Tree}{44}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}Properties of Open Nodes}{45}{subsection.5.2.1}
+\contentsline {subsection}{\numberline {5.2.2}Standard Structure}{45}{subsection.5.2.2}
+\contentsline {section}{\numberline {5.3}Construction of Partial Trees}{46}{section.5.3}
+\contentsline {subsection}{\numberline {5.3.1}Construction of Subtrees From Parsing XML Chunks}{48}{subsection.5.3.1}
+\contentsline {subsection}{\numberline {5.3.2}Pre-path Computation}{49}{subsection.5.3.2}
+\contentsline {subsection}{\numberline {5.3.3}Creation of Ranges of Open Nodes}{51}{subsection.5.3.3}
+\contentsline {section}{\numberline {5.4}Eavalute XPath Queries on Partial Trees}{52}{section.5.4}
+\contentsline {subsection}{\numberline {5.4.1}Definitions}{53}{subsection.5.4.1}
+\contentsline {subsection}{\numberline {5.4.2}Queries without Predicate}{54}{subsection.5.4.2}
+\contentsline {subsubsection}{\numberline {5.4.2.1}Downwards Axes}{55}{subsubsection.5.4.2.1}
+\contentsline {subsubsection}{\numberline {5.4.2.2}Upwards Axes}{57}{subsubsection.5.4.2.2}
+\contentsline {subsubsection}{\numberline {5.4.2.3}Intra-sibling Axes}{58}{subsubsection.5.4.2.3}
+\contentsline {subsection}{\numberline {5.4.3}Queries with Predicate}{60}{subsection.5.4.3}
+\contentsline {subsubsection}{\numberline {5.4.3.1}Preparing Predicate}{62}{subsubsection.5.4.3.1}
+\contentsline {subsubsection}{\numberline {5.4.3.2}Evaluation of Steps within A Predicate}{62}{subsubsection.5.4.3.2}
+\contentsline {subsubsection}{\numberline {5.4.3.3}Processing Predicate}{63}{subsubsection.5.4.3.3}
+\contentsline {subsection}{\numberline {5.4.4}Worst-Case Complexity}{64}{subsection.5.4.4}
+\contentsline {section}{\numberline {5.5}BFS-array based implementation}{66}{section.5.5}
+\contentsline {section}{\numberline {5.6}Evaluation}{71}{section.5.6}
+\contentsline {subsection}{\numberline {5.6.1}Datasets and XPath Queries}{71}{subsection.5.6.1}
+\contentsline {subsection}{\numberline {5.6.2}Experimental set-up}{72}{subsection.5.6.2}
+\contentsline {subsection}{\numberline {5.6.3}Evaluate Queries on a Single EC2 Instance}{72}{subsection.5.6.3}
+\contentsline {subsection}{\numberline {5.6.4}Evaluate Queries on Multiple EC2 Instances}{72}{subsection.5.6.4}
+\contentsline {section}{\numberline {5.7}Summary}{74}{section.5.7}
+\contentsline {chapter}{\numberline {6}Conclusion and Future Work}{77}{chapter.6}
+\contentsline {section}{\numberline {6.1}Conclusion}{77}{section.6.1}
+\contentsline {section}{\numberline {6.2}Future Work}{78}{section.6.2}
+\contentsline {chapter}{Bibliography}{81}{chapter*.39}

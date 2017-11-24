@@ -1,0 +1,44 @@
+\section{XPath Query}
+
+XML path language (XPath)~\cite{XPath} is a W3C standard for representing queries
+to XML documents. In XPath, a query is represented in path
+notation. In this paper, we focus on an important subset of XPath queries called \emph{navigational XPath queries}~\cite{xpathcategory}. 
+Fig.~\ref{fig:grammar} shows the grammar of the XPath queries we use in this paper.
+
+An XPath query in this paper starts from the root and consists of one or more \emph{steps}.
+Each step consists of an \emph{axis}, a \emph{name test}, and at most one \emph{predicate}. 
+An axis defines a set of nodes relative to the nodes matched for the steps so far.
+We can use nine axes
+\footnote{%
+Since the name-test allows a wildcard ``\texttt{*}'', we can translate the \texttt{following} and \texttt{preceding} axes into a path in the grammar: for example \texttt{following::}$x$ is the same as \texttt{ancestor-or-self::*/}\break\texttt{following-sibling::*/descendant-or-self::}$x$. }
+
+including \verb|following-sibling| and \verb|preceding-sibling|.
+A name test is used for selecting nodes: if the name of a tag in an XML document is equal to the name test, the node is selected.  A predicate written 
+between ``\verb|[|'' and ``\verb|]|'' describes additional conditions on the matched nodes by using a path without predicates.
+For example, ``\verb|/descendant::a/child::b[following-|\break
+\verb|sibling::d]|'' is an XPath query with two steps where \verb|descendant| 
+and \verb|child| are the axes, \verb|a| and \verb|b| are the name-tests, and a predicate \verb|following-sibling::d| is attached to the second step. 
+This query first retrieves all the nodes with name \verb|a| in an XML document, and then among their children it retrieves node \verb|b| with one or more following siblings with name \verb|d|.
+In other words, the result of the query is a set of nodes \verb|b| that has its parent \verb|a| and at least one sibling \verb|d| on its right.
+
+\begin{figure}`
+\centering\fbox{
+\begin{minipage}{.9\linewidth}
+\textit{Query} ::= `\texttt{/}' \textit{LocationPath}          \\
+\textit{LocationPath} ::= \textit{Step} $~|~$ \textit{Step} `\texttt{/}' \textit{LocationPath}          \\
+\textit{Step} ::= \textit{AxisName} `\texttt{::}' \textit{NameTest} \textit{Predicate}?          \\
+\textit{AxisName} ::= `\texttt{self}' $~|~$ `\texttt{child}' $~|~$ `\texttt{parent}'          \\
+\phantom{\textit{AxisName} :}           $~|~$ `\texttt{descendant}' $~|~$ `\texttt{ancestor}'          \\
+\phantom{\textit{AxisName} :}           $~|~$ `\texttt{descendant-or-self}' $~|~$ `\texttt{ancestor-or-self}'          \\
+\phantom{\textit{AxisName} :}           $~|~$ `\texttt{following-sibling}' $~|~$ `\texttt{preceding-sibling}'          \\
+\textit{NameTest} ::= `\texttt{*}' $~|~$ \textit{string}	          \\
+\textit{Predicate} ::= `\texttt{[}' \textit{SimpleLocationPath} `\texttt{]}'          \\
+\textit{SimpleLocationPath} ::= \textit{SimpleStep}  \\
+\phantom{\textit{SimpleLocationPath} :}           $~|~$ \textit{SimpleStep} `\texttt{/}' \textit{SimpleLocationPath}          \\
+\textit{SimpleStep} ::= \textit{AxisName} `\texttt{::}' \textit{NameTest}          
+\end{minipage}
+}
+\caption{Grammars of XPath queries used in this paper}
+\label{fig:grammar}
+\end{figure}
+

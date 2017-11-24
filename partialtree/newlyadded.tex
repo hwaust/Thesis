@@ -1,0 +1,214 @@
+\section{XPath Queries on Partial Trees}
+
+
+During the queries, if an open node is selected after the evaluation of a step, 
+the open nodes corresponding to the same node should also be selected. 
+For example, when B$_7$+ on pt$_1$ in Fig.~\ref{fig:partialtree2} is selected, 
++B$_7$+ on pt$_2$ and +B$_7$ on pt$_3$ should be selected as well.
+
+\subsection{Pseudo codes}
+
+An XPath step consists of one or more steps. 
+
+\begin{figure}[t]
+	\centering
+	\label{fig:funPreparePredicate}
+	\begin{tabular}{l}
+		\hline
+		\textbf{Function 3} \textsc{PreparePredicate} (\emph{InputLists}) \\
+		\hline
+		\textbf{Input}: a list of node lists \emph{InputLists} \\
+		\textbf{Output}: a list of {node, Link} lists \\
+		1: \hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		2: \hspace{4 mm} \textbf{for all} $n \in \mathit{InputLists}[i]$ \textbf{do} \\
+		3: \hspace{8 mm} \emph{OutputLists}.Add($\{n, \textbf{new}, \mathit{Link}(i, n.uid)\})$ \\
+		4: \hspace{1 mm} \textbf{return} \emph{OutputLists} \\
+		\hline
+		\textbf{Function 4} \textsc{ProcessPredicate}  (\emph{InputLists}, \emph{pts}) \\
+		\hline
+		\textbf{Input}: a list of node lists \emph{InputLists}, a list of partial trees \emph{pts} \\
+		\textbf{Output}: a list of node lists \\
+		1: \hspace{1 mm} // regroup links by partial tree id. \\
+		2: \hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		3: \hspace{4 mm} \textbf{for} $\emph{j} \in [0, InputLists[i]$.Size()) \textbf{do} \\
+		4: \hspace{8 mm} $ link \leftarrow \mathit{InputLists}, InputLists[i].children[j].link$ \\
+		5: \hspace{8 mm} $LinkLists[link.uid]$.Add(\emph{link}) \\
+		6: \hspace{1 mm} // add source nodes to corresponding output lists. \\
+		7: \hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		8: \hspace{4 mm} \textbf{for all} $link \in LinkLists[i]$ \textbf{do} \\
+		9: \hspace{8 mm} $nt \leftarrow$ GetNode$(pts[i], link.uid)$ \\
+		10:\hspace{8 mm} \textbf{if} $nt \not \in OutputLists[i]$ \textbf{then}  \\
+		11:\hspace{12 mm} $OutputLists[i]$.Add($nt$) \\
+		12:\hspace{1 mm} \textbf{return} $OutputLists$ \\
+		\hline
+	\end{tabular}
+	\caption{Functions for handling predicate}
+\end{figure}
+
+
+\begin{figure}[t]
+	\centering
+	\label{fig:algQuery}
+	\begin{tabular}{l}
+		\hline
+		\textbf{Algorithm 1} \textsc{Query} (\emph{steps}, \emph{pts}) \\
+		\hline
+		\textbf{Input}:a list of location steps \emph{steps}, a list of partial trees \emph{pts} \\
+		\textbf{Output}: a list of node lists  \\
+		1: \hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		2: \hspace{4 mm} $ResultLists[i]$.Add($pts[i].root$) \\
+		3: \hspace{1 mm} \textbf{for all} $\emph{step} \in \emph{steps}$ \textbf{do} \\
+		4: \hspace{4 mm} SetIsChecked(\emph{pts[i]}, false) \\
+		5: \hspace{4 mm} \emph{ResultLists} $ \leftarrow $ Query$<$\emph{Step}.axis$>$(\emph{ResultLists}, \emph{step})\\
+		6: \hspace{4 mm} \textbf{if} $step.predicate \neq NULL$ \textbf{then} \\
+		7: \hspace{8 mm} \emph{PResultLists} $\leftarrow$ \textsc{PreparePredicate}(\emph{ResultLists}) \\
+		8: \hspace{8 mm} \textbf{for all} $\emph{pstep} \in \emph{step.predicate}$ \textbf{do} \\
+		9: \hspace{12 mm} \emph{PResultLists}$ \leftarrow $ \textsc{QueryPredicate}$<$\emph{step.axis}$>$ (\emph{PResultLists}, \emph{pstep}) \\
+		10: \hspace{3 mm} \emph{ResultLists} $ \leftarrow $ \textsc{ProcessPredicate}(\emph{PResultLists})  \\
+		14: \hspace{0 mm} \textbf{return} \emph{ResultLists} \\
+		\hline
+	\end{tabular}
+	\caption{Functions for handling predicate}
+\end{figure}
+
+	
+
+\begin{figure}[t]
+	\centering
+	\label{fig:algQueryChild}
+	\begin{tabular}{l}
+		\hline
+		\textbf{Algorithm 2} \textsc{Query}$<$Step.Child$>$ (\emph{InputLists}, \emph{nametest}) \\
+		\hline
+		\textbf{Input}: a list of node lists \emph{InputLists}, a name test \emph{nametest} \\
+		\textbf{Output}: a list of node lists  \\
+		1: \hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		2: \hspace{4 mm} \textbf{for all} $n \in InputLists[i]$ \textbf{do} \\
+		3: \hspace{8 mm} \textbf{for all} $nc \in n.children$ \textbf{do} \\
+		4: \hspace{12 mm} \textbf{if} $nc.tagname = nametest$ \textbf{then}  \\
+		5: \hspace{16 mm} $OutputLists[i]$.Add(\emph{nc})   \\
+		6: \hspace{1 mm} \textbf{return} \emph{OutputLists} \\
+		\hline
+		\textbf{Algorithm 4} \textsc{Query}$<$Step.Descendant$>$ (\emph{InputLists}, \emph{nametest}) \\
+		\hline
+		\textbf{Input}: a list of node lists \emph{InputLists}, a name test \emph{nametest} \\
+		\textbf{Output}: a list of node lists  \\
+		1: \hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		2: \hspace{4 mm} \textbf{for all} $n \in InputLists[i]$ \textbf{do} \\
+		3: \hspace{8 mm} \emph{Stack}.Push(\emph{n}) \\
+		4: \hspace{8 mm} \textbf{while not}(\emph{Stack}.Empty()) \textbf{do}  \\
+		5: \hspace{12 mm} $nt \leftarrow Stack$.Pop()  \\
+		6: \hspace{12 mm} \textbf{if} $nt.isChecked = true$ \textbf{then} \\
+		7: \hspace{16 mm} \emph{continue} \\
+		8: \hspace{12 mm} $nt.isChecked \leftarrow true$ \\
+		9: \hspace{12 mm} \textbf{for all} $n \in nt.children$ \textbf{do} \\
+		10: \hspace{16 mm} \textbf{if} $nc.tagname = nametest$ \textbf{then} \\
+		11: \hspace{20 mm} $OutputLists[i]$.Add(\emph{nc}) \\
+		12: \hspace{0 mm} \textbf{return} \emph{OutputLists} \\
+		\hline
+		\textbf{Algorithm 5} \textsc{Query}$<$Step.Parent$>$ (\emph{InputLists}, \emph{nametest}) \\
+		\hline
+		\textbf{Input}: a list of node lists \emph{InputLists}, a name test \emph{nametest} \\
+		\textbf{Output}: a list of node lists  \\
+		1: \hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		2: \hspace{4 mm} \textbf{for all} $n \in InputLists[i]$ \textbf{do} \\
+		3: \hspace{8 mm} \textbf{if} $n.parent \neq NULL \textbf{and } n.parent = \emph{nametest}$ \textbf{then} \\
+		4: \hspace{12 mm} \emph{OutputLists}[i].Add(\emph{n}) \\
+		5: \hspace{0 mm} \textbf{return} \emph{OutputLists} \\
+		\hline
+	\end{tabular}
+	\caption{Pre-Path Computation}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\label{fig:algQueryFolsib}
+	\begin{tabular}{l}
+		\hline
+		\textbf{Algorithm 6} Query$<$Step.Flosib$>$ (\emph{InputLists}, \emph{nametest}) \\
+		\hline
+		\textbf{Input}: a list of node lists \emph{InputLists}, a name test \emph{nametest} \\
+		\textbf{Output}: a list of node lists  \\
+		~1: \hspace{1 mm} /* Local query */ \\
+		~2: \hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		~3: \hspace{4 mm} \textbf{for all} $n \in InputLists[i]$ \textbf{do} \\
+		~4: \hspace{8 mm} \textbf{while} $n.folsib \neq NULL$ \textbf{do} \\
+		~5: \hspace{12 mm} \textbf{if} $n.tagname = nametest$ \textbf{then} \\
+		~6: \hspace{16 mm} $OutputLists[i]$.Add(\emph{n})\\
+		~7: \hspace{12 mm} $n \leftarrow n.folsib$ \\
+		~8: \hspace{4 mm} \textbf{for all} $n \in OutputLists[i]$ \textbf{do} \\
+		~9: \hspace{8 mm} \textbf{if} $n.parent \neq NULL \textbf{ and } n.parent.isRightOpen$ \textbf{then}\\
+		10: \hspace{12 mm} \emph{TempList}.Add(\emph{n})\\
+		11: \hspace{4 mm} \emph{RemoteList}.Append(\emph{TempList}) \\
+		12: \hspace{0 mm} /* Regroup nodes by partial tree id */\\
+		13: \hspace{0 mm} \textbf{for all} $n \in RemoteLists[i]$ do  \\
+		14: \hspace{4 mm}  $start \leftarrow n.parent.start$ \\
+		15: \hspace{4 mm} $end \leftarrow n.parent.end$ \\
+		16: \hspace{4 mm} \textbf{if} $n.isRightOpen$ \textbf{then}\\
+		17: \hspace{8 mm} $start \leftarrow n.end + 1$\\
+		18: \hspace{4 mm} \textbf{for} $i \in [start, end)$ \textbf{do}\\
+		19: \hspace{8 mm} $RemoteLists[i]$.Add(\emph{n.parent})\\
+		20: \hspace{0 mm} /* Remote query */\\
+		21: \hspace{0 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		22: \hspace{4 mm} \textbf{for all} $n \in RemoteList[i]$ \textbf{do} \\
+		23: \hspace{8 mm} $nt \leftarrow \textsc{GetOpenNode}(n.type, n.depth)$ \\
+		24: \hspace{8 mm} \textbf{for all} $nc \in nt.children$ \textbf{do}\\
+		25: \hspace{12 mm} \textbf{if} \emph{nc} $\not \in OutputLists[i]$ \textbf{then} \\
+		26: \hspace{16 mm} $OutputLists[i]$.Add(\emph{nc})\\
+		27: \hspace{4 mm} \textbf{return} \emph{OutputLists}   	 \\	
+		\hline
+	\end{tabular}
+	\caption{Algorithm for Following-sibling axis}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\label{fig:algQueryChild}
+	\begin{tabular}{l}
+		\hline
+		\textbf{Algorithm 9} \textsc{QueryPredicate}$<$Child$>$ (\emph{InputLists}, \emph{nametest}) \\
+		\hline
+		\textbf{Input}: a list of node lists \emph{InputLists}, a name test \emph{nametest} \\
+		\textbf{Output}: a list of node lists  \\
+		1: \hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		2: \hspace{4 mm} \textbf{for} $j \in [0, InputLists[i]$.Size()) \textbf{do} \\
+		3: \hspace{8 mm} $n \leftarrow InputLists[i].children[j].node$ \\
+		4: \hspace{8 mm} $link \leftarrow InputLists[i].children[j].link$ \\
+		5: \hspace{8 mm} \textbf{for all} $nc \in n.children$ \textbf{do}   \\
+		6: \hspace{12 mm} \textbf{if} $nc.tagname = nametest$ \textbf{then}  \\
+		7: \hspace{16 mm} $OutputLists[i]$.Add$(\{nc, link\})$ \\
+		8: \hspace{1 mm} \textbf{return} \emph{OutputLists} \\
+		\hline
+	\end{tabular}
+	\caption{Functions for handling predicate}
+\end{figure}	
+
+
+\begin{figure}[t]
+	\centering
+	\begin{tabular}{l}
+		\hline
+		\textbf{Algorithm 8} \textsc{CreatePrepath} ($LLS, RLS$)) \\
+		\hline
+		\textbf{Input}: a list of LLs \emph{LLS}, a list of RLs \emph{RLS} \\
+		\textbf{Output}: a list of node lists  \\
+		~1: \hspace{1 mm} /* Prepath compuatation */ \\
+		~2: \hspace{1 mm} \textbf{for} $i \in [0, P-1)$ \textbf{do} \\
+		~3: \hspace{4 mm} $TempList$.Append$(0, RL[i])$ \\ 
+		~4: \hspace{4 mm} $LeftOpenNodes$.Append$(LLS[i+1])$ \\
+		~5: \hspace{4 mm} $RightOpenNodes$.Append$(TempList.GetLast(LLS[i+1]$.Size)) \\
+		~6: \hspace{4 mm} $TempList.RemoveLast(LLS[i+1]$.Size)) \\
+		~7: \hspace{4 mm} $PPS[i+1] \leftarrow TempList1$   \\
+		~8: \hspace{1 mm} /* Range computation */ \\
+		~9: \hspace{1 mm} \textbf{for all} $i \in [0, LeftOpenNodes.$Size()]\\
+		10: \hspace{4 mm} $nl \leftarrow LeftOpenNodes[i] $ \\
+		11: \hspace{4 mm} $nr \leftarrow RightOpenNodes[i] $ \\
+		12: \hspace{4 mm} \textbf{for } $j \in [nr.ptid, nl.ptid]$ \textbf{do}\\
+		13: \hspace{8 mm} $PPS[j][nl.depth].start \leftarrow nr.ptid$  \\
+		14: \hspace{8 mm} $PPS[j][nl.depth].end \leftarrow nl.ptid$  \\
+		15: \hspace{0 mm} \textbf{return} \emph{PPS} \\
+		\hline
+	\end{tabular}
+	\caption{Pre-path Computation}
+	\label{fig:algSimpleQuery}
+\end{figure}

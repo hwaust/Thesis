@@ -1,0 +1,133 @@
+% Based on Harish Bhanderi's PhD/MPhil template, then Uni Cambridge
+% http://www-h.eng.cam.ac.uk/help/tpl/textprocessing/ThesisStyle/
+
+\documentclass[twoside,11pt]{Latex/Classes/PhDthesisPSnPDF}
+
+% Macro file for Latex
+\include{Latex/Macros/MacroFile1}
+
+%: ----------------------------------------------------------------------
+%:                  TITLE PAGE: name, degree,..
+% ----------------------------------------------------------------------
+% below is to generate the title page with crest and author name
+
+% ------------------- information in PDF header -------------------
+%\pdfinfo { /Title  (PhD and MPhil Thesis Classes)
+%           /Creator (Wei Hao)
+%           /Producer (Wei Hao)
+%           /Title(Parallelization of XPath Queries on Large XML Documents)
+%           /Author (Wei HAO)
+%           /CreationDate (D:20170501080000)  %format D:YYYYMMDDhhmmss
+%           /ModDate (D:20170609170000)
+%           /Subject (Computer Science)
+%           /Keywords (XML, XPath, large XML documents, BaseX) }
+%\pdfcatalog {/PageMode (/UseOutlines) /OpenAction (fitbh)}
+
+\title{Parallelization of XPath Queries on Large XML Documents}
+\author{\href{mailto:hwaust@126.com}{Wei Hao}}
+\collegeordept{A dissertation submitted to the\\
+            \href{https://www.kochi-tech.ac.jp/academics/info/}
+            {Engineering Course, Department of Engineering, \\
+            Graduate School of Engineering,}}
+\university{\href{https://www.kochi-tech.ac.jp}{Kochi University of Technology}, 
+	       \\Kochi, Japan}
+\degree{Doctor of Philosophy}
+\degreedate{September 2017}
+
+
+
+% ----------------------------------------------------------------------
+% turn of those nasty overfull and underfull hboxes
+% \hbadness=10000
+% \hfuzz=50pt
+
+
+%: --------------------------------------------------------------
+%:                  FRONT MATTER: dedications, abstract,..
+% --------------------------------------------------------------
+\begin{document}
+\renewcommand
+\baselinestretch{1.2} % sets line spacing
+\baselineskip=20pt
+
+
+%: ------------------- ---- generate cover page ------------------------
+\maketitle
+
+
+
+%: ----------------------- cover page back side ------------------------  
+\newpage
+\vspace{10mm}
+1. Reviewer: 
+
+\vspace{10mm}
+2. Reviewer:
+
+\vspace{40mm}
+Day of the defense:
+
+\vspace{20mm}\hspace{70mm}
+
+Signature from head of PhD committee:
+
+
+
+%: ----------------------------- abstract -----------------------------
+\include{frontmatter/abstract}
+
+%: -------------------------- front matter ---------------------------
+\frontmatter
+
+\include{frontmatter/dedication}
+
+\include{frontmatter/acknowledgement}
+
+
+%: ----------------------- contents ------------------------
+% levels are: 0 - chapter, 1 - section, 2 - subsection, 3 - subsection
+\setcounter{secnumdepth}{3} % organisational level that receives a numbers (default(2))
+\setcounter{tocdepth}{3}    % print table of contents for level 3
+
+\tableofcontents   % print the table of contents
+\listoffigures	   % print list of figures
+\listoftables      % print list of tables
+
+
+%: --------------------------------------------------------------
+%:                  MAIN DOCUMENT SECTION
+% --------------------------------------------------------------
+% the main text starts here with the introduction, 1st chapter,...
+% hao: page numbers start with 1, 2, 3, etc in this section.
+\mainmatter
+
+\include{introduction/index}
+
+\include{relatedwork/index}
+
+\include{xpath/index}
+
+\include{basex/index}
+
+\include{partialtree/index}
+
+\include{backmatter/conclusion}
+
+
+% --------------------------------------------------------------
+%:                  BACK MATTER: appendices, refs,..
+% --------------------------------------------------------------
+%: ----------------------- bibliography ------------------------
+
+\bibliographystyle{ieeetr}
+\bibliography{backmatter/references} % adjust this to fit your BibTex file
+%\bibliographystyle{Latex/Classes/PhDbiblio-case} % title forced lower case
+%\bibliographystyle{Latex/Classes/PhDbiblio-bold} % title as in bibtex but bold
+%\bibliographystyle{Latex/Classes/PhDbiblio-url} % bold + www link if provided
+%\bibliographystyle{Latex/Classes/jmb} % calls style file jmb.bst
+%: Declaration of originality
+%: --------------- declaration of originality ----------------
+\include{backmatter/declaration}
+
+
+\end{document}

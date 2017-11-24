@@ -1,0 +1,143 @@
+\section{Implementing Query Partitioning with BaseX}
+\label{sect:qpsimpl}
+
+In this section, we describe our implementation of query partitioning strategy on top of
+BaseX. The implementation of query partitioning strategy is also a Java program that
+involves a BaseX client. This implementation
+is relatively simpler than that for data partitioning.  It has two-phase, 
+a parallel evaluating phase and a merge phase.  In the
+parallel evaluating phase, a query is divided into multiple subqueries, which 
+are executed by a BaseX server in parallel. In the second phase,
+the results of all subquery are merged together into a whole as the final
+result. In the following paragraphs, we focus the parallel evaluating phase 
+of query partitioning in detail.
+
+
+There are two ways of partitioning an XPath query in the
+parallel evaluating phase: position-based partitioning and predicate-based
+partitioning. Position-based partitioning is to divide the query by the
+\texttt{position} function on a specific location step.  It is based on the
+partition of children of a node in particular positions such that these children
+are divided into multiple groups in order. Then, we evaluate on these groups of
+nodes and its branches in parallel. Let us take XM5 as example. The children
+nodes of \texttt{/site/open\_auctions} on `xmark10.xml' is 120000. Letting P =
+3, then we can use the \texttt{position} function to divide the query into three
+subqueries as follows:\\
+\begin{small}
+	\verb|/site/open_auctions\open_auction[position()=1 to 40000]\bidder/increase|\\
+	\verb|/site/open_auctions\open_auction[position()=40001 to 80000]\bidder/increase|\\
+	\verb|/site/open_auctions\open_auction[position()=80001 to 120000]\bidder/increase|\\
+\end{small}
+These three subqueries cover exactly the same parts on the target XML document 
+as that of the original query and returns in turn the same results. 
+Node that since the query is divided
+by the \texttt{position} function in document order, the results are also in
+document order. Thus, we can simply merge the results orderly to form the final
+result.
+
+% branch-based partitioning
+
+As for the predicate-based partitioning, it is not promising to be introduced in
+term of XML database engines. This is because it takes extra time to
+merge the results of subqueries. For example, given a query \texttt{/q1[q2 or
+	q3]} that is divided into \texttt{q1[q2]} and \texttt{q1[q3]}, we can retrieve
+results from both queries. Since the operation is an `\texttt{or}', we need to
+perform an ordered union to the results of the two subqueries. However, since
+the resultant nodes in the results, there are two difficulties to merge them.
+First, we need to determine the order of nodes in the results. Second, the
+merging process itself is time-consuming when the results are in plain text.
+Therefore, we do not discuss this partitioning in our study.
+
+We also extend the query partitioning strategy by partitioning the children with
+different names, called branch-based partitioning. We exploit the structure of the
+input XML document to evaluate subqueries on the branches of a node by walking
+through its children in parallel. Let us take XM1(d) on `\texttt{xmark10.xml}'
+as an example. Since the root of the document has only six nodes:
+\texttt{regions}, 
+\texttt{categories}, 
+\texttt{catgraph}, 
+\texttt{people},
+\texttt{open\_auctions},
+\texttt{closed\_auctions}, 
+we can make the input query into six corresponding sub
+queries. Given the first child \texttt{regions} of the root, we make the
+corresponding subquery as
+\verb|/site/regions/descendant-or-self::incategory.../@id|, which is to be
+evaluated through only the first branch of the root  and selects \texttt{@id}s
+that matches the query in that branch. 
+The six corresponding sub queries cover exactly the same part of the
+original query and return the same results. Because the children of the root are
+in document order, the results are also ordered as long as the results are
+merged in the same order.
+
+
+\begin{figure}[tbp]
+	\centering
+	\caption{List of XPath queries used for query partitioning, where [pos] denotes position-based partitioning and \{name\} denotes branch-based partitioning.}
+	\label{tab:qpsqueries}
+	\small
+	\begin{tabular}{l|l}
+		\hline
+		XM1 & \verb|/site//*[name(.)="emailaddress" or name(.)="annotation"| \\
+		& \verb| or name(.)="description"]|\\
+		XM1(d) & \verb|/site/*[pos]/descendant-or-self::*[name(.)="emailaddress" |\\
+		&  or name(.)="annotation" or name(.)="description"]| \\
+		XM1(e) & \verb|/site/{name}/descendant-or-self::*[name(.)="emailaddress" |\\
+		& \verb| or name(.)="annotation" or name(.)="description"]|\\
+		\hline
+		XM2 & \verb|/site//incategory[./@category="category52"]/parent::item/@id| \\
+		XM2(d) & \verb|/site/regions/*[pos]/item/incategory[./@category="category52"]|\\
+		& \verb|/parent| \\
+		XM2(e) & \verb|/site/regions/{name}/item/incategory[./@category="category52"]|\\
+		& \verb|/parent| \\
+		\hline
+		XM3 & \verb|/site//open_auction/bidder[last()]|\\
+		XM3(d) & \verb|/site/open_auctions/open_auction[pos]/bidder[last()]|\\
+		\hline
+		XM4 & \verb|/site/regions/*/item[./location="United States" and ./quantity| \\
+		& \verb| > 0 and ./payment="Creditcard"and ./description and ./name]|\\
+		XM4(d) & \verb|/site/regions/*[pos]/item[./location="United States"|\\
+		& \verb|and ./quantity > 0 and ./payment="Creditcard and ./description| \\
+		& \verb|and ./name]| \\
+		XM4(e) & \verb|/site/regions/{name}/item[./location="United States"|\\
+		& \verb|and ./quantity > 0 and ./payment="Creditcard" and ]|\\
+		& \verb|./description and ./name| \\
+		\hline
+		XM5 & \verb|/site/open_auctions/open_auction/bidder/increase| \\
+		XM5(d) & \verb|/site/open_auctions/open_auction[pos]/bidder/increase|\\
+		\hline
+		XM5(e) & \verb|/site/open_auctions/open_auction/bidder[pos]/increase|\\
+		\hline
+		XM6 & \verb|/site/regions/*[name(.)="africa" or name(.)="asia"]| \\
+		& \verb|/item/description/parlist/listitem| \\
+		XM6(d) & \verb|/site/regions/*[pos][name(.)="africa" or name(.)="asia"]| \\
+		& \verb|/item/description/parlist/listitem| \\
+		XM6(e) & \verb|/site/regions/\{name\}[name(.)="africa" or name(.)="asia"]| \\
+		& \verb|/item/description/parlist/listitem| \\
+		\hline
+		DBLP1 & \verb|/dblp/article/author| \\
+		DBLP1(d) & \verb|/site/regions/*[pos][name(.)="africa" or name(.)="asia"]| \\
+		& \verb|/item/description/parlist/listitem|\\
+		\hline
+		DBLP2 & \verb|/dblp//title| \\
+		DBLP2(d) & \verb|/dblp/{name}/titlem|\\
+		\hline
+	\end{tabular}
+\end{figure}
+
+
+%In query partitioning, the position-based and branch-based partitions 
+%in our study are the same, which evaluate a
+%query through dividing the children of a node. There, however, still are three
+%main differences between them. First, position-based partitioning is not
+%sensitive to the number of children of a node, i.e. no matter how big or small
+%the number of nodes is, it is always available in both cases. This is because
+%the \texttt{position} function can process a range of nodes in a subquery. As
+%for branch-based partitioning, it is usually feasible only in case when the
+%number of children is small. This is because each child makes a sub query. Thus,
+%when the number of children is too big, there are by too many subqueries and
+%need too many threads that may excess the number of available threads. In
+%additional, the overhead of parsing theses subqueries is dramatic. Third, the
+%branch-based is more  likely to be limited to the structure of input XML
+%document. This is because  in real world XML documents, it is more likely to be
+%ill-balanced when the names  of children of a node are different.  

@@ -1,0 +1,18 @@
+\section{Summary}
+
+In this chapter, we have first developed a novel tree structure called partial
+tree based on a vertical fragmentation of XML documents. To construct partial
+trees from an XML document, there are four phases. First, we split the XML
+document into several chunks. Second, we parse the chunks in parallel to form
+several sets of subtrees that have some open nodes. Third, we compute pre-paths
+from all open nodes. Last, we put pre-paths to each corresponding set of
+subtrees to complete the partial tree construction.
+
+After the introduction to partial tree, we have also designed query algorithms
+for most useful class of XPath queries with three examples to demonstrate how
+the query algorithms work.
+
+Last, we have implemented partial tree with a BFS-array based index for high-
+efficiency. The experiment shows that the implementation reaches a good absolute
+query time that can evaluate XPath queries over 100s GB of XML documents in 100s
+millisecond to several seconds.

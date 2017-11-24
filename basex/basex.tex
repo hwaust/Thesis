@@ -1,0 +1,84 @@
+\section{BaseX: An XML Database Engine}
+\label{sect:basex}
+
+To begin with, we give a brief introduction to BaseX, which is both a
+state-of-the-art XML database and an XQuery/XPath 3.1 processor (refer to the
+official documentation~\cite{basex864} for more details). BaesX provides
+significant features in processing XML data sets. The following are the BaseX's
+features particularly important for our study:
+
+\begin{itemize}
+	\item Full support of XQuery 3.1, especially arrays and XQuery Update Facility;
+	\item XQuery extension for database operations, especially index-based
+	random access;
+	\item XQuery extension for full-text operations, especially
+	\Src{ft:tokenize};
+	\item Support of in-memory XML databases;
+	\item Query optimization based on various indices.
+	\item Support of concurrent transactions in the server mode.
+\end{itemize}
+
+The first three are concerned with the expressiveness of queries and the rests
+are concerned with performance.
+
+The most important (practically essential) feature to our implementations is
+index-based random access to nodes of an XML database in BaseX. BaseX offers
+indices that enable us to access any node in constant time. The PRE index, which
+denotes the position of a node in the document order, brings the fastest
+constant-time access in BaseX. Function \Src{db:node-pre} returns the PRE value
+of a given node and function \Src{db:open-pre} returns the node of a given PRE
+value. For example, given a BaseX database ``exampledb'', as shown below.
+\begin{lstlisting}[escapechar=\@]
+@$^1$@<books>
+  @$^2$@<book>
+	 @$^3$@<name>@$^4$@XML</name>
+	 @$^5$@<author>@$^6$@Jack</author>
+  @$^{\phantom{3}}$@</book>
+@$^{\phantom{1}}$@</books>@\textrm{~,}@
+\end{lstlisting}
+where a left superscript denotes a PRE value. Now, consider the following query.
+\begin{lstlisting}
+for $node in db:open(``exampledb'')/books/book
+return db:node-pre($node)
+\end{lstlisting}
+The querys selects \texttt{book} in `exampledb' and the result of \texttt{\$node} is
+\verb|<book>...</book>|. Then, after applying the \texttt{db:node-pre} function
+the final result is 2. PRE values are well-suited for representing intermediate
+results of XPath queries because a PRE value is merely an integer that makes it
+efficient to restart a tree traversal with PRE values. Letting a PRE value be 2
+on the `exampledb', we use the following query as an example.
+
+\begin{lstlisting}
+for $pre in db:open-pre(``exampledb'', 2)/author
+return $node
+\end{lstlisting}
+
+The \texttt{db:open-pre} takes the database and PRE as arguments to locate the
+\texttt{book} node. Then it selects the \texttt{author} of \texttt{book}. The final
+result is \verb|<author>Jack</author>|.
+
+
+Arrays are useful for efficiently implementing block partitioning. On BaseX, the
+length of an array is returned in constant time and the subarray of a specified
+range is extracted in logarithmic time\footnote{In fact, both sequences and
+arrays on BaseX are implemented with finger trees and therefore the
+corresponding operations on sequences have the same cost.}. XQuery Update
+Facility over in-memory databases strongly supports efficient use of temporary
+databases for holding results of queries. Function \Src{ft:tokenize}, which
+tokenizes a given string to a sequence of token strings, can implement
+deserialization of sequences/arrays efficiently.  
+
+BaseX's query optimization is so powerful that it is not unusual to improve time
+complexity. For example, path index enables pruning
+traversal of descendants and attribute index enables instant access to
+the nodes that have a specific attribute name or value. With aggressive constant
+propagation, BaseX exploits most constants including database metadata and PRE
+values found in a given query for query optimization. Prevention of spoiling it,
+as to be described in Section~\ref{sect:opt}, is therefore of crucial importance
+for performance.
+
+Lastly, BaseX can work in a client-server mode. A BaseX server can handle
+concurrent transactions requested from BaseX clients with multiple threads
+depending on the server's configurations. Read transactions that do not modify
+data, such as XPath queries, are executed in parallel without waiting or using
+locks in BaseX.

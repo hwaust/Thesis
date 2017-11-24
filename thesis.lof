@@ -1,0 +1,29 @@
+\select@language {english}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces An example XML tree\relax }}{5}{figure.caption.4}
+\contentsline {figure}{\numberline {1.2}{\ignorespaces Partial tree for the example.\relax }}{5}{figure.caption.4}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces An example of node relationships.\relax }}{17}{figure.caption.5}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Grammars of XPath queries used for partial tree\relax }}{18}{figure.caption.6}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces List of XPath queries and their partitioning, where pre and suf mean prefix query and suffix query respectively\relax }}{27}{figure.caption.7}
+\contentsline {figure}{\numberline {4.2}{\ignorespaces List of XPath queries used for query partitioning, where [pos] denotes position-based partitioning and \{name\} denotes branch-based partitioning.\relax }}{30}{figure.caption.8}
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Load balance\relax }}{36}{figure.caption.12}
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Increase of work\relax }}{36}{figure.caption.12}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Four types of element nodes\relax }}{44}{figure.caption.14}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces The standard structure of partial tree.\relax }}{45}{figure.caption.15}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces an XML tree from the given XML string\relax }}{47}{figure.caption.16}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Partial trees from the given XML string.\relax }}{47}{figure.caption.16}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Subtrees from parsing chunks\relax }}{49}{figure.caption.17}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Overall algorithm of XPath query for partial trees\relax }}{55}{figure.caption.21}
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Query algorithm for downwards axes\relax }}{56}{figure.caption.22}
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Query algorithms for upwards axes\relax }}{60}{figure.caption.25}
+\contentsline {figure}{\numberline {5.9}{\ignorespaces Algorithm for Following-sibling axis\relax }}{61}{figure.caption.27}
+\contentsline {figure}{\numberline {5.10}{\ignorespaces Query algorithm for handling predicate\relax }}{65}{figure.caption.31}
+\contentsline {figure}{\numberline {5.11}{\ignorespaces Query algorithm for child axis in a predicate\relax }}{66}{figure.caption.32}
+\contentsline {figure}{\numberline {5.12}{\ignorespaces An example XML tree with values.\relax }}{68}{figure.caption.34}
+\contentsline {figure}{\numberline {5.13}{\ignorespaces Partial trees with values from the XML document.\relax }}{69}{figure.caption.35}
+\contentsline {figure}{\numberline {5.14}{\ignorespaces A partial tree and its representation with two arrays\relax }}{70}{figure.caption.36}
+\addvspace {10\p@ }
