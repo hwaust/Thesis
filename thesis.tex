@@ -1,28 +1,11 @@
-% Based on Harish Bhanderi's PhD/MPhil template, then Uni Cambridge
-% http://www-h.eng.cam.ac.uk/help/tpl/textprocessing/ThesisStyle/
-
-\documentclass[twoside,11pt]{Latex/Classes/PhDthesisPSnPDF}
-
+\documentclass[twoside,11pt]{Latex/PhDthesis}
 % Macro file for Latex
-\include{Latex/Macros/MacroFile1}
-
-%: ----------------------------------------------------------------------
-%:                  TITLE PAGE: name, degree,..
-% ----------------------------------------------------------------------
-% below is to generate the title page with crest and author name
-
-% ------------------- information in PDF header -------------------
-%\pdfinfo { /Title  (PhD and MPhil Thesis Classes)
-%           /Creator (Wei Hao)
-%           /Producer (Wei Hao)
-%           /Title(Parallelization of XPath Queries on Large XML Documents)
-%           /Author (Wei HAO)
-%           /CreationDate (D:20170501080000)  %format D:YYYYMMDDhhmmss
-%           /ModDate (D:20170609170000)
-%           /Subject (Computer Science)
-%           /Keywords (XML, XPath, large XML documents, BaseX) }
-%\pdfcatalog {/PageMode (/UseOutlines) /OpenAction (fitbh)}
-
+\include{Latex/macros}
+ 
+  
+%: --------------------------------------------------------------
+%:                  Front Page
+% --------------------------------------------------------------
 \title{Parallelization of XPath Queries on Large XML Documents}
 \author{\href{mailto:hwaust@126.com}{Wei Hao}}
 \collegeordept{A dissertation submitted to the\\
@@ -34,14 +17,6 @@
 \degree{Doctor of Philosophy}
 \degreedate{September 2017}
 
-
-
-% ----------------------------------------------------------------------
-% turn of those nasty overfull and underfull hboxes
-% \hbadness=10000
-% \hfuzz=50pt
-
-
 %: --------------------------------------------------------------
 %:                  FRONT MATTER: dedications, abstract,..
 % --------------------------------------------------------------
@@ -49,39 +24,12 @@
 \renewcommand
 \baselinestretch{1.2} % sets line spacing
 \baselineskip=20pt
-
-
-%: ------------------- ---- generate cover page ------------------------
 \maketitle
 
 
 
-%: ----------------------- cover page back side ------------------------  
-\newpage
-\vspace{10mm}
-1. Reviewer: 
 
-\vspace{10mm}
-2. Reviewer:
-
-\vspace{40mm}
-Day of the defense:
-
-\vspace{20mm}\hspace{70mm}
-
-Signature from head of PhD committee:
-
-
-
-%: ----------------------------- abstract -----------------------------
-\include{frontmatter/abstract}
-
-%: -------------------------- front matter ---------------------------
-\frontmatter
-
-\include{frontmatter/dedication}
-
-\include{frontmatter/acknowledgement}
+\include{0_fronter}
 
 
 %: ----------------------- contents ------------------------
@@ -94,40 +42,50 @@ Signature from head of PhD committee:
 \listoftables      % print list of tables
 
 
-%: --------------------------------------------------------------
-%:                  MAIN DOCUMENT SECTION
-% --------------------------------------------------------------
-% the main text starts here with the introduction, 1st chapter,...
+%: --------------- MAIN DOCUMENT SECTION  -----------------
 % hao: page numbers start with 1, 2, 3, etc in this section.
 \mainmatter
 
-\include{introduction/index}
 
-\include{relatedwork/index}
+\include{1_introduction}
 
-\include{xpath/index}
+\include{2_relatedwork}
+
+\include{3_xpath}
 
 \include{basex/index}
 
 \include{partialtree/index}
 
-\include{backmatter/conclusion}
+\include{6_conclusion}
 
 
-% --------------------------------------------------------------
-%:                  BACK MATTER: appendices, refs,..
-% --------------------------------------------------------------
+
 %: ----------------------- bibliography ------------------------
-
 \bibliographystyle{ieeetr}
-\bibliography{backmatter/references} % adjust this to fit your BibTex file
-%\bibliographystyle{Latex/Classes/PhDbiblio-case} % title forced lower case
-%\bibliographystyle{Latex/Classes/PhDbiblio-bold} % title as in bibtex but bold
-%\bibliographystyle{Latex/Classes/PhDbiblio-url} % bold + www link if provided
-%\bibliographystyle{Latex/Classes/jmb} % calls style file jmb.bst
-%: Declaration of originality
-%: --------------- declaration of originality ----------------
-\include{backmatter/declaration}
+\bibliography{backmatter/references}
+
+
+\begin{declaration}
+	
+	I herewith declare that I have produced this paper without the prohibited
+	assistance of third parties and without making use of aids other than those
+	specified; notions taken over directly or indirectly from other sources have
+	been identified as such. This paper has not previously been presented in
+	identical or similar form to any other Japan or foreign examination board.
+	
+	The thesis work was conducted from Wei HAO under the supervision of Associate
+	Professor Kiminori Matsuzaki at Kochi University of Technology, Kami City, Kochi
+	Prefecture, Japan.
+	
+	\vspace{70mm}
+	
+	\hspace{80mm} Signature:
+	
+	\hspace{80mm} Date:
+	
+\end{declaration}
+
 
 
 \end{document}

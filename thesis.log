@@ -1,10 +1,15 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2017.11.24)  24 NOV 2017 23:05
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2017.11.24)  29 NOV 2017 00:04
 entering extended mode
 **./thesis.tex
 (thesis.tex
 LaTeX2e <2017-04-15>
 Babel <3.15> and hyphenation patterns for 75 language(s) loaded.
-(Latex/Classes/PhDthesisPSnPDF.cls
+(Latex/PhDthesis.cls
+
+LaTeX Warning: You have requested document class `Latex/PhDthesis',
+               but the document class provides `Latex/Classes/PhDthesisPSnPDF'.
+
+
 Document Class: Latex/Classes/PhDthesisPSnPDF 2017/06/09 v1 PhD thesis class
 ("C:\Program Files\MiKTeX 2.9\tex\latex\base\book.cls"
 Document Class: book 2014/09/29 v1.4h Standard LaTeX document class
@@ -393,38 +398,36 @@ Package: nomencl 2005/09/22 v4.2 Nomenclature package (LN)
 
 Writing nomenclature file thesis.nlo
 )
-\@input{Latex/Macros/MacroFile1.aux}
-\openout2 = `Latex/Macros/MacroFile1.aux'.
+\@input{Latex/macros.aux}
+\openout2 = `Latex/macros.aux'.
 
-(Latex/Macros/MacroFile1.tex
+(Latex/macros.tex
 \c@property=\count122
 )
 
 LaTeX Warning: Unused global option(s):
     [pdftex].
 
-(thesis.aux (frontmatter/abstract.aux) (frontmatter/dedication.aux)
-(frontmatter/acknowledgement.aux) (introduction/index.aux)
-(relatedwork/index.aux) (xpath/index.aux) (basex/index.aux)
-(partialtree/index.aux) (backmatter/conclusion.aux) (backmatter/declaration.aux
-))
+(thesis.aux (0_fronter.aux) (1_introduction.aux) (2_relatedwork.aux)
+(3_xpath.aux) (basex/index.aux) (partialtree/index.aux) (6_conclusion.aux))
 \openout1 = `thesis.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
- ("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+
+("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count123
 \scratchdimen=\dimen134
@@ -457,7 +460,7 @@ Package caption Info: threeparttable package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \c@lstlisting=\count129
 \AtBeginShipoutBox=\box57
-Package hyperref Info: Link coloring OFF on input line 48.
+Package hyperref Info: Link coloring OFF on input line 23.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
@@ -467,20 +470,20 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count130
 )
-LaTeX Info: Redefining \ref on input line 48.
-LaTeX Info: Redefining \pageref on input line 48.
-LaTeX Info: Redefining \nameref on input line 48.
+LaTeX Info: Redefining \ref on input line 23.
+LaTeX Info: Redefining \pageref on input line 23.
+LaTeX Info: Redefining \nameref on input line 23.
 
 (thesis.out) (thesis.out)
 \@outlinefile=\write4
 \openout4 = `thesis.out'.
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 55.
+LaTeX Font Info:    Try loading font information for U+msa on input line 27.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 55.
+LaTeX Font Info:    Try loading font information for U+msb on input line 27.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -491,49 +494,49 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 \FN@pp@footnotehinttrue 
 
 {C:/Users/Administrator/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-[2]
-\openout2 = `frontmatter/abstract.aux'.
+\openout2 = `0_fronter.aux'.
 
- (frontmatter/abstract.tex [3
 
-] [4])
-\openout2 = `frontmatter/dedication.aux'.
+(0_fronter.tex [2
 
- (frontmatter/dedication.texpdfTeX warning (ext4): destination with the same id
-entifier (name{page.i}) has been already used, duplicate ignored
+] [3] [4] [5] [6
+
+]pdfTeX warning (ext4): destination with the same identifier (name{page.i}) has
+ been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.29 \end{dedication}
-                      [1
-
-
-
-])
-\openout2 = `frontmatter/acknowledgement.aux'.
-
- (frontmatter/acknowledgement.texpdfTeX warning (ext4): destination with the sa
-me identifier (name{page.ii}) has been already used, duplicate ignored
+l.134 \end{dedication}
+                       [1]pdfTeX warning (ext4): destination with the same iden
+tifier (name{page.ii}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.41 
-      [2
-
-
-]pdfTeX warning (ext4): destination with the same identifier (name{page.iii}) h
-as been already used, duplicate ignored
+l.176 
+       [2]pdfTeX warning (ext4): destination with the same identifier (name{pag
+e.iii}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.51 \end{acknowledgements}
-                            [3])pdfTeX warning (ext4): destination with the sam
-e identifier (name{page.iv}) has been already used, duplicate ignored
+l.181 \end{acknowledgements}
+                             [3])pdfTeX warning (ext4): destination with the sa
+me identifier (name{page.iv}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.92 \tableofcontents
+l.40 \tableofcontents
                         % print the table of contents [4
 \FN@pp@footnotehinttrue 
 
 
-] (thesis.toc [5] [6] [7])
+] (thesis.tocpdfTeX warning (ext4): destination with the same identifier (name{
+page.v}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.24 ...{3}XML and Query Languages}{15}{chapter.3}
+                                                   [5]pdfTeX warning (ext4): de
+stination with the same identifier (name{page.vi}) has been already used, dupli
+cate ignored
+<to be read again> 
+                   \relax 
+l.53 ...eristics of Partial Tree}{44}{section.5.2}
+                                                   [6] [7])
 \tf@toc=\write5
 \openout5 = `thesis.toc'.
 
@@ -560,34 +563,39 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
 ] [12
 
 ]
-\openout2 = `introduction/index.aux'.
+\openout2 = `1_introduction.aux'.
 
- (introduction/index.tex
+ (1_introduction.tex
 Chapter 1.
 [1
 
 
 ] [2] [3]
-<introduction/figures/exampletree.png, id=646, 666.23906pt x 447.17062pt>
-File: introduction/figures/exampletree.png Graphic file (type png)
-<use introduction/figures/exampletree.png>
-Package pdftex.def Info: introduction/figures/exampletree.png  used on input li
-ne 136. on input line 136.
+<figures/exampletree.png, id=651, 666.23906pt x 447.17062pt>
+File: figures/exampletree.png Graphic file (type png)
+<use figures/exampletree.png>
+Package pdftex.def Info: figures/exampletree.png  used on input line 145. on in
+put line 145.
 Package pdftex.def Info: Requested size: 199.87326pt x 134.15222pt on input lin
-e 136.
-<introduction/figures/examplepartialtree.png, id=648, 402.75468pt x 429.85594pt
->
-File: introduction/figures/examplepartialtree.png Graphic file (type png)
-<use introduction/figures/examplepartialtree.png>
-Package pdftex.def Info: introduction/figures/examplepartialtree.png  used on i
-nput line 139. on input line 139.
+e 145.
+<figures/examplepartialtree.png, id=653, 402.75468pt x 429.85594pt>
+File: figures/examplepartialtree.png Graphic file (type png)
+<use figures/examplepartialtree.png>
+Package pdftex.def Info: figures/examplepartialtree.png  used on input line 147
+. on input line 147.
 Package pdftex.def Info: Requested size: 120.82733pt x 128.95776pt on input lin
-e 139.
- [4] [5 <./introduction/figures/exampletree.png> <./introduction/figures/exampl
-epartialtree.png>] [6]) [7]
-\openout2 = `relatedwork/index.aux'.
+e 147.
+ [4]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
- (relatedwork/index.tex [8
+ [5 <./figures/exampletree.png> <./figures/examplepartialtree.png>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [6])
+[7]
+\openout2 = `2_relatedwork.aux'.
+
+ (2_relatedwork.tex [8
 
 
 
@@ -598,9 +606,9 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [12]
 [13]) [14]
-\openout2 = `xpath/index.aux'.
+\openout2 = `3_xpath.aux'.
 
- (xpath/index.tex
+ (3_xpath.tex
 Chapter 3.
 [15
 
@@ -616,11 +624,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 66--67
 
  []
 
-<xpath/figures/relationships.png, id=848, 846.16125pt x 575.90157pt>
-File: xpath/figures/relationships.png Graphic file (type png)
-<use xpath/figures/relationships.png>
-Package pdftex.def Info: xpath/figures/relationships.png  used on input line 76
-. on input line 76.
+<figures/relationships.png, id=854, 846.16125pt x 575.90157pt>
+File: figures/relationships.png Graphic file (type png)
+<use figures/relationships.png>
+Package pdftex.def Info: figures/relationships.png  used on input line 76. on i
+nput line 76.
 Package pdftex.def Info: Requested size: 412.56496pt x 280.78822pt on input lin
 e 76.
 
@@ -634,7 +642,7 @@ ancestor-or-self\OT1/cmr/m/n/10.95 , \OT1/cmtt/m/n/10.95 following\OT1/cmr/m/n/
 /10.95 preceding\OT1/cmr/m/n/10.95 ,
  []
 
-[17 <./xpath/figures/relationships.png>]
+[17 <./figures/relationships.png>]
 Overfull \hbox (10.7686pt too wide) in paragraph at lines 115--120
 []\OT1/cmr/m/n/10.95 For ex-am-ple, given a query ``[][]\OT1/cmtt/m/n/10.95 /de
 scentdant::F[following-sibling::J]/child::H[]\OT1/cmr/m/n/10.95 '',
@@ -694,7 +702,7 @@ ok, incollections, inproceedings, masterthesis,
  []
 
 [35]
-<basex/exp_results/load_balance.pdf, id=1007, pagebox=cropbox, 336.59943pt x 20
+<basex/exp_results/load_balance.pdf, id=1013, pagebox=cropbox, 336.59943pt x 20
 1.44028pt>
 File: basex/exp_results/load_balance.pdf Graphic file (type pdf)
 <use basex/exp_results/load_balance.pdf>
@@ -702,7 +710,7 @@ Package pdftex.def Info: basex/exp_results/load_balance.pdf  used on input line
  179. on input line 179.
 Package pdftex.def Info: Requested size: 194.06796pt x 116.14076pt on input lin
 e 179.
-<basex/exp_results/increase_of_work.pdf, id=1008, pagebox=cropbox, 334.03273pt 
+<basex/exp_results/increase_of_work.pdf, id=1014, pagebox=cropbox, 334.03273pt 
 x 197.53148pt>
 File: basex/exp_results/increase_of_work.pdf Graphic file (type pdf)
 <use basex/exp_results/increase_of_work.pdf>
@@ -737,7 +745,7 @@ Chapter 5.
 
 
 ]
-<partialtree/figures/fromWord-2.pdf, id=1071, pagebox=cropbox, 223.83624pt x 56
+<partialtree/figures/fromWord-2.pdf, id=1078, pagebox=cropbox, 223.83624pt x 56
 .21pt>
 File: partialtree/figures/fromWord-2.pdf Graphic file (type pdf)
 <use partialtree/figures/fromWord-2.pdf>
@@ -751,7 +759,7 @@ Overfull \hbox (33.7116pt too wide) in paragraph at lines 33--35
 em has left-open/closed/right-
  []
 
-<partialtree/figures/fromWord-4.pdf, id=1084, pagebox=cropbox, 164.615pt x 156.
+<partialtree/figures/fromWord-4.pdf, id=1091, pagebox=cropbox, 164.615pt x 156.
 585pt>
 File: partialtree/figures/fromWord-4.pdf Graphic file (type pdf)
 <use partialtree/figures/fromWord-4.pdf>
@@ -765,7 +773,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 31--34
  []
 
 [46]
-<partialtree/figures/fromWord-5.pdf, id=1108, pagebox=cropbox, 454.69875pt x 17
+<partialtree/figures/fromWord-5.pdf, id=1114, pagebox=cropbox, 454.69875pt x 17
 9.67125pt>
 File: partialtree/figures/fromWord-5.pdf Graphic file (type pdf)
 <use partialtree/figures/fromWord-5.pdf>
@@ -773,7 +781,7 @@ Package pdftex.def Info: partialtree/figures/fromWord-5.pdf  used on input line
  56. on input line 56.
 Package pdftex.def Info: Requested size: 409.22508pt x 161.7026pt on input line
  56.
-<partialtree/figures/fromWord-7.pdf, id=1109, pagebox=cropbox, 459.7175pt x 187
+<partialtree/figures/fromWord-7.pdf, id=1115, pagebox=cropbox, 459.7175pt x 187
 .70125pt>
 File: partialtree/figures/fromWord-7.pdf Graphic file (type pdf)
 <use partialtree/figures/fromWord-7.pdf>
@@ -788,7 +796,7 @@ Overfull \hbox (1.17696pt too wide) in paragraph at lines 60--61
 
 [47 <./partialtree/figures/fromWord-5.pdf> <./partialtree/figures/fromWord-7.pd
 f>] [48]
-<partialtree/figures/fromWord-6.pdf, id=1134, pagebox=cropbox, 459.7175pt x 138
+<partialtree/figures/fromWord-6.pdf, id=1140, pagebox=cropbox, 459.7175pt x 138
 .5175pt>
 File: partialtree/figures/fromWord-6.pdf Graphic file (type pdf)
 <use partialtree/figures/fromWord-6.pdf>
@@ -830,7 +838,7 @@ Overfull \hbox (34.29pt too wide) in paragraph at lines 682--760
  []
 
 [63] [64] [65]) (partialtree/bfsimpl.tex [66] [67]
-<partialtree/figures/bfstree.pdf, id=1259, pagebox=cropbox, 260.975pt x 173.648
+<partialtree/figures/bfstree.pdf, id=1266, pagebox=cropbox, 260.975pt x 173.648
 74pt>
 File: partialtree/figures/bfstree.pdf Graphic file (type pdf)
 <use partialtree/figures/bfstree.pdf>
@@ -838,7 +846,7 @@ Package pdftex.def Info: partialtree/figures/bfstree.pdf  used on input line 45
 . on input line 45.
 Package pdftex.def Info: Requested size: 287.07338pt x 191.0142pt on input line
  45.
-<partialtree/figures/bfstrees.png, id=1260, 1547.7825pt x 703.12688pt>
+<partialtree/figures/bfstrees.png, id=1267, 1547.7825pt x 703.12688pt>
 File: partialtree/figures/bfstrees.png Graphic file (type png)
 <use partialtree/figures/bfstrees.png>
 Package pdftex.def Info: partialtree/figures/bfstrees.png  used on input line 5
@@ -846,7 +854,7 @@ Package pdftex.def Info: partialtree/figures/bfstrees.png  used on input line 5
 Package pdftex.def Info: Requested size: 402.41397pt x 182.80867pt on input lin
 e 52.
  [68 <./partialtree/figures/bfstree.pdf>]
-<partialtree/figures/bfspt1.png, id=1278, 392.96812pt x 703.12688pt>
+<partialtree/figures/bfspt1.png, id=1285, 392.96812pt x 703.12688pt>
 File: partialtree/figures/bfspt1.png Graphic file (type png)
 <use partialtree/figures/bfspt1.png>
 Package pdftex.def Info: partialtree/figures/bfspt1.png  used on input line 104
@@ -869,25 +877,25 @@ Overfull \hbox (22.75043pt too wide) in paragraph at lines 139--152
  []
 
 ) [72] [73] (partialtree/summary.tex)) [74] [75]
-\openout2 = `backmatter/conclusion.aux'.
+\openout2 = `6_conclusion.aux'.
 
- (backmatter/conclusion.tex
-[76
+ (6_conclusion.tex [76
 
 
 
 ]
 Chapter 6.
-[77] [78]) [79] (thesis.bbl [80
-
-
-]
+[77] [78] [79] [80]) (thesis.bbl
 Missing character: There is no Ã in font cmr10!
 Missing character: There is no ¼ in font cmr10!
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no “ in font cmr10!
- [81]
+ [81
+\FN@pp@footnotehinttrue 
+
+
+]
 Missing character: There is no â in font cmti10!
 Missing character: There is no € in font cmti10!
 Missing character: There is no ™ in font cmti10!
@@ -905,8 +913,7 @@ Missing character: There is no © in font cmti10!
 Missing character: There is no â in font cmti10!
 Missing character: There is no € in font cmti10!
 Missing character: There is no ™ in font cmti10!
-
-[89]
+ [89]
 Underfull \hbox (badness 10000) in paragraph at lines 426--428
 []\OT1/cmr/m/n/10.95 ``Extensible markup lan-guage (XML) 1.0 (fifth edi-tion).'
 '
@@ -917,30 +924,22 @@ Underfull \hbox (badness 10000) in paragraph at lines 433--435
 []\OT1/cmr/m/n/10.95 ``XMark --- An XML bench-mark project.'' http://www.xml-
  []
 
-) [90]
-\openout2 = `backmatter/declaration.aux'.
-
- (backmatter/declaration.tex [91
-
-])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 133.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 133.
- (thesis.aux (frontmatter/abstract.aux) (frontmatter/dedication.aux) (frontmatt
-er/acknowledgement.aux)
-(introduction/index.aux) (relatedwork/index.aux) (xpath/index.aux)
-(basex/index.aux) (partialtree/index.aux) (backmatter/conclusion.aux)
-(backmatter/declaration.aux))
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 133.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 133.
+) [90] [91]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 91.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 91.
+ (thesis.aux (0_fronter.aux) (1_introduction.aux) (2_relatedwork.aux) (3_xpath.
+aux) (basex/index.aux) (partialtree/index.aux) (6_conclusion.aux))
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 91.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 91.
 Package rerunfilecheck Info: File `thesis.out' has not changed.
 (rerunfilecheck)             Checksum: 6A42AE609B0AD356F0571CA1C0070172;6014.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 133.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 91.
  ) 
 Here is how much of TeX's memory you used:
- 10558 strings out of 493312
- 159414 string characters out of 3138874
- 277111 words of memory out of 3000000
- 13454 multiletter control sequences out of 15000+200000
+ 10527 strings out of 493312
+ 158569 string characters out of 3138874
+ 276831 words of memory out of 3000000
+ 13451 multiletter control sequences out of 15000+200000
  21768 words of font info for 81 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  43i,12n,51p,363b,1691s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -965,9 +964,9 @@ gram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program Fil
 es/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Program Files/MiKTe
 X 2.9/fonts/type1/public/amsfonts/cm/cmtt9.pfb><C:/Program Files/MiKTeX 2.9/fon
 ts/type1/urw/times/utmr8a.pfb>
-Output written on thesis.pdf (107 pages, 989627 bytes).
+Output written on thesis.pdf (109 pages, 993313 bytes).
 PDF statistics:
- 1533 PDF objects out of 1728 (max. 8388607)
+ 1541 PDF objects out of 1728 (max. 8388607)
  352 named destinations out of 1000 (max. 500000)
  706 words of extra memory for PDF output out of 10000 (max. 10000000)
 
