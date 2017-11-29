@@ -3,3 +3,7 @@ thesis.pdf
 thesis.pdf
 *.aux
 *.bbl
+thesis.aux
+thesis.bbl
+thesis.log
+thesis.synctex.gz
