@@ -11,12 +11,8 @@
 % and comment the above 8 report style lines:
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
-\ifx\pdfoutput\undefined
-   \LoadClass[dvips, a4paper]{book}
-\else
-   \LoadClass[pdftex, a4paper]{book}
-\fi
-
+\LoadClass[dvips, a4paper]{book}
+ 
 
 %:-------------------------- packages for fancy things -----------------------
 \usepackage{amssymb}

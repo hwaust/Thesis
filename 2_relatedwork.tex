@@ -2,19 +2,64 @@
 \chapter{Related Work}
 \label{sec:relatedwork}
 
-We discuss related work in three related fields, XML fragmentation, parallel XML
-processing and XML database Techniques.
+We discuss related work in the following related fields, XML fragmentation,
+parallel XML processing and XML database Techniques.
 
-\section{XML Fragmentation}
+\section{XML Fragmentation} 
+
+XML Fragmentation is to devide a document tree into multiple fragments of
+document trees. Let $t$ be a document tree, F = \{$f_1$, $f_2$, ..., $f_m$\} be
+a collection of fragments of $t$ such that $t$ = $f_1$ $\cup$ $f_2$ $\cup$ ...
+$\cup$ $f_m$. Then, F is the fragmentation of $t$.
+
+In this study, F has vertically two parts: the top part FT and the bottom part
+FB. FT is the top part that has only one fragment, FB is the bottom part that
+has $m-1$ fragments. These two parts satisfis that FT $\cup$ FB = F.
+
+For the definition of the top part, let $xq$ = /$s_1$/$s_1$/../$s_i$ be an XPath
+query, where $s_i$ is a location step. Let D = \textsc{Eval}($t$, $xq$) =
+\{$d_1$, $d_2$, ..., $d_n$\} be a collection of document trees such that each
+$d_i$ $\in$ D corresponds to the same schema. The function \textsc{Root}($d$)
+returns the root node of a document tree $d$.  Then, FT satisfies Eval(FT, $xq$) =
+\{\textsc{Root}($d_1$), \textsc{Root}($d_2$), ..., \textsc{Root}($d_n$)\}.
+
+For the bottom part, we also apply horizontal fragmentation defined as follows.
+let FP = \{fp$_1$, fp$_2$, ..., fp$_{m-1}$\} be a collection of predicates
+(corresponds to QPT in [1]), then, we have FB = \{$f_1$, $f_2$, ..., $f_{m-1}$\}
+be a collection of fragments of D, where $f_j$ = \textsc{Eval}(T, QPRE[$fp_j$]) =
+\{$d_i$ $\in$ D $|$ $fp_j$ ($d_i$)\}.
+
+Note that although a root node of $d_i$ appears twice: one on the FT and one on
+TB, they are still the same node. The connection between the two nodes is
+maintained in some way based on the implementation.
+
+\textbf{Example}
+As shown in Figure 2 (A) of EDBT09 paper, we have the following \\representations:
+
+$t$ is a \texttt{dblp} document.
+
+D = \{book$_1$, book$_2$, ..., book$_n$\}, where book is a document tree rooted
+at 'book'.
+
+$xq$ = \verb|/dblp/book|
+
+FT is the first two level of the \texttt{dblp} dataset.
+
+FP = \{position() $\le$ t, position() $>$ t\}, where $1 \le t < n$.
+
+FB = \{\{book$_1$, book$_2$, ..., book$_t$ \}, \{book$_{t+1}$, book$_{t+2}$, ...,
+book$_n$ \} \}.
+
+
 
 Fragmentation is an important way of efficient processing XML documents, which
 divides an XML document in fragments and processes them in parallel.
 Fragmentation is the premise of data-parallel computation algorithms, and has
-been intensively
-studied~\cite{ARBM06,DaGP14,CFKL12,NEMH07,OgTP13,LiZZ17,CFKL12,DaGP14}. We
-discuss three ways of fragmentations of XML documents in this section.
+been intensively studied~\cite{ARBM06,DaGP14,CFKL12,NEMH07,OgTP13,LiZZ17,
+	CFKL12,DaGP14}. We discuss three ways of fragmentations of XML documents in this
+section.
 
-\subsection{Fragmentation of Trees}
+\subsection{Horizontal and Vertical Fragmentation}
 
 Data fragmentation is characterized by physical changes to the dataset, that is,
 the dataset is fragmented and allocated to multiple computational
@@ -44,8 +89,8 @@ data are integrated from different sites or organizations~\cite{CFKL12,KlOD10}.
 
 \subsection{Fragmentation of XML Text}
 
-Compared to these tree-based fragmentation techniques, the fragmentation in this
-study is based on serialized text, which means we cast the partition on the
+Compared to these fragmentation techniques on trees, the fragmentation in this
+study is based on serialized text, which means we cast the fragmentation on the
 plain text of an XML document in stead of the XML tree parsed from the document.
 The main advantage of our text-based fragmentation is that we can assign the
 chunks over distributed file systems~\cite{dfs} that are cut by default. Similar
@@ -55,14 +100,15 @@ make every chunk a well-formed tree in a preparsing phase.
 \subsection{Holes and Fillers}
 
 Bose et al. proposed a fragmentation model~\cite{bose2003query}. Bese on this,
-Bose  et al. proposed a system called Xfrag~\cite{bose2005xfrag}. In this
-system, an document is divided into multiple sub documents called fillers,
-where other fragments (the fillers) may fit.  Cong et al.~\cite{CFKL12} and
-Nomura et al. \cite{NEMH07} adopted a tree-shaped fragment that contains
-original nodes and hole nodes, where a hole node represents a link to a missing
-subtree, and represented the whole document as a tree of fragments. The key part
-of their approaches to decouple dependencies between evaluations on fragments so
-as to perform them in parallel.
+they later proposed a system called Xfrag~\cite{bose2005xfrag}. In this system,
+an document is divided into multiple sub documents called fillers, where other
+fragments (the fillers) may fit.  Cong et al.~\cite{CFKL12} and Nomura et al.
+\cite{NEMH07} adopted a tree-shaped fragment that contains original nodes and
+hole nodes, where a hole node represents a link to a missing subtree, and
+represented the whole document as a tree of fragments. The key part of their
+approaches to decouple dependencies between evaluations on fragments so as to
+perform them in parallel. 
+
 
 
 \section{Parallel XML Processing}
@@ -97,6 +143,13 @@ expressive than that of PP-transducer, which does not support order-aware
 queries. In parallel pushdown transducers \cite{LiZZ17}, a given document is
 modeled as a sequence of matched brackets and a fragment is represented as a
 sequence of unmatched brackets.
+
+\section{XML Parsing}
+
+XML Parsing is a process of creating an XML tree from reading an XML document. 
+\cite{PLZC07,WZYu08} focused on XML parsing, which is related to our parsing
+algorithm. Yinfei et al.~\cite{PaZC08} developed an algorithm for parsing the
+XML data in parallel without any sequential preparsing phase.
 
 
 \subsection{MapReduce-based XML Processing}
@@ -147,23 +200,28 @@ their partial evaluation is similar to automata.
 
 \subsection{Indexing and Labeling Schemes}
 
-Indexing is a hot topic for improving the performance of XML queries processing.
-\cite{CVZZ08,ToGr02,JLWO03} are related to this field. They examined the indices
-on different types of trees, including B+-tree, R-tree, and XR-tree. O'Neil et
-al.~\cite{OOPC04} proposed an index called ORDPATH for natively supporting XML
-data type. This index makes it possible to process XML queries  inside the
-database with downward XPath queries and allows update operations. Since this
-length of this index increases with respect to the size of XML documents, the
-length will be very long in case the XML documents are large. Pal et
-al.~\cite{PCSS04} studied how to improve the query performance by introducing
-two indexes to nodes and values in SQL Server. Li et al~\cite{LiLi05} improved
-OrdPath by reducing the length of ORDPATH index when inserting. Min et
-al.~\cite{MLCh07} proposed an efficient labeling scheme, called EXEL, which
-incurs no re-labeling of nodes when inserting nodes. Finis et al~\cite{FBKF15}
-Proposed an idea mainly on how to maintain and query hierarchical data at a high
-rate of complex, possibly skewed structural updates. There indexes inspire our
-deisgn of index scheme on XML document to make ours in a more efficient way.
-
+Indexing is a commom database technique to improve the access of data 
+by using index. It is also useful to for accelerating the access in XML databases. 
+However, due to the tree structure, it is a challenge to create efficient 
+index for XML documents.
+In the early 2000, O'Neil et al.~\cite{OOPC04} proposed an index called ORDPATH
+for natively supporting XML data type. This index makes it possible to process
+XML queries inside the database with downward XPath queries and allows update
+operations. Since this length of this index increases with respect to the size
+of XML documents, the length will be very long in case the XML documents are
+large. Pal et al.~\cite{PCSS04} studied how to improve the query performance by
+introducing two indexes to nodes and values in SQL Server~\cite{sql2005}. Li et
+al~\cite{LiLi05} improved OrdPath by reducing the length of ORDPATH index when
+inserting. Min et al.~\cite{MLCh07} proposed an efficient labeling scheme,
+called EXEL, which incurs no re-labeling of nodes when inserting nodes. Finis et
+al~\cite{FBKF15} Proposed an idea mainly on how to maintain and query
+hierarchical data at a high rate of complex, possibly skewed structural updates.
+There indexes inspire our deisgn of index scheme on XML document to make ours in
+a more efficient way. There are also some studyies concerning specific types of
+trees, such as \cite{ToGr02,JLWO03,CVZZ08}, whicsh examined the differences in
+indexing trees, including B+-tree, R-tree, and XR-tree. In this theses, by 
+considering the above studies, an new conbimed index is designed for specially 
+for large XML data.
 
 \subsubsection{Joins Algorithms}
 
@@ -186,30 +244,13 @@ a given node with optimized worst case I/O cost. Le Liu et al.~\cite{LFLQ08}
 first applied structural join in parallel over shared-memory environments.
 
 Twig joins are also commonly used for maching a part of an XML
-documents~\cite{jiang2003holistic,lu2005efficient,lu2005tjfast,fontoura2005optimizing}.
-In twig join, a query is represented as a twig patten, and then is searched on
-the target XML document. One of the early twig joins was \cite{BrKS02}. In the
-paper, a holistic twig join algorithm, called TwigStack was proposed for
-matching an XML query. There are also variants of twig joins then
-devleoped~\cite{CLTH06,QiYD07}. In 2009, Machdi et al.~\cite{MaAK09} implemented
-the idea in parallel on multiple cores and in 2012 Choi et al.~\cite{CLKL12}
-studied the twig joins on Hadoop in a parallel manner.
+documents~\cite{jiang2003holistic,lu2005efficient,lu2005tjfast,
+	fontoura2005optimizing}. In twig join, a query is represented as a twig patten,
+and then is searched on the target XML document. One of the early twig joins was
+\cite{BrKS02}. In the paper, a holistic twig join algorithm, called TwigStack
+was proposed for matching an XML query. There are also variants of twig joins
+then devleoped~\cite{CLTH06,QiYD07}. In 2009, Machdi et al.~\cite{MaAK09}
+implemented the idea in parallel on multiple cores and in 2012 Choi et
+al.~\cite{CLKL12} studied the twig joins on Hadoop in a parallel manner.
 
 
-%\section{Others}
-%
-%\cite{PLZC07,WZYu08} focused on XML parsing, which is related to our parsing
-%algorithm. Yinfei et al.~\cite{PaZC08} developed an algorithm for parsing the
-%XML data in parallel without any sequential preparsing phase.
-%
-% MonetDB~\cite{BGvM06}
-
-%They are inconvenient in  practice because their algorithms were designed for
-%evaluating small subsets (e.g., child and descendant axes with predicates in
-%\cite{CFKL12,kling11:dist_xml}) of XPath by using dedicated data structures. Use
-%of dedicated data structures necessitate implementing XML database engines
-%nearly from scratch in practice. Even fallbacks to sequential evaluation of
-%queries beyond a parallelizable set then become nontrivial. This means that we
-%have to design a full stack of XML database management systems in practice. In
-%summary, existing divide-and-conquer approaches are inherently a hard
-%engineering option in parallelizing XPath queries.
