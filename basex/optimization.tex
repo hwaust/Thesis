@@ -1,0 +1,45 @@
+\section{Integration with Query Optimization}
+\label{sect:opt}
+
+As mentioned in Section~\ref{sect:basex}, BaseX is equipped with a powerful
+query optimizer. Some queries can be optimized to reduce the execute
+time.  For example, BaseX optimizes XM3 to
+\begin{lstlisting}
+/site/open_auctions/open_auction/bidder[last()]
+\end{lstlisting}
+on the basis of the path index, which brings knowledge that \Src{open\_auction}
+exists only immediately below \Src{open\_auctions} and \Src{open\_auctions}
+exists only immediately below \Src{site}. Because a step of descendant-or-self
+axis (\Src{//open\_auction}) is replaced with two steps of child axes
+(\Src{/open\_auctions/open\_auction}), the search space of this query has been
+significantly reduced. Note that a more drastic result is observed in XM2 that
+
+, where
+the attribute index is exploited through function \Src{db:attribute}. 
+
+Partitioning strategies convert a given query to two separate ones and therefore
+affects the capability of BaseX in query optimization. In fact, the suffix query
+of XM3(b) is not optimized to the corresponding part of optimized XM3 because
+BaseX does not utilize indices for optimizing queries starting from nodes
+specified with PRE values even if possible in principle. Most index-based
+optimizations are limited to queries starting from the document root. This is a
+reasonable design choice in query optimization because it is expensive to check
+all PRE values observed. However, we do not have to check all PRE values that
+specify the starting nodes of the suffix query because of the nature of data
+partitioning, of which BaseX is unaware. This discord between BaseX's query
+optimization and data partitioning may incur serious performance degradation, 
+and it also occurs in query partitioning strategy in term of parallelizing subquereis.
+
+A simple way of resolving this discord is to apply partitioning strategies after
+BaseX's query optimization. Partitioning strategies are applicable to any
+multi-step XPath query in principle. Even if an optimized query is thoroughly
+different from its original query as in XM2, it is entirely adequate to apply
+both partitioning strategies to the optimized query, forgetting the original. In fact,
+XM2--4(c) are instances of such data partitioning after optimization.
+
+The simplicity of this coordination brings two big benefits. One is that we are
+still able to implement partitioning strategies only by using BaseX's dumps of
+optimized queries without any modification on BaseX. The other is that it is
+very easy to implement partitioning strategies into compilation in BaseX; we can
+just add a data/query-partitioning pass after all existing query optimization
+passes without any interference.

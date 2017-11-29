@@ -1,0 +1,972 @@
+\section{Eavalute XPath Queries on Partial Trees}
+\label{sec:queryalgo}
+
+When performing an XPath query on an XML document, the evaluation is done on a
+single tree. By exploiting partial tree, the evaluation of an XPath query on a
+single tree is then applied to multiple partial trees. A significant advantagte
+of using partial tree is that it makes the parallelization of evaluation of
+XPath queries possible by simply evaluting the same query on partail trees
+separately. However, it also brings challenges in designing query algorhtms on
+partial trees. Generally speaking, there are three main difficulties as follows.
+
+First, since partial trees are craeted from chunks of an XML document, a node
+may be seperated and thus lie in different partial trees. This leads to a
+possible situation that multiple open nodes may stem from the same node and
+distributed in different partial trees as discussed in Section~\ref{sec:ranges}.
+Since these open nodes are from the same node, in case when one of such open
+nodes is selected in a partial tree (e.g., \Nr{B}{6} on \PT1), the other
+corresponding nodes (\Np{B}{6} on \PT2 and \Nl{B}{6} on \PT3) should also be
+selected for consistency. This is simply because they are all \Nc{B}{6} in the
+original XML document.
+
+Second, although partial trees have all the parent-child edges of their nodes,
+the sibling-relation that is split among partial trees may be missing. For
+example,  \Nc{B}{1} has five following-sibling nodes in the original XML tree,
+but in \PT1, there is no following-sibling nodes of \Nc{B}{1} because of
+splitting. When we perform queries with \texttt{following-sibling} or
+\texttt{preceding-sibling}, the results may be in another (possibly far) partial
+tree. We  design an algorithm to let the partial trees know about such cases.
+
+Third, when we perform queries with a predicate, we usually execute the
+sub-query in the predicate from a set of matching nodes.  However, on a set of
+partial trees, the starting nodes and the matching nodes of the sub-query may be
+on different partial trees (we will show this in the follwoing part of this
+section). We also need an algorithm to propagate the information over partial
+trees for queries with predicates.
+
+In this section, we develop algorithms for evaluating XPath queries on a set of
+partial trees. We first show the outline of the algorithms and then describe the
+details of how the query algorithms work for evaluating XPath queries. We use
+the following three XPath expressions as our running examples.
+
+Q1: \texttt{ /child::A/descendant::B/descendant::C/parent::B}
+
+Q2: \texttt{ /descendant::B/following-sibling::B}
+
+Q3:  \texttt{ /descendant::B[following-sibling::B/child::C]/child::C}
+
+After the introduction of the algorithms, we also discuss the complexity of our
+algorithms at the end of this section.
+
+
+\subsection{Definitions}
+
+For introducing the query algorithms, we first give a few definitions to partial
+tree nodes. Each node has a \textit{type} denoting its node type, including
+closed, left-open, right-open and pre-node, and \textit{depth} denoting the
+number of edges from the node to the root. A node has four pointers pointing to
+the related nodes: the \textit{parent} pointer that points to its parent and the
+\textit{children} pointer to its children. For accessing siblings, it has the
+\textit{presib} pointer and the \textit{folsib} pointer that points to its
+preceding-sibling node and following-sibling node, respectively. For
+distinguishing nodes, we give each node a unique id called \textit{uid}.
+
+Besides the partial tree node, there is also a requirement that we need to know
+from which partial tree a node comes in distributed memory environments;
+therefore, we number each partial tree with a unique id denoted as
+\textit{partial tree id} or simply \textit{ptid} for distinguishing partial
+trees. We number \textit{ptid} from 0 to \textit{P - 1} (where P is the total
+number of partial trees) in document order.
+
+For locating any node on a partial tree, we define data type \textit{Link} that
+holds a ptid and a uid. By using \textsc{FindNode}(\textit{pt}, \textit{uid}),
+we can locate any node with a unique integer \textit{uid} on partial tree
+\textit{pt}. We assume that we can access any node in constant time.
+
+When processing an XPath query, we evaluate it step by step in order. For
+storing the results of a step, we define a resultant list of nodes for each
+partial tree i.e. the are P reslultant lists given P partial trees. The
+evaluation of a step is applies to each node in the resultant list. To start
+with, we add a virtual node VN$i$ into a resultant list for each parital tree,
+which has the root of PT$i$ as its single child. For example, VN$_0$ has only a
+single child \Nr{A}{0} of \PT0 and is put into the resultant list before the
+evaluation on \PT0 starts. The evaluation of a step generats a new resultant
+list of nodes. After the evaluation, we replace the current resultant list with
+the new list as the results and will be used as the input for the next step.
+
+
+\subsection{Queries without Predicate}
+
+Algorithm~1 outlines the big picture of our XPath query algorithms. The input
+includes an XPath query to be evaluated and a set of partial trees generated
+from an XML document. The output is a set of resultant nodes that matchs the
+XPath query, each of which is associated with a corresponding partial tree.
+
+The evaluation of the XPath query starts from the root of the original XML tree.
+In case of paritial tree, the root node of the original tree corresponds to the
+root node of every partial tree, and they are put into the resultant lists for
+holding intermediate results (lines 1--2). Hereafter, the loops by $p$ over $[0,
+P)$ are assumed to be executed in parallel.
+
+As we know, an XPath query consists of one or more location steps, and in our
+algorithm they are processed one by one in order. For each step, Algorithm~1
+calls the corresponding sub-algorithm based on the axis of the step and updates
+the intermediate results (line 4) in the resultant lists for each turn. Lines
+6--9 will be executed in case the input XPath query has a predicates. We will
+explain this part later in Section~\ref{sec:predicate}.
+
+{
+	\setstretch{1.5}
+\begin{figure}[t]
+  \label{fig:algQuery2}
+	\centering
+	\begin{tabular}{l}
+		\hline
+		\hline
+		\makebox[.95\linewidth][l]{\textbf{Algorithm 1} \textsc{Query}($\mathit{steps}$, $\INDEXSET{pt}$)} \\
+		\hline
+		\textbf{Input}:           $\mathit{steps}$: an XPath expression \\
+                \phantom{\textbf{Input}:} $\INDEXSET{pt}$: an indexed set of partial trees \\
+		\textbf{Output}: an indexed set of results of query \\
+		\makebox[1em][r]{1:}\hspace{1 mm} \textbf{for} $p \in [0, P)$ \textbf{do} \\
+		\makebox[1em][r]{2:}\hspace{4 mm}    $\mathit{ResultList}_p \leftarrow \{~ \mathit{pt}_p.\mathit{root} ~\}$ \\
+		\makebox[1em][r]{3:}\hspace{1 mm} \textbf{for all} $\emph{step} \in \emph{steps}$ \textbf{do} \\
+		\makebox[1em][r]{4:}\hspace{4 mm}    $\INDEXSET{ResultList}$ \\
+                \makebox[1em][r]{  }\hspace{6 mm}        ${}\leftarrow \hbox{\textsc{Query}}\langle\mathit{step}.\mathit{axis}\rangle(\INDEXSET{pt}, \INDEXSET{ResultList}, \mathit{step}.\mathit{test})$ \\
+		\makebox[1em][r]{5:}\hspace{4 mm}    \textbf{if} $step.predicate \neq \hbox{\textsc{null}}$ \textbf{then} \\
+		\makebox[1em][r]{6:}\hspace{7 mm}       $\INDEXSET{PResultList} \leftarrow \hbox{\textsc{PreparePredicate}}(\INDEXSET{ResultList})$ \\
+		\makebox[1em][r]{7:}\hspace{7 mm}       \textbf{for all} $\emph{pstep} \in \emph{step.predicate}$ \textbf{do} \\
+		\makebox[1em][r]{8:}\hspace{10 mm}         $\INDEXSET{PResultList}$ \\
+                \makebox[1em][r]{  }\hspace{12 mm}             ${} \leftarrow  \hbox{\textsc{PQuery}}\langle\mathit{step}.\mathit{axis}\rangle(\INDEXSET{pt}, \INDEXSET{PResultList}, \mathit{pstep})$ \\
+		\makebox[1em][r]{9:}\hspace{7 mm}       $\INDEXSET{ResultList} \leftarrow \hbox{\textsc{ProcessPredicate}}(\INDEXSET{PResultList})$ \\
+		\makebox[1em][r]{10:}\hspace{1 mm} \textbf{return} $\INDEXSET{ResultList}$ \\
+		\hline
+	\end{tabular}
+  \caption{Overall algorithm of XPath query for partial trees}
+\end{figure}
+}
+
+
+\subsubsection{Downwards Axes}
+
+Algorithm 2 shows the procedure for evaluting a step with a child axis. The
+input $\INDEXSET{InputList}$ has the nodes selected up from the last step on
+each partial tree. The algorithm simply lists up all the children of input nodes
+and compares their tags with the node test (lines 3--4).
+
+Algorithm 3 shows the procedure for evaluting a step with a descendant axis.
+Starting from every node in the input, it traverses partial trees by depth-first
+search along with a stack. To avoid redundant traversals on the same node, we
+add the $\mathit{isChecked}$ flag for each node (lines 8--9) so that we can
+evaluate  each node only once. Note that we can reduce the worst-case complexity
+by using this flag from square to linear with respect to the number of nodes.
+
+{
+	\setstretch{1.5}
+\begin{figure}[!t]
+	\centering
+	\begin{tabular}{l}
+		\hline
+		\hline
+		\makebox[.95\linewidth][l]{\textbf{Algorithm 2} \textsc{Query}$\langle$\texttt{child}$\rangle$($\INDEXSET{pt}$, $\INDEXSET{InputList}$, $\mathit{test}$)} \\
+		\hline
+		\textbf{Input}:           $\INDEXSET{pt}$: an indexed set of partial trees \\
+                \phantom{\textbf{Input}:} $\INDEXSET{InputList}$: an indexed set of input nodes \\
+                \phantom{\textbf{Input}:} $\mathit{test}$: a string of nametest \\
+		\textbf{Output}: an indexed set of results \\
+		\makebox[1em][r]{1:}\hspace{1 mm} \textbf{for} $p \in [0, P)$ \textbf{do} \\
+		\makebox[1em][r]{2:}\hspace{4 mm}    $\mathit{OutputList}_p \leftarrow [] $ \\
+		\makebox[1em][r]{3:}\hspace{4 mm}    \textbf{for all} $n \in InputList_p$ \textbf{do} \\
+		\makebox[1em][r]{4:}\hspace{7 mm}       $\mathit{OutputList}_p $ \\
+                \makebox[1em][r]{  }\hspace{9 mm}          ${}\leftarrow \mathit{OutputList}_p \cup [nc ~|~ nc \in n.\mathit{children}, nc.\mathit{tag} = \mathit{test}] $ \\
+		\makebox[1em][r]{5:}\hspace{1 mm} \textbf{return} $\INDEXSET{OutputList}$ \\
+		\hline
+        \\
+		\hline
+		\hline
+		\makebox[.95\linewidth][l]{\textbf{Algorithm 3} \textsc{Query}$\langle$\texttt{descendant}$\rangle$($\INDEXSET{pt}$, $\INDEXSET{InputList}$, $\mathit{test}$)} \\
+		\hline
+		\textbf{Input}:           $\INDEXSET{pt}$: an indexed set of partial trees \\
+                \phantom{\textbf{Input}:} $\INDEXSET{InputList}$: an indexed set of input nodes \\
+                \phantom{\textbf{Input}:} $\mathit{test}$: a string of nametest \\
+		\textbf{Output}: an indexed set of results \\
+		\makebox[1em][r]{1:}\hspace{1 mm} \textbf{for} $p \in [0, P)$ \textbf{do} \\
+		\makebox[1em][r]{2:}\hspace{4 mm}    $\mathrm{SetIsChecked}(\mathit{pt}_p, \mathit{false})$ \\
+		\makebox[1em][r]{3:}\hspace{4 mm}    $\mathit{OutputList} \leftarrow [] $ \\
+		\makebox[1em][r]{4:}\hspace{4 mm}    \textbf{for all} $n \in InputList_p$ \textbf{do} \\
+		\makebox[1em][r]{5:}\hspace{7 mm}       $\mathit{Stack} \leftarrow \{ \emph{n} \}$ \\
+		\makebox[1em][r]{6:}\hspace{7 mm}       \textbf{while not }$\mathit{Stack}.\mathit{Empty()}$ \textbf{do}  \\
+		\makebox[1em][r]{7:}\hspace{10mm}         $nt \leftarrow \mathit{Stack}.\mathit{Pop}()$  \\
+		\makebox[1em][r]{8:}\hspace{10mm}         \textbf{if} $nt.\mathit{isChecked}$ \textbf{then} \textbf{continue} \\
+		\makebox[1em][r]{9:}\hspace{10mm}         $nt.\mathit{isChecked} \leftarrow \hbox{\textsc{true}}$ \\
+		\makebox[1em][r]{10:}\hspace{10mm}         $\mathit{OutputList}_p $ \\
+                \makebox[1em][r]{   }\hspace{12mm}             ${}\leftarrow \mathit{OutputList}_p \cup [nc ~|~ nc \in nt.children, nc.\mathit{tag} = \mathit{test}] $ \\
+		\makebox[1em][r]{11:}\hspace{10mm}         $\mathit{Stack}.\mathit{PushAll}(nt.\mathit{children})$ \\
+		\makebox[1em][r]{12:}\hspace{1 mm} \textbf{return} $\INDEXSET{OutputList}$ \\
+		\hline
+	\end{tabular}
+    \caption{Query algorithm for downwards axes}
+	\label{fig:algQueryChild2}
+\end{figure}
+}
+
+Now let us look at our running example Q1. The process of downward steps of Q1
+is listed in Table~\ref{tab:Q1first}. For the first step \texttt{child::A},
+since  VN$_i$ has only one child that is the root of the $i$th partial tree, we
+obtain it as the results for each partial tree as shown in the second row of the
+table. Then we perform the next step \texttt{descendant::B} independently for
+each partial tree from the results of the first step. We evalute the step
+\texttt{descendant::B} on each of the nodes in the resultant list of the
+previous step. For example, for \Nr{A}{1} on \PT1, there is only a node
+\Nc{B}{1} that matches the query and is then selected and put into a new list.
+As introduced, when the evaluation is done, the new list replaces the current
+resultant list to be the resultant list up to the current step. The results of
+this step for each partial tree are listed in the fourth row of
+Table~\ref{tab:Q1first}.  For the third step \texttt{descendant::C}, the
+algorithm works in a similar way. The results up to \texttt{descendant::C} are
+lised in the last row of Table~\ref{tab:Q1first}. It is worth noting that the
+$\mathit{isChecked}$ flag now works. For example, on \PT1, starting from
+\Nr{B}{6}, we traverse \Nr{B}{7}, \Nc{D}{8}, \Nc{E}{9}, and then starting from
+\Nr{B}{7}, we can stop the traversal immediately.
+
+{
+\setstretch{1.5}
+\begin{table}[t]
+\caption{Evaluating downward steps of Q1}
+\label{tab:Q1first}
+\begin{center}
+\begin{tabular}{c|ccccc}
+\hline
+\hline
+Process &
+\PT0 &
+\PT1 &
+\PT2 &
+\PT3 &
+\PT4 \\
+\hline
+Input&
+[VN$_0$] &
+[VN$_1$] &
+[VN$_2$] &
+[VN$_3$] &
+[VN$_4$] \\
+\hline
+\texttt{child::A} &
+$ [\Nr{A}{0}] $ &
+$ [\Np{A}{0}] $ &
+$ [\Np{A}{0}] $ &
+$ [\Np{A}{0}] $ &
+$ [\Nl{A}{0}] $ \\
+\hline
+\texttt{descendant::B} &
+$ [\Nc{B}{1}] $ &
+$ [\Nr{B}{6}, \Nr{B}{7}] $ &
+$ [\Np{B}{6}, \Nl{B}{7}] $ &
+$ [\Nl{B}{6}] $ &
+$ [\Nc{B}{17}, \Nc{B}{20}] $ \\
+\hline
+\texttt{descendant::C} &
+$ [\Nc{C}{2}] $ &
+$ [\,] $ &
+$ [\Nc{C}{10}, \Nc{C}{11}] $ &
+$ [\,] $ &
+$ [\Nc{C}{19}] $ \\
+\hline
+\end{tabular}
+\label{tab:Q1}
+\end{center}
+\end{table}
+}
+
+\subsubsection{Upwards Axes}
+
+In querying of a step with downward axes, the algorithms have nothing different
+to partial trees compared to ordinary XML trees. This is due to Property 1 in
+Section~\ref{sec:chars}. Let an open node $x$ be selected after a downwards
+query. Then, it should have started from an open node (this is an ancestor of
+$x$) and the corresponding nodes should have all been selected, which means all
+the nodes corresponding to $x$ should be selected after the query.
+
+However, this discussion does not hold for the queries with upwards axes. In
+such case when an open node is selected after an upwards query, it may come
+from a closed node and we have no guarantee that all the corresponding open
+nodes are selected. Therefore, we add a postprocessing for sharing the selected
+nodes when we process the upwards axes.
+
+Algorithm 4 shows the procedure for evaluating a step with a parent axis.
+It has almost the same flow as that of the child axis (lines 1--5),
+except for the last call of the \textsc{ShareNodes} function.
+
+The \textsc{ShareNodes} function is used for keeping the consistency of open
+nodes. It consists of two parts\footnote{In our implementation of this
+\textsc{ShareNodes} function, there are two phases of communication: all the
+partial trees send their open nodes to a process and then the necessary data for
+a partial tree are sent back.}.
+
+First, it collects all the selected open nodes from all partial trees (lines
+4--6). Then, based on the range information of node $n$ ($n.\mathit{start}$ and
+$n.\mathit{end}$), we add all the corresponding selected nodes to all the
+partial trees. After the call of \textsc{ShareNodes} function, all the open
+nodes that are from the same node are selected in corresponding partial trees.
+
+Now, let us continue the running example Q1 for its last step as shown in
+Table~\ref{tab:Q1last}. For the \texttt{parent::B} after the
+\texttt{descendant::C}, we first directly select the parent nodes of the
+intermediate results from the results of the previous step independently. For
+the running example, we can notice that \Nc{B}{1} is selected for it is  the
+parent of \Nc{C}{2} on \PT0, while for \Nl{B}{7} and \Np{B}{6}, they are the
+parents of \Nc{C}{10} and \Nc{C}{11} respectively.  The results are listed in
+the second row of Table\ref{tab:Q1last}.
+
+Here, unfortunately the node \Nl{B}{7} is selected on \PT2, but its
+corresponding node on \PT1, i.e. \Nr{B}{7}, has not been selected yet.  We then
+call the \textsc{ShareNodes} function. By collecting all the open nodes from all
+the partial trees, we have the list $[\Nl{B}{7}, \Np{B}{6}]$. Since they have
+ranges $(1, 2)$ and $(1, 3)$, respectively, \PT1 receives two nodes \Nr{B}{7}
+and \Nr{B}{6}, \PT2 receives two nodes \Nl{B}{7} and \Np{B}{6}, and \PT3
+receives one node \Nl{B}{6}. By taking the union with the previous intermediate
+results, we obtain the final results as shown in the last row of
+Table\ref{tab:Q1last}.
+
+Now, after evaluating the last step of Q1, the evaluation of the whole query Q1
+is complete. The resultant lists in the last row of the table from evaluating
+the last step is then the final results of Q1.
+
+{
+	\setstretch{1.5}
+\begin{table}[t]
+	\caption{Evaluating the last step of Q1}
+	\label{tab:Q1last}
+	\begin{center}
+		\medskip
+		\begin{tabular}{c|ccccc}
+			\hline
+			\hline
+			Process &
+			\PT0 &
+			\PT1 &
+			\PT2 &
+			\PT3 &
+			\PT4 \\
+			\hline
+			Input &
+			$ [\Nc{C}{2}] $ &
+			$ [\,] $ &
+			$ [\Nc{C}{10}, \Nc{C}{11}] $ &
+			$ [\,] $ &
+			$ [\Nc{C}{19}] $ \\
+			\hline
+			\texttt{parent::B} &
+			$ [\Nc{B}{1}] $ &
+			$ [\,] $ &
+			$ [\Nl{B}{7}, \Np{B}{6}] $ &
+			$ [\,] $ &
+			$ [\Nc{B}{17}] $ \\
+			\hline
+			\textsc{ShareNode} &
+			$ [\Nc{B}{1}] $ &
+			$ [\Nr{B}{6}, \Nr{B}{7}] $ &
+			$ [\Nl{B}{7}, \Np{B}{6}] $ &
+			$ [\Nl{B}{6}] $ &
+			$ [\Nc{B}{17}] $ \\
+			\hline
+		\end{tabular}
+		\medskip
+	\end{center}
+\end{table}
+
+\begin{figure}[t]
+	\centering
+	\begin{tabular}{l}
+		\hline
+		\hline
+		\makebox[.95\linewidth][l]{\textbf{Algorithm 4} \textsc{Query}$\langle$\texttt{parent}$\rangle$($\INDEXSET{pt}$, $\INDEXSET{InputList}$, $\mathit{test}$)} \\
+		\hline
+		\textbf{Input}:           $\INDEXSET{pt}$: an indexed set of partial trees \\
+        \phantom{\textbf{Input}:} $\INDEXSET{InputList}$: an indexed set of input nodes \\
+        \phantom{\textbf{Input}:} $\mathit{test}$: a string of nametest \\
+		\textbf{Output}: an indexed set of results \\
+		\makebox[1em][r]{1:}\hspace{1 mm} \textbf{for} $p \in [0, P)$ \textbf{do} \\
+		\makebox[1em][r]{2:}\hspace{4 mm}    $\mathit{OutputList}_p \leftarrow [\,]$ \\
+		\makebox[1em][r]{3:}\hspace{4 mm}    \textbf{for all} $n \in \mathit{InputList}_p$ \textbf{do} \\
+		\makebox[1em][r]{4:}\hspace{7 mm}       \textbf{if} $n.\mathit{parent} \neq \hbox{\textsc{null}}$ \textbf{ and } $n.\mathit{parent}.\mathit{tag} = \emph{test}$ \textbf{then} \\
+		\makebox[1em][r]{5:}\hspace{10mm}          $\mathit{OutputList}_p.\mathit{Add}(n)$ \\
+		\makebox[1em][r]{6:}\hspace{1 mm} \textbf{return} \textsc{ShareNodes}($\INDEXSET{pt}$, $\INDEXSET{OutputList}$) \\
+		\hline
+        \\
+        \hline
+		\hline
+		\makebox[.95\linewidth][l]{\textbf{Algorithms 5} \textsc{ShareNodes}($\INDEXSET{pt}$, $\INDEXSET{NodeList})$} \\
+		\hline
+		\textbf{Input}:           $\INDEXSET{pt}$: an indexed set of partial trees \\
+                \phantom{\textbf{Input}:} $\INDEXSET{NodeList}$: an indexed set of nodes \\
+		\textbf{Output}: an indexed set of nodes after sharing\\
+		\makebox[1em][r]{1:}\hspace{1 mm} /* Select all open nodes and append them to a node list */ \\
+		\makebox[1em][r]{2:}\hspace{1 mm} $\mathit{ToBeShared} \leftarrow [\,]$ \\
+		\makebox[1em][r]{3:}\hspace{1 mm} \textbf{for} $p \in [0, P)$ \textbf{do} \\
+		\makebox[1em][r]{4:}\hspace{4 mm} $ \mathit{OpenNodes} \leftarrow [n ~|~ n \in \mathit{NodeList}_p, $\\
+		\makebox[1em][r]{5:}\hspace{4 mm} \phantom{$ \mathit{OpenNodes} \leftarrow [n ~|~$}$n.\mathit{type} \in \{\textsc{LeftOpen}, \textsc{RightOpen}, \textsc{PreNode}\}]$\\
+		\makebox[1em][r]{6:}\hspace{4 mm} $ \mathit{ToBeShared} \leftarrow \mathit{ToBeShared} \cup \mathit{OpenNodes}$ \\[5pt]
+		\makebox[1em][r]{7:}\hspace{1 mm} /* Regroup nodes by partial tree id and add them to NodeList */ \\
+		\makebox[1em][r]{8:}\hspace{1 mm} \textbf{for} $p \in [0, P)$ \textbf{do} \\
+		\makebox[1em][r]{9:}\hspace{4 mm}    $\mathit{ToBeAdded}_p \leftarrow [n ~|~ n \in \mathit{ToBeShared}, n.\mathit{start} \le p \le n.\mathit{end}]$ \\
+		\makebox[1em][r]{10:}\hspace{4 mm}    $\mathit{OutputList}_p \leftarrow \mathit{NodeList}_p \cup \mathit{ToBeAdded}_p$ \\
+		\makebox[1em][r]{11:}\hspace{1 mm} \textbf{return} $\INDEXSET{OutputList}$ \\
+		\hline
+	\end{tabular}
+        \caption{Query algorithms for upwards axes}
+	\label{fig:algQueryParent2}
+\end{figure}
+}
+
+\subsubsection{Intra-sibling Axes}
+
+The \texttt{following-sibling} or \texttt{preceding-sibling} axes retrieve nodes
+from a set of nodes that are siblings of an intermediate node.  In our partial
+trees, a set of those sibling nodes might be divided into two or more partial
+trees. Therefore, these intro-sibling axes require querying on other partial
+trees in addition to the local querying.
+
+Without loss of generality, we discuss the following-sibling axis only, since
+preceding-sibling is only different in a opposite direction compared to
+following-sibling axis. Algorithm 6 shows the procedure for evaluating a step
+with a following-sibling axis, which consists of four phases: local query,
+preparation, regrouping, and remote query.
+
+In the local query, we utilize the $\mathit{folsib}$ pointer and the
+$\mathit{isChecked}$ flag to realize linear-time querying (lines 6--10). Then,
+in the preparation, we select the nodes that are passed to another partial tree
+to perform the remote query.  The latter two conditions (lines 14, 15) are
+rather easy: we will ask a remote query if the parent node can have more
+segments on the right (i.e., right open). The former condition (line 13) is a
+little tricky.  Even if the latter two conditions hold, we do not need a remote
+query if the node itself is right open.  Notice that if a node is right open
+then it should have a corresponding left-open node in another partial tree, and
+that node will ask for a remote query.  The regrouping is almost the same as
+that in \textsc{ShareNodes}, and the difference is the range we consider (we
+only look at the right for the following-sibling). Finally, the remote query
+finds the children from the intermediate nodes given by regrouping.
+
+Now, let us look at our running example of Q2. After the evaluation of
+\texttt{descendant::B}, we have the intermediate results in the third row of
+Table~\ref{tab:query2}. In the first phase of \texttt{following-sibling::B}, we get
+the results in the third row. Then, we collect the parent nodes that satisfies
+the conditions (lines 13--15). Such nodes and their ranges are: \Nr{A}{0} with
+range [1,4] (on \PT0), \Np{B}{6} with range [3,3] (on \PT2), and \Np{A}{0} with
+range [4,4] (on \PT3). By regrouping the nodes based on the partial tree id, the
+input nodes for the remote query are as in the fourth row of the table. Starting
+from these intermediate results, we select their children and obtain the results
+as shown in the last row of Table~\ref{tab:query2}. Note that these results are also
+the final results for the query since the result of a local query is a subset of
+this remote query.
+
+{
+	\setstretch{1.5}
+\begin{table}[t]
+	\caption{Evaluating the location steps of Q2}
+	\label{tab:query2}
+\centering
+\small
+\begin{tabular}{c|ccccc}
+\hline
+\hline
+Process &
+\PT0 &
+\PT1 &
+\PT2 &
+\PT3 &
+\PT4 \\
+\hline
+Input&
+[VN$_0$] &
+[VN$_1$] &
+[VN$_2$] &
+[VN$_3$] &
+[VN$_4$] \\
+\hline
+\texttt{descendant::B} &
+$ [\Nc{B}{1}] $ &
+$ [\Nr{B}{6}, \Nr{B}{7}] $ &
+$ [\Np{B}{6}, \Nl{B}{7}] $ &
+$ [\Nl{B}{6}] $ &
+$ [\Nc{B}{17}, \Nc{B}{20}] $ \\
+\hline
+\texttt{following-sibling::B} &
+$ [\,] $ &
+$ [\,] $ &
+$ [\,] $ &
+$ [\,] $ &
+$ [\Nc{B}{20}] $ \\
+\hline
+remote \texttt{Parent::A} &
+$ [\,] $ &
+$ [\Np{A}{0}] $ &
+$ [\Np{A}{0}] $ &
+$ [\Np{A}{0}, \Nl{B}{6}] $ &
+$ [\Nl{A}{0}] $ \\
+\hline
+remote \texttt{child::B} &
+$ [\,] $ &
+$ [\Nr{B}{6}] $ &
+$ [\Np{B}{6}] $ &
+$ [\Nl{B}{6}] $ &
+$ [\Nc{B}{17},\Nc{B}{20}] $ \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[!t]
+	\centering
+	\begin{tabular}{l}
+		\hline
+		\hline
+		\makebox[.95\linewidth][l]{\textbf{Algorithm 6} \textsc{Query}$\langle$\texttt{following-sibling}$\rangle$($\INDEXSET{pt}$, $\INDEXSET{InputList}$, $\mathit{test}$)} \\
+		\hline
+		\textbf{Input}:           $\INDEXSET{pt}$: an indexed set of partial trees \\
+                \phantom{\textbf{Input}:} $\INDEXSET{InputList}$: an indexed set of input nodes \\
+                \phantom{\textbf{Input}:} $\mathit{test}$: a string of nametest \\
+		\textbf{Output}: an indexed set of results \\
+		\makebox[1em][r]{ 1:}\hspace{1 mm} \textbf{for} $p \in [0, P)$ \textbf{do} \\[5pt]
+		\makebox[1em][r]{ 2:}\hspace{4 mm}    /* Local query */ \\
+		\makebox[1em][r]{ 3:}\hspace{4 mm}    $\mathrm{SetIsChecked}(\mathit{pt}_p, \mathit{false})$ \\
+		\makebox[1em][r]{ 4:}\hspace{4 mm}    $ \mathit{OutputList}_p \leftarrow [\,] $ \\
+		\makebox[1em][r]{ 5:}\hspace{4 mm}    \textbf{for all} $n \in InputList_p$ \textbf{do} \\
+		\makebox[1em][r]{ 6:}\hspace{7 mm}       \textbf{while} $n.\mathit{isChecked} = \hbox{\textsc{false}}$ \textbf{and} $n.folsib \neq \hbox{\textsc{null}}$ \textbf{do} \\
+		\makebox[1em][r]{ 7:}\hspace{10mm}          $n.\mathit{isChecked} \leftarrow \hbox{\textsc{true}}$ \\
+		\makebox[1em][r]{ 8:}\hspace{10mm}          $n \leftarrow n.folsib$ \\
+		\makebox[1em][r]{ 9:}\hspace{10mm}          \textbf{if} $n.tag = test$ \textbf{then} \\
+		\makebox[1em][r]{10:}\hspace{13mm}             $OutputList_p.\mathit{Add}(n)$ \\[5pt]
+		\makebox[1em][r]{11:}\hspace{4 mm}    /* Preparing remote query */ \\
+		\makebox[1em][r]{12:}\hspace{4 mm}    \textbf{for all} $n \in \mathit{InputList}_p$ \textbf{do} \\
+		\makebox[1em][r]{13:}\hspace{7 mm}       \textbf{if} $n.type \not\in \{\hbox{\textsc{RightOpen}}, \hbox{\textsc{PreNode}}\}$ \\
+		\makebox[1em][r]{14:}\hspace{9 mm}             \textbf{and} $n.\mathit{parent} \neq \hbox{\textsc{null}}$ \\
+		\makebox[1em][r]{15:}\hspace{9 mm}             \textbf{and} $n.parent.type \in \{\hbox{\textsc{RightOpen}}, \hbox{\textsc{PreNode}}\}$ \textbf{then}\\
+		\makebox[1em][r]{16:}\hspace{11 mm}                $\mathit{ToBeQueried}.\mathit{Add}((n.\mathit{parent}, p+1, n.\mathit{parent}.\mathit{end}))$ \\[5pt]
+		\makebox[1em][r]{17:}\hspace{1 mm} /* Regroup nodes by partial tree id */\\
+		\makebox[1em][r]{18:}\hspace{4 mm} \textbf{for} $p \in [0, P)$ \textbf{do}\\
+		\makebox[1em][r]{19:}\hspace{7 mm}    $RemoteInput_p \leftarrow [n ~|~ (n, st, ed) \in \mathit{ToBeQueried}, st \le p \le ed] $ \\[5pt]
+		\makebox[1em][r]{20:}\hspace{1 mm} /* Remote query */ \\
+		\makebox[1em][r]{21:}\hspace{1 mm} $\INDEXSET{RemoteOutput} \leftarrow \hbox{\textsc{Query}$\langle$\texttt{child}$\rangle$($\INDEXSET{pt}$, $\INDEXSET{RemoteInput}$, $\mathit{test}$)}$ \\
+		\makebox[1em][r]{22:}\hspace{1 mm} \textbf{for} $p \in [0, P)$ \textbf{do} \\
+		\makebox[1em][r]{23:}\hspace{4 mm}    $ \mathit{OutputList}_p \leftarrow \mathit{OutputList}_p \cup \mathit{RemoteOutput}_p$ \\
+		\makebox[1em][r]{24:}\hspace{0 mm} \textbf{return} $\INDEXSET{OutputList}$ \\
+		\hline
+	\end{tabular}
+	\caption{Algorithm for Following-sibling axis}
+	\label{fig:algQueryFolsib2}
+\end{figure}
+}
+
+
+\subsection{Queries with Predicate}
+\label{sec:predicate}
+
+Predicates in this study are filters that check the existence of matched nodes
+by simple steps that have no predicates. Our algorithm for handling predicates
+consists of three phases: preparing, evaluating steps in predicates, and
+processing predicates. The main differences of processing predicates are the
+elements of their intermediate data. In the evaluation of steps, we select nodes
+as we do for steps that have no predicates. In the querying in predicates, we
+also attach a link to each of the original nodes from which the predicates are
+evaluated. Since the upwards or intra-sibling axes may select a node on a
+different partial tree, the link is a pair of partial tree id and the index of
+nodes in the partial tree. The intermediate data will be denoted as $(x, (i,
+y))$ in the pseudo code or as $\pred{x}{\PT{i}.y}$ in the running example, both
+of which mean node $x$ is selected and it has a link to node $y$ on \PT{i}.
+
+\subsubsection{Preparing Predicate}
+
+Algorithm 7 shows the procedure for initializing the process of a predicate.
+It just copies the nodes from the input lists with a link to the node itself.
+
+For example in Q3, after evaluating \texttt{descendant::B}, we have the
+resultant lists  before the predicate evaluation as shown in the third row of
+Table~\ref{tab:q3prepare}. Then, by calling \textsc{PreparePredicate}, we have
+the intermediate results as shown in the last row of the table. Note that (1)
+all the links point to the nodes themselves at the beginning and (2) the
+resultant lists in the last row of the table are newly created apart from the
+current resultant list.
+
+{
+	\setstretch{1.5}
+\begin{table}[t]
+    \caption{Prepare the predicate of Q3}
+    \label{tab:q3prepare}
+\begin{center}\footnotesize
+	\medskip
+	\begin{tabular}{c|ccccc}
+		\hline
+		\hline
+		Process &
+		\PT0 &
+		\PT1 &
+		\PT2 &
+		\PT3 &
+		\PT4 \\
+		\hline
+		Input&
+		[VN$_0$] &
+		[VN$_1$] &
+		[VN$_2$] &
+		[VN$_3$] &
+		[VN$_4$] \\
+		\hline
+		\texttt{descendant::B} &
+		$ [\Nc{B}{1}] $ &
+		$ [\Nr{B}{6},\Nr{B}{7}] $ &
+		$ [\Np{B}{6},\Nl{B}{7}] $ &
+		$ [\Nl{B}{6}] $ &
+		$ [\Nc{B}{17},\Nc{B}{20}] $ \\
+		\hline
+		\hline
+		Prepare &
+		$ [\Nc{B}{1}\rightarrow $ &
+		$ [\pred{\Nr{B}{6}}{\PT1.\Nr{B}{6}}, $ &
+		$ [\pred{\Np{B}{6}}{\PT2.\Np{B}{6}}, $ &
+		$ [\Nl{B}{6}\rightarrow $ &
+		$ [\pred{\Nc{B}{17}}{\PT4.\Nc{B}{17}}, $ \\
+		predicate &
+		$ \{\PT0.\Nc{B}{1}\}] $ &
+		$ \pred{\Nr{B}{7}}{\PT1.\Nr{B}{7}}] $ &
+		$ \pred{\Nl{B}{7}}{\PT2.\Nl{B}{7}}] $ &
+		$ \{\PT3.\Nl{B}{6}\}] $ &
+		$ \pred{\Nc{B}{20}}{\PT4.\Nc{B}{20}}] $ \\
+		\hline
+	\end{tabular}
+	\medskip
+	\end{center}
+\end{table}
+}
+
+
+\subsubsection{Evaluation of Steps within A Predicate}
+
+The evaluation of inner steps of a prediate is almost the same as that without
+predicate. Algorithm 9 shows the procedure for evalauting a step with a child
+axis in the predicate; the key differences are the type of intermediate values
+and the duplication of links.
+
+There is another important difference for the descendant, ancestor,
+following-sibling, and preceding-sibling. In the querying without predicate, we
+used the $\mathit{isChecked}$ flag to avoid traversing the same node more than
+once. In the querying in predicates, however, the different nodes may have
+different links and this prevents us from using the flag. As we can see in the
+discussion on complexity later, this modification makes the algorithm over
+linear.
+
+Now we continue our running example Q3 for the evaluation of the inner steps of
+the prediate as shown in Table~\ref{tab:q3steps}. We then apply the query
+\texttt{following-sibling::B} in two phases: the local query and the remote
+query. The local query is the same as that of the previous section. The only
+different is the nodes to be processed, which have links with them. We obtain
+the results as shown in the third row of the table.
+
+The remote queries are different from that is not in a predicate. Although
+selected nodes are the same as before, they may have multiple links and are
+stored in newly created lists. For example,  \Nc{B}{17} and \Nc{B}{20} in \PT4
+both have two links. By merging results from local and remote queries, we
+finally have the following intermediate results after
+\texttt{following-sibling::B} in the predicate as shown in the fourth row of the
+table.
+
+For example, let us consider \Nc{B}{20} in \PT4. The local result of it is
+$\pred{\Nc{B}{20}}{\PT4.\Nc{B}{20}}$, and the remote results is
+$\pred{\Nc{B}{20}}{\PT0.\Nc{B}{1}, \PT3.\Nl{B}{6}}$. After merging link,  we
+have $\pred{\Nc{B}{20}}{\PT0.\Nc{B}{1}, \PT3.\Nl{B}{6}, \PT4.\Nc{B}{20}}$ as
+the result.
+
+Similarly, by applying the following step \texttt{child::C}, the intermediate
+results are shown in the last row of Table~\ref{tab:q3steps}. Note that in \PT4,
+the resultant node $ [\pred{\Nc{C}{19}}{\PT0.\Nc{B}{1}, \PT3.\Nl{B}{6}}] $ is
+a child of \Nc{B}{17}. Thus, it follows the link of \Nc{B}{17}.
+
+{
+	\setstretch{1.5}
+\begin{table}[t]
+	\caption{Evaluate inner steps of the predicate in Q3}
+	\label{tab:q3steps}
+	\centering
+	\footnotesize
+	\medskip
+	\begin{tabular}{c|ccccc}
+		\hline
+		\hline
+		Process &
+		\PT0 &
+		\PT1 &
+		\PT2 &
+		\PT3 &
+		\PT4 \\
+		\hline
+		Input &
+		$ [\Nc{B}{1}\rightarrow $ &
+		$ [\pred{\Nr{B}{6}}{\PT1.\Nr{B}{6}}, $ &
+		$ [\pred{\Np{B}{6}}{\PT2.\Np{B}{6}}, $ &
+		$ [\Nl{B}{6}\rightarrow $ &
+		$ [\pred{\Nc{B}{17}}{\PT4.\Nl{B}{17}}, $ \\
+		&
+		$ \{\PT0.\Nc{B}{1}\}] $ &
+		$ \pred{\Nr{B}{7}}{\PT1.\Nr{B}{7}}] $ &
+		$ \pred{\Nl{B}{7}}{\PT2.\Nl{B}{7}}] $ &
+		$ \{\PT3.\Nl{B}{6}\}] $ &
+		$ \pred{\Nc{B}{20}}{\PT4.\Nc{B}{20}}] $ \\
+		\hline
+		local &
+		&
+		&
+		&
+		&\\
+		\texttt{following-}&
+		$ [\,] $ &
+		$ [\,] $ &
+		$ [\,] $ &
+		$ [\,] $ &	$ [\pred{\Nc{B}{20}}{\PT4.\Nl{B}{17}}] $ \\
+		\texttt{sibling::B} &
+		&
+		&
+		&
+		&\\
+		\hline
+		\hline
+		remote &
+		$ [\,] $ & $ [\Nr{B}{6}\rightarrow $ &
+		$ [\Np{B}{6}\rightarrow  $ &
+		$ [\Nl{B}{6}\rightarrow $ &
+		$ [\pred{\Nc{B}{17}}{\PT0.\Nc{B}{1}, \PT3.\Nl{B}{6}}$ \\
+	    queries &
+	    &
+	    $\{\PT0.\Nc{B}{1}\}]$ &
+	    $\{\PT0.\Nc{B}{1}\}]$  &
+	    $\{\PT0.\Nc{B}{1}\}]$  &
+	    $\pred{\Nc{B}{20}}{\PT0.\Nc{B}{1}, \PT3.\Nl{B}{6}}] $ \\
+		\hline
+		\hline
+		merge link&
+		$ [\,] $ & $ [\Nr{B}{6}\rightarrow $ &
+		$ [\Np{B}{6}\rightarrow  $ &
+		$ [\Nl{B}{6}\rightarrow $ &
+		$ [\pred{\Nc{B}{17}}{\PT0.\Nc{B}{1}, \PT3.\Nl{B}{6}}, $ \\
+		&
+		&
+		$\{\PT0.\Nc{B}{1}\}]$ &
+		$\{\PT0.\Nc{B}{1}\}]$  &
+		$\{\PT0.\Nc{B}{1}\}]$  &
+		$ \Nc{B}{20} \rightarrow \{\PT0.\Nc{B}{1}, \PT3.\Nl{B}{6},$ \\
+		&
+		&
+		&
+		&
+		& $ \PT4.\Nl{B}{17}\}] $\\
+		\hline
+		\texttt{child::C} &
+		$ [\,] $ &
+		$ [\,] $ &
+		$ [\pred{\Nl{C}{11}}{\PT0.\Nc{B}{1}}] $ &
+		$ [\,] $ &
+		$ [\pred{\Nc{C}{19}}{\PT0.\Nc{B}{1}, \PT3.\Nl{B}{6}}] $ \\
+		\hline
+	\end{tabular}
+
+	\medskip
+\end{table}
+}
+
+\subsubsection{Processing Predicate}
+
+Finally, we process the intermediate results to obtain the results after
+filtering of predicate. Algorithm 8 shows the procedure for processing the
+predicate.
+
+The algorithm is similar to the \textsc{ShareNodes} function, but in this case
+we consider all the results instead of open nodes. First, we collect all the
+links (lines 3--4) and then select only the nodes that have at least one link to
+the node (lines 5--6). Since there is no guarantee that all the corresponding
+open nodes have been activated by predicates, we need an additional call of
+\textsc{ShareNodes}.
+
+For our running example Q3, the results are shown in the third row of
+Table~\ref{tab:q3process}. Links $\pred{\Nc{C}{11}}{\PT0.\Nc{B}{1}}$ in the
+intermediate results of \PT2 adds node \Nc{B}{1} to the result list of \PT0 and
+$\pred{\Nc{C}{19}}{\PT0.\Nc{B}{1}, \PT3.\Nl{B}{6}}$ in the intermediate results
+of \PT4 adds two nodes, \Nc{B}{1} on \PT0 and \Nl{B}{6} on \PT3, respectively.
+We then apply the \textsc{ShareNodes} function and obtain the intermediate
+results as in the second last row of Table~\ref{tab:q3process}.
+
+The last step simply calls the processing of the step with a child axis, and the
+final results for Q3 are in the last row of the table. Then, the query of Q3 is
+complete. All the nodes in the resultant lists are the final results.
+
+
+{
+	\setstretch{1.5}
+\begin{table}[t]
+	\caption{Process the predicate in Q3}
+	\label{tab:q3process}
+	\centering
+	\small
+	\begin{tabular}{c|ccccc}
+\hline
+\hline
+Process &
+\PT0 &
+\PT1 &
+\PT2 &
+\PT3 &
+\PT4 \\
+\hline
+Input &
+$ [\,] $ &
+$ [\,] $ &
+$ [\pred{\Nl{C}{11}}{\PT0.\Nc{B}{1}}] $ &
+$ [\,] $ &
+$ [\pred{\Nc{C}{19}}{\PT0.\Nc{B}{1}, \PT3.\Nl{B}{6}}] $ \\
+\hline
+\hline
+Process predicate &
+$ [\Nc{B}{1}] $ &
+$ [\,] $ &
+$ [\,] $ &
+$ [\Nl{B}{6}] $ &
+$ [\,] $ \\
+\hline
+\textsc{ShareNode} &
+$ [\Nc{B}{1}] $ &
+$ [\Nr{B}{6}] $ &
+$ [\Np{B}{6}] $ &
+$ [\Nl{B}{6}] $ &
+$ [\,] $ \\
+\hline
+\texttt{child::C} &
+$ [\Nc{C}{2}] $ &
+$ [\,] $ &
+$ [\Nc{C}{11}] $ &
+$ [\,] $ &
+$ [\,] $ \\
+\hline
+\end{tabular}
+\medskip
+\end{table}
+
+
+\begin{figure}[t]
+	\centering
+	\begin{tabular}{l}
+		\hline
+		\hline
+		\makebox[.95\linewidth][l]{\textbf{Algorithm 7} \textsc{PreparePredicate}($\INDEXSET{InputList}$)} \\
+		\hline
+		\textbf{Input}: $\INDEXSET{InputList}$: an indexed set of lists of nodes \\
+		\textbf{Output}: an indexed set of lists of (node, link) \\
+		\makebox[1em][r]{ 1:}\hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		\makebox[1em][r]{ 2:}\hspace{4 mm} $\mathit{OutputList}_p \leftarrow [(n, (p, n.uid)) | n \in \mathit{InputList}_p]$ \\
+		\makebox[1em][r]{ 3:}\hspace{1 mm} \textbf{return} \emph{OutputList} \\
+		\hline
+		\\
+		\hline
+		\hline
+		\makebox[.95\linewidth][l]{\textbf{Algorithm 8} \textsc{ProcessPredicate}($\INDEXSET{pt}$, $\INDEXSET{InputList}$)} \\
+		\hline
+		\textbf{Input}:           $\INDEXSET{pt}$: an indexed set of partial trees \\
+		\phantom{\textbf{Input}:} $\INDEXSET{InputList}$: an indexed set of lists of (node, link) \\
+		\textbf{Output}: an indexed set of lists of filtered nodes \\
+		\makebox[1em][r]{ 1:}\hspace{1 mm} /* regroup links by partial tree id. */ \\
+		\makebox[1em][r]{ 2:}\hspace{1 mm} $\mathit{AllLinks} \leftarrow [\,]$ \\
+		\makebox[1em][r]{ 3:}\hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		\makebox[1em][r]{ 4:}\hspace{4 mm}    $\mathit{AllLinks} \leftarrow \mathit{AllLinks} \cup [(p', i') | (n', (p', i')) \in \mathit{InputList}_p]$ \\
+		\makebox[1em][r]{ 5:}\hspace{1 mm} \textbf{for} $i \in [0, P)$ \textbf{do} \\
+		\makebox[1em][r]{ 6:}\hspace{4 mm}    $\mathit{Activated}_p \leftarrow [n ~|~ (p', i') \in \mathit{AllLinks}, p = p', n.\mathit{uid} = i']$ \\[5pt]
+		\makebox[1em][r]{ 7:}\hspace{1 mm} \textbf{return} \textsc{ShareNodes}($\INDEXSET{pt}$, $\INDEXSET{Activated}$) \\
+		\hline
+	\end{tabular}
+	\caption{Query algorithm for handling predicate}
+	\label{fig:funPredicate2}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\begin{tabular}{l}
+		\hline
+		\makebox[.95\linewidth][l]{\textbf{Algorithm 9} \textsc{PQuery}$\langle$\texttt{child}$\rangle$($\INDEXSET{pt}$, $\INDEXSET{InputList}$, $\INDEXSET{test}$)} \\
+		\hline
+		\textbf{Input}:           $\INDEXSET{pt}$: an indexed set of partial trees \\
+		\phantom{\textbf{Input}:} $\INDEXSET{InputList}$: an indexed set of lists of (node, link) \\
+		\phantom{\textbf{Input}:} $\mathit{test}$: a string of nametest \\
+		\textbf{Output}: an indexed set of lists of (node, link) \\
+		\makebox[1em][r]{1:}\hspace{1 mm} \textbf{for} $p \in [0, P)$ \textbf{do} \\
+		\makebox[1em][r]{2:}\hspace{4 mm}    $\mathit{OutputList}_p \leftarrow [] $ \\
+		\makebox[1em][r]{3:}\hspace{4 mm}    \textbf{for all} $(n, link) \in InputList_p$ \textbf{do} \\
+		\makebox[1em][r]{4:}\hspace{7 mm}       $\mathit{OutputList}_p $ \\
+		\makebox[1em][r]{  }\hspace{9 mm}          ${}\leftarrow \mathit{OutputList}_p \cup [(nc, link) ~|~ nc \in n.\mathit{children}, nc.\mathit{tag} = \mathit{test}] $ \\
+		\makebox[1em][r]{5:}\hspace{1 mm} \textbf{return} $\INDEXSET{OutputList}$ \\
+		\hline
+	\end{tabular}
+	\caption{Query algorithm for child axis in a predicate}
+	\label{fig:algQueryPreChild2}
+\end{figure}
+}
+
+\subsection{Worst-Case Complexity}
+
+At the end of this section, we discuss the time complexity of our algorithms.
+Here we analyze the worst-case complexity in the following categorization:
+
+$\bullet$ axes,
+
+$\bullet$ without or in predicate, and
+
+$\bullet$ local computation and network communication.
+
+
+For discussion, let $N$ be the total number of nodes in a given XML
+document, $H$ be the tree height, and $P$ be the number of partial trees.
+Assuming that the given document is evenly split,
+the number of nodes in a chunk is $N/P$.
+Each partial tree may have pre-path, which has at most $H$ extra nodes.
+Therefore, the number of nodes in a partial tree is at most $N/P + H$.
+The number of open nodes are at most $2H$.
+Let the number of nodes in the intermediate results be $K$; this is also the size of the input for processing a step.
+
+Table~\ref{table:discussion} shows the time complexity of the axes without or with predicates.
+We discuss some important points with regard to the time complexity.
+
+For the querying without predicate, the local computation cost is linear with respect to the size of the tree.
+Naive implementation of the descendant, ancestor, or following-sibling would have squared the cost.
+In our algorithm, we obtained the linear cost by using the $\mathit{isChecked}$ flag.
+
+For the downwards axes (child and descendant) and to prepare predicates, we need no communication.
+For the parent, ancestor, and following-sibling, we require communication.
+The amount of data to be exchanged is $O(PH)$.
+With these results, the total complexity of our XPath query algorithm is
+$O(N/P + PH)$ if we have no predicates.
+This is a cost optimal algorithm under $P < \sqrt{N/H}$.
+
+When there are predicates, the worst-case complexity becomes much worse.
+The two main reasons are as following.
+
+$\bullet$  Due to the links, we cannot simply use the $\mathit{isChecked}$ flag.
+      This introduces additional factor $K$ for the computation.
+
+$\bullet$ The number of links is at most $PK$ for each node.
+      If all the open or matched nodes on all the partial trees have that many links, then
+      the total amount of network transfer becomes $O(P^2HK)$ or $O(P^2K^2)$.
+
+By summing all the terms, the time complexity of querying XPath with predicate
+is bound by $O(KN/P + P^2K^2)$.
+
+{
+	\setstretch{1.5}
+\begin{table}[t]
+	\caption{Time Complexity}
+	\label{table:discussion}
+	\centering
+	\begin{tabular}{c|cc|cc}
+		\hline
+        \hline
+                   & \multicolumn{2}{c|}{without predicate} & \multicolumn{2}{c}{in predicate} \\
+		           & computation   & network & computation      & network\\
+		\hline
+		child	   & $O(N/P+H)$    & 0       & $O(N/P + PK^2)$  & 0 \\
+		\makebox[4em][c]{descendant} & $O(N/P+H)$    & 0       & $O(KN/P + PK^2)$ & 0 \\
+		\hline
+		parent     & $O(K)$        & $O(PH)$ & $O(PK^2)$        & $O(P^2HK)$ \\
+		ancestor   & $O(N/P+H)$    & $O(PH)$ & $O(KN/P + PK^2)$ & $O(P^2HK)$ \\
+		\hline
+		folsib     & $O(N/P+H)$    & $O(PH)$ & $O(KN/P + PK^2)$ & $O(P^2HK)$ \\
+		\hline
+		prepare    &               &         & $O(N/P+H)$	 & 0 \\
+		process    &               &         & $O(P^2K^2$)	 & $O(P^2K^2)$ \\
+		\hline
+	\end{tabular}
+\end{table}
+}
