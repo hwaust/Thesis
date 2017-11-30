@@ -31,6 +31,8 @@
 \usepackage[nottoc]{tocbibind} % correct page numbers for bib in TOC, nottoc suppresses an entry for TOC itself
 \usepackage{setspace}
 
+\usepackage{subcaption}
+
 \usepackage{rotating}
 \usepackage{listings}
 \usepackage{multirow}
