@@ -4,9 +4,9 @@
 Data partitioning strategy was originally studied in a shared-memory
 environment, where XML data is stored in a shared memory and can be concurrently
 accessible by multiple XPath processors. In the conclusion of the original
-paper,  the author had pointed out that the parallelization model is over XML
-data model, it  can be adapted to any XML storage laryout. However, no matter in
-the original study,  or in our previous study, the strategies are applied both
+paper~\cite{BoLS09},  the authors had pointed out that the parallelization model is over XML
+data model, and it can also be adapted to any XML storage laryout. However, no matter in
+the original study, or in our previous study, the strategies are applied both
 in a shared-memory environment. Therefore, here comes a question:  how we can
 apply it in a distributed-memory environment? In this study, by exploiting
 horizontal fragmentation on XML data, we present our study on applying data
@@ -15,6 +15,7 @@ improves the scalability.
 
 \section{Fragmentation}
 
+\subsection{Introduction}
 Fragmentation is an effective way to improve scalability of database
 systems~\cite{navathe1995mixed, hauglid2010dyfram, khan2010new}.  In the field
 of parallel XML processing, there are also some studies on  fragmentation of XML
@@ -24,6 +25,7 @@ to the nature of horizontal fragments that are  relatively independent, it is a
 more direct and practical way to work together with data partitioning. We thus
 focus on only horizontal fragmentation in this study.
 
+\subsection{Definitions}
 We first define horizontal fragmentation.  Let $D$ = \{$d_1$, $d_2$, ...,
 $d_n$\} be a collection of document trees such that each $d_i \in D$ conforms
 the same XML schema~\cite{xmlschema}.  Let $\mathit{FS}$ = \{$F_1$, $F_2$,...,
@@ -70,25 +72,9 @@ rectangles, where $F_1$ = \{$d_1$, $d_2$\}, $F_2$ = \{$d_3$\} and  $F_3$ =
 	\label{fig:hfrag_example}
 \end{figure}
 
+\subsection{Applying Fragmentation}
 
-
-\section{Our Ditributed XPath Query Framework}
-
-We design an XPath query framework using horizontal fragmentation with data
-partitioning strategy on top of BaseX over a distributed-memory environment. 
-The implementation consists of the following four stages:\\
-\begin{itemize}
-	\item Data Fragmentation \\To divide an input XML document into fragments.
-	\item Allocation\\ To assign the fragments into multiple computation nodes.
-	\item Query Evaluation\\ To query fragments in parallel
-	\item Results Merging\\ To merge the results of fragents to form the final result.
-\end{itemize}
-
-We give the detailed introduction in the following sections.
-
-\subsection{Fragmentation}
-
-In our framework, we first apply horizontal fragmentation to the input XML data,
+In our study, we first apply horizontal fragmentation to the input XML data,
 through which an XML tree is divided into a set of fragments. To make the 
 fragmentation works well in combination with data partitioning strategy. We
 have the following requirements.
@@ -180,13 +166,13 @@ fragment, then it is not included in any other fragment.
 \end{figure}
 
 \begin{figure}[!t] 
-	\includegraphics[scale=0.38]{basex/figures/fragment1}
+	\includegraphics[scale=0.38]{figures/fragment1}
 	\caption{An example tree with number denoting PRE values of nodes}
 	\label{fig:frag1}
-	\includegraphics[scale=0.38]{basex/figures/fragment2}
+	\includegraphics[scale=0.38]{figures/fragment2}
 	\caption{Recontructed fragments.}
 	\label{fig:frag2}
-	\includegraphics[scale=0.35]{basex/figures/fragment3}
+	\includegraphics[scale=0.35]{figures/fragment3}
 	\caption{Regroup and merge.}
 	\label{fig:frag3}
 \end{figure}
@@ -233,6 +219,32 @@ f$_8$] = [[2, 5], [7], [12], [15, 18], [21], [24], [28], [30]], where the
 subscripted numbers are the fragment ids. Then, by applying Algorithm 2 that adds
 the path from the subtrees to the root of the whole tree, we obtain the final
 recontructed fragment as shown in Fig.~\ref{fig:frag2}.
+
+\section{Our Ditributed XPath Query Framework}
+
+We design an XPath query framework using horizontal fragmentation with data
+partitioning strategy on top of BaseX over a distributed-memory environment. 
+In this framework, there are one client and $N_s$ servers. The client is a
+computer running a Java program that is the implementation of our query
+algorithm. It works for sending queries to multiple servers and processing
+results returned from them. A server is a computer that runs a BaseX server in
+charge of evaluating received queries. An input dataset will be fragmented and
+distributed to all the servers to be queried and the results returned from all
+the servers will be merged on the client.
+
+It consists of the following four stages:\\
+\begin{itemize}
+	\item Data Fragmentation \\To divide an input XML document into fragments.
+	\item Allocation\\ To assign the fragments into multiple computation nodes.
+	\item Query Evaluation\\ To query fragments in parallel
+	\item Results Merging\\ To merge the results of fragents to form the final result.
+\end{itemize}
+
+
+
+We give the detailed introduction in the following sections.
+
+
 
 \subsection{Allocation}
 
@@ -284,47 +296,111 @@ $links$ =
 where $links[0] \rightarrow f_0$, $links[1] \rightarrow f_1$, ...,  $links[7]
 \rightarrow f_7$.
 
-\subsection{Query evaluation}
+\section{Query evaluation}
 
-In our implementation on top of BaseX, each of fragment has already been
-inserted into BaseX server on a computation node as a database before querying.
-By using the mapping list $links$, we perform a given query on the databases in
-parallel using multiple cores by using \texttt{db:open-pre(`db', pre)} function
-on top of BaseX. We may apply data partitioning strategy on a single fragment,
-or compute in parallel over multiple fragments.
+\subsection{Rewriting An XPath Query In XQuery}
 
-Let us take $links[0] = ($Tree$_3, 2) \rightarrow f_0$ as an example. We start
-the query from the root node of $f_0$ located in Tree$_3$. In the implementation
-on top of BaseX, we use \texttt{db:open-pre(`db', pre)} to locate a node with
-PRE value \texttt{pre} in a database namely \texttt{db}. In this example,
-\texttt{db} corresponds the database created from Tree$_3$, and \texttt{pre} is
-2. Let the name of the database be \texttt{xmark40\_0} and the query be
-\texttt{/site//open\_auction//bidder[last()]}, We can evaluate the query from
-the root of $f_0$ as \\ \texttt{db:open-pre(`xmark40\_0',
-	2)//open\_auction//bidder[last()]}\\ Note that, since
-\texttt{db:open-pre(`xmark40\_0', 2)} is the root \texttt{site}, we removed
-\texttt{/site} in the expression.
+An input XPath query is rewritten into an XQuery expression to be then processed
+by BaseX servers. The rewriting is different depending on whether data
+partitioning strategy is used or not.
 
-We can also can apply the server-side implementation of DPS to the fragment. The
-example query can be rewritten into a prefix query $prefix$ =
-\texttt{//open\_auction} and a suffix query $suffix$ = \texttt{bidder[last()]}.
-The application of DPS is basically the same as the original way. The only
-difference is where to start the prefix query. In this case, we use
-\texttt{db:open-pre(`db', pre)prefix} to start the prefix query instead of
-\texttt{db:open(`db')prefix}. Note that $depth$ can be used to help the
-rewritting of query. The partitioning place in the query should be at level
-greater than $depth$, otherwize there will be only 1 node in the result of
-prefix query. Also, we omit \texttt{/site} as mentioned above.
+\subsection{Without Data Partitioninng Strategy}
+\label{no-dps}
+
+Since the nodes in the results will no long follow the original order in the
+input document, we return the nodes along with their PRE index for later
+identifying and reordering by using the following expression.
+
+\verb|for $node in db:open(`db')$query|\\
+\verb|     return ((`', db:node-pre($node)), $node)|
+\footnote{\texttt{return (a, b)} will add a line break between \texttt{a} and
+	\texttt{b} while returning.}
+
+We separate the PRE value and the content of a node by a linebreak and add an
+extra linebreak among resultant nodes\footnote{According to my previous
+	implementation and tests, it worked.}.
 
 
-\subsection{Results Merging}
+\subsection{With Data Partitioning Strategy}
 
-Last, the results received from BaseX servers on computation nodes are collected
-and merged to form the final result. We evaluate all fragments in parallel by
-using $links$. After the evaluation of each fragment is done, we merge the
-results from each link in the same order as it in the $links$. For our example,
-we simply merge the results by concatenating the result of $f_0$ through the
-result of $f_7$.
+When applying data Partitioning, we use the server-side implementation. In
+order to maintain the order of resultant nodes, we make some change to the
+server-side implementation. For the two-phases implementation, we do not need to
+change the first phase, which still returns the PRE values of the results of
+prefix query. We need to change the second phase, where the \verb|return|
+statement in the suffix query needs to be modified to 
+\verb|return ((`',db:node-pre($node)), $node)|, 
+i.e. the same as the XQuery expression described in~\ref{no-dps}.
+
+ 
+
+\section{Evaluating Queries}
+
+The evaluation an XPath queries consists of two steps: sending query and
+processing results.
+
+\subsection{Sending query}
+
+After an input query being rewritten, it will be sent form the client to all
+srevers for executing. After sending, the client will be idle waiting for
+results to be sent back.
+
+\subsection{Processing Results}
+
+The results are returned from all servers through the network (some servers may
+return empty results). There are two issues we need to consider when processing
+results. First, since the size of results can be larger than the memory size of
+the client (such as XM1 that returns about 90 the size of the input data), we
+thus store results on disk. Second, due to the randomization, the results
+returned from all servers are not in the original order. Thus, we have to
+recover the original order of results when processing. It is different to deal
+with the order depending on whether data partitioninng strategy is used.
+
+\subsection{Without Data Partitioning Strategy}
+
+First, since we have the PRE values of resultant nodes, we can use them to
+determine which fragment a resultant node belongs to by comparing with the
+$mpre$ of each fragment, where $mpre$ is the PRE value of the root of the first
+subtree in the fragment. Given a list of fragments $F$ = \{$f_0$, $f_1$,...,
+$f_n$\}, a function \textsc{GetMpre($f$)} that returns the $mpre$ of the
+fragment $f$ and the PRE value $pre$ of a node $n$, if \textsc{GetMpre($f_i$)}
+$\leq pre <$ \textsc{GetMpre($f_{i+1}$)}, ($i  < n$ - 1) or
+\textsc{GetMpre($f_i$)}$\leq pre$, ($i = n$ - 1), then $n$ belongs to $f_i$. For
+example, there are three fragments, and their $mpre$ are 3, 10, 20 respectively.
+A node with the PRE value 5 belongs to the first fragment. Note that we do not
+need to deal with the order of the nodes in the same fragment, because these
+nodes in the same fragment still keep the original order. Thus, the results can
+be grouped by fragments.
+
+Next, we store the results in a list of files, each of which stores the results
+that belong to the same fragment. We use fragment id to name these files so
+that we can obtain the results stored in these files in the original order, when
+reading the files ordered by their names
+
+Through the above method, since all the fragment can be processed separately, we
+can receive the results and save them to disk in parallel.
+
+\subsection{With Data Partitioninng Strategy}
+
+Since data partitioninng strategy uses multiple processors, results of the same
+fragment may be processed by two processors. For example, when we use two
+processes $p_1$ and $p_2$ to process the same merged tree with only one fragment
+$f_0$, the resultant nodes in the fragment may be processed by both processors.
+Since there is only one file that corresponds the fragment for storing, the two
+processor cannot write the resutls to the file at the same time.
+
+There are two ways to solve the problem. One way is to write the results in
+sequential, i.e. we let only one processor to write at a time. For example, we
+let $p_1$ write first then $p_2$ follows. However, this way should be slow, because
+when a processor is writing results, the following processors have to wait.
+Another way is simply to add a suffix to the file names then concatenate files
+with suffix. For the above example, $p_0$ changes the file name to
+\texttt{0\_start.txt} and $p_1$ to \texttt{0\_end.txt} for the fragment $f_0$.
+After receiving all the results, we concatenate the two files to \texttt{0.txt}.
+In this way, we can still process the results in parallel. But in some extreme
+case when the results of a fragment is very larger, the concatenation may bring
+significant overhead.
+
 
 
 \section{Experiments}
