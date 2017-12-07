@@ -16,15 +16,16 @@ data-parallel computation algorithms. When process large XML documents, it is a
 natural way to reduce the sizes of XML documents processed at a time, so that we
 can process them in parallel to boost the perform of parsing and querying. For
 these reasons, fragmentation has been intensively studied~\cite{ARBM06,DaGP14,
-	CFKL12,NEMH07, OgTP13,LiZZ17, CFKL12,DaGP14}.
+	CFKL12,NEMH07, OgTP13,LiZZ17, CFKL12,DaGP14}. In this section, we discuss 
+two fragmentations that closely relate to our study.
 
 
 \subsection{Horizontal and Vertical Fragmentation}
 \label{sec:hfragment}
 
-There are two different fragmentations defined by Kling et
+There are two fragmentations defined by Kling et
 al.~\cite{kling11:dist_xml}, who modeled fragmentation as horizontal and
-vertical in terms of XML schema~\cite{schema} that is a language for defnining
+vertical in terms of XML schema~\cite{schema}, which is a language for defnining
 the strucutre of XML documents by using constraints.
 
 \subsubsection{Horizontal Fragmentation}
@@ -38,8 +39,8 @@ tree into five subtrees, i.e. $d_1$, $d_2$,..., $d_5$ in the dotted rectangleds.
 According to the schema, node `b' has a single `e' followed by one or zeor  `f';
 node `c' has exact one `e'; node `d' can have zero or multiple node `g's. Thus,
 all the subtrees follow the schema in Fig.~\ref{fig:hfrag_example}(b). Note that
-all the fragments are ate the same level, which is a intuitive reason why the
-fragmetation is called horizontal fragmetation.
+all the root nodes of fragments are at the same level, which is a intuitive 
+reason why the fragmetation is called horizontal fragmetation.
 
 
 \begin{figure}[t]
@@ -78,7 +79,7 @@ thus widely used in parallel XML processing~\cite{DaGP14,BoLS09,AfDG15,CCMN15}.
 In our study, we exploit and extend the horizontal fragmentation to process
 large  XML document in distributed-memory environments.
 
-\subsubsection{Vertical Fragmentation * To be extened.} \label{sec:vfragment}
+\subsubsection{Vertical Fragmentation} \label{sec:vfragment}
 
 Vertical fragmentation, on the other hand, is a fragmentation that divide XML
 documents into multiple fragments at different levels, where these fragments
@@ -94,10 +95,10 @@ does not consider the schema of XML documents. The partial tree (see Chapter 5)
 in our study is a fragmetation that does not use shcema, thus we consider this
 study can be categorized as ad-hoc fragmetation.
 
-There are some studies concerning vertical fragmetation. A common kind of ad-hoc
-fragmentation is called hole-filler model, in which holes are connecting portals
-and fillers are fragments that connect to holes according to the structure of
-the original whole tree.Bose et al. proposed a fragmentation model for steam
+A common ad-hoc fragmentation is called hole-filler model, in which holes 
+are portals used for connection 
+and fillers are fragments that can connect to holes according to the structure 
+of the original whole tree. Bose et al. proposed a fragmentation model for steam
 data~\cite{bose2003query} and a system called Xfrag~\cite{bose2005xfrag}. In
 their studies, an document is divided into multiple sub documents. Each one sub
 documents have one or more holes that are used to connect other sub document
@@ -112,7 +113,7 @@ perform them in parallel.
 
 
 
-\section{Parallel XML Processing (Related to my parsing)}
+\section{Parallel XML Processing}
 \label{sec:paralleleval}
 
 Many existing studies address the topic of XML processing in
@@ -150,15 +151,16 @@ sequence of unmatched brackets.
 XML Parsing is a process of creating an XML tree from reading an XML document.
 \cite{PLZC07,WZYu08} focused on XML parsing, which is related to our parsing
 algorithm. Yinfei et al.~\cite{PaZC08} developed an algorithm for parsing the
-XML data in parallel without any sequential preparsing phase.
-
-Compared to these fragmentation techniques on trees, the fragmentation in this
-study is based on serialized text, which means we cast the fragmentation on the
-plain text of an XML document in stead of the XML tree parsed from the document.
-The main advantage of our text-based fragmentation is that we can assign the
-chunks over distributed file systems~\cite{dfs} that are cut by default. Similar
-idea was introduced by Choi et al.~\cite{ChLL14} in which they added labels to
-make every chunk a well-formed tree in a preparsing phase.
+XML data in parallel without any sequential preparsing phase. 
+Based on parallel XML parsing, we propose partial tree that is a size-balanced
+tree. A similar idea was introduced by Choi et al.~\cite{ChLL14} in which they 
+added labels to make every chunk a well-formed tree in a preparsing phase.
+Compared to fragmentation techniques on trees, the parallel XML parsing in 
+this study is based on serialized text, which means we divide the
+plain text of an XML document into multiple chunks in stead of fragmenting the 
+XML trees that are parsed from the document. 
+The main advantage of our text-based fragmentation is that we can easily achieve
+size-balance chunks and then process them over distributed file systems~\cite{dfs}. 
 
 \subsection{MapReduce-based XML Processing} \label{sec:mapreduce}
 
@@ -221,12 +223,13 @@ length of ORDPATH index when inserting. Min et al.~\cite{MLCh07} proposed an
 efficient labeling scheme, called EXEL, which incurs no re-labeling of nodes
 when inserting nodes. Finis et al~\cite{FBKF15} Proposed an idea mainly on how
 to maintain and query hierarchical data at a high rate of complex, possibly
-skewed structural updates. There indexes inspire our deisgn of index scheme on
-XML document to make ours in a more efficient way. There are also some studyies
-concerning specific types of trees, such as \cite{ToGr02,JLWO03,CVZZ08}, whicsh
-examined the differences in indexing trees, including B+-tree, R-tree, and
-XR-tree. In this theses, by  considering the above studies, an new conbimed
-index is designed for specially  for large XML data.
+skewed structural updates. These indexes inspired our deisgn of index scheme on
+XML document to make ours in a more efficient way. Besides these index schemes, 
+there are also some studies concerning specific types of trees, such as
+\cite{ToGr02,JLWO03,CVZZ08}, which examined the differences in indexing trees,
+including B+-tree, R-tree, and XR-tree. In this theses, by considering the above 
+studies, an new combined index is designed for representing partial tree to 
+particularly process large XML data.
 
 \subsubsection{Joins Algorithms}
 
