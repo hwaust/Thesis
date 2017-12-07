@@ -1,8 +1,8 @@
 \chapter{Conclusion and Future Work}
 
 This thesis has investigated the parallelization of XPath queries on large XML
-documents with two approaches, BaseX and partial tree. We conclude our thesis in
-this chapter.
+documents in two ways: a distributed data partition strategy and a data 
+structure partial tree. We conclude our thesis in this chapter.
 
 \section{Conclusion}
 
@@ -18,7 +18,7 @@ have both changed. We presented our three implementations on top of a
 state-of-the-art XML databasex engine BaseX over XML documents sized server
 gigabytes. Since BaseX provides full support for XQuery/XQuery 3.1, we can
 harness this feature to process subqueries from the division of target XPath
-queries.
+queries. 
 
 Through our implementations, we are the first to experimentally prove that it is
 possible to obtain significant speedups by simply rewriting queries into
@@ -29,7 +29,13 @@ great advantage that we are able to use off-the-shelf XML database engines to
 parallelize the evalaution of XPath queries over gigabytes XML documents, which
 is very convinient and practical.
 
-For processing larger XML documents, we proposed a novel tree, called partial
+For processing larger XML documents, we extend the study to distributed-memory
+environment by introducing fragmentation that divides an input XML document 
+into multiple fragment containing information for later querying. We then apply
+data partitioning on the fragments in an XML database engine called BaseX. 
+
+For processing larger XML documents with more expressive expressions, 
+we proposed a novel tree, called partial
 tree. With partial tree, we extend the processing of XML documents from
 shared-memory environments to distributed-memory environments, making it
 possible to utilize computer clusters. We also proposed an efficient BFS-array
@@ -56,16 +62,8 @@ environments.
 Based on the studies of BaseX and the partial tree, there are three works that
 are worthing doing in the future.
 
-Firstly, our implementations on top of BaseX were evaluated with only a single
-BaseX server on a dual-CPU system. Thus, it would be very promising to use
-multiple BaseX servers on multiple CPUs in distributed-memory environments over
-large XML documents. Considering the PRE values that are integers and very
-small, it is suitable to represent the intermediate results of queries by PRE
-values to be transmitted among BaseX processors. With more BaseX servers running
-on a computer cluster, it is feasible to efficiently process larger XML
-documents.
 
-Secondly, although partial trees are suitable for processing XPath queires over
+Firstly , although partial trees are suitable for processing XPath queires over
 large XML documents, the functionality and fault tolerance, which are both
 important for process large XML documents, are still weak when partial trees
 work alone. Therefore, developing a partial tree based framework that cooperates
@@ -74,29 +72,14 @@ good designing choice. Also, equipping additional programming interfaces to
 handle more complicated queries or larger data is practically important for the
 framework.
 
-Lastly, the application of partial tree to BaseX would also be an interesting
+Secondly, the application of partial tree to BaseX would also be an interesting
 work. By the introduction of partial tree into BaseX, we can exploit good
 features of partial tree, such as handling imbalanced trees. In this way, it is
 high likely to achieve good scalability, especially in case of the
 implementation of BaseX in distributed-memory environments.
 
+Lastly, the optimization of both studies for the performance is worth intensively
+studying. There are some factors that limit their performance, such as network,
+I/O, software/hardware settings, etc. By investing them, new approaches or better
+algorithms should be designed and proposed.
 
-\begin{declaration}
-	
-	I herewith declare that I have produced this paper without the prohibited
-	assistance of third parties and without making use of aids other than those
-	specified; notions taken over directly or indirectly from other sources have
-	been identified as such. This paper has not previously been presented in
-	identical or similar form to any other Japan or foreign examination board.
-	
-	The thesis work was conducted from Wei HAO under the supervision of Associate
-	Professor Kiminori Matsuzaki at Kochi University of Technology, Kami City, Kochi
-	Prefecture, Japan.
-	
-	\vspace{70mm}
-	
-	\hspace{80mm} Signature:
-	
-	\hspace{80mm} Date:
-	
-\end{declaration}
