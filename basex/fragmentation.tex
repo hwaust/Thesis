@@ -1,17 +1,27 @@
 
-\section{Introduction}
 
-Data partitioning strategy was originally studied in a shared-memory
-environment, where XML data is stored in a shared memory and can be concurrently
-accessible by multiple XPath processors. In the conclusion of the original
-paper~\cite{BoLS09},  the authors had pointed out that the parallelization model is over XML
-data model, and it can also be adapted to any XML storage laryout. However, no matter in
-the original study, or in our previous study, the strategies are applied both
-in a shared-memory environment. Therefore, here comes a question:  how we can
-apply it in a distributed-memory environment? In this study, by exploiting
-horizontal fragmentation on XML data, we present our study on applying data
-partitioning in a distributed-memory environment to experimentally show how it
-improves the scalability.
+\section{From Shared-Memory to Distributed-Memory}
+
+In the previous sections, we have introduced our implementations on top of BaseX
+and the evaluation with a single BaseX server on a dual-CPU system. As
+introduced in the original study, data partitioning strategy was studied in a
+shared-memory environment, where XML data is stored in a shared memory and can
+be concurrently accessible by multiple XPath processors. In the conclusion of
+the original paper~\cite{BoLS09},  the authors had pointed out that the
+parallelization model is over XML data model, and it can also be adapted to any
+XML storage laryout. However,  no matter in the original study, or in our
+previous study, the strategies  are applied both in a shared-memory environment. 
+
+Based on our previous experiment results, it would also be promising to use
+multiple BaseX servers on multiple CPUs in distributed-memory environments over
+large XML documents. Moreover, with more BaseX servers running on a computer
+cluster, it is feasible to efficiently process larger XML documents. Then, here
+comes a question:  how we can apply it in a distributed-memory environment? In
+this study, by exploiting horizontal fragmentation on XML data, we present our
+study on applying data partitioning in a distributed-memory  environment to
+experimentally show how it improves the scalability.
+
+
 
 \section{Fragmentation}
 
@@ -26,12 +36,22 @@ more direct and practical way to work together with data partitioning. We thus
 focus on only horizontal fragmentation in this study.
 
 \subsection{Definitions}
+
+To process a large XML document in a distrubed-memory environment, 
+we first need to fragment the XML into multiple fragment that will
+be allocated to computing node for querying. To make the fragments
+well balanced, we introduce a fragmentation algorithm. We introduce 
+the algorithm with an example in this section.
+
+
+
 We first define horizontal fragmentation.  Let $D$ = \{$d_1$, $d_2$, ...,
 $d_n$\} be a collection of document trees such that each $d_i \in D$ conforms
 the same XML schema~\cite{xmlschema}.  Let $\mathit{FS}$ = \{$F_1$, $F_2$,...,
 $F_m$\}  be a collection of fragments such that for each $F_i \subset D$. If
 $\bigcup\limits_{i=1}^{m} F_{i} = F$ and $\bigcap\limits_{i=1}^{m} F_{i} =
 \emptyset$, then $\mathit{FS}$ is a horizontal fragmentation of $D$.
+
 
 Let us take the tree in Fig.~\ref{fig:hfrag_example} as an example. There are
 five document trees in Fig.~\ref{fig:hfrag_example}(a), i.e. we have $D$ =
@@ -165,16 +185,28 @@ fragment, then it is not included in any other fragment.
 	\label{fig:algQuery2}
 \end{figure}
 
-\begin{figure}[!t] 
-	\includegraphics[scale=0.38]{fragment1}
-	\caption{An example tree with number denoting PRE values of nodes}
-	\label{fig:frag1}
-	\includegraphics[scale=0.38]{fragment2}
-	\caption{Recontructed fragments.}
-	\label{fig:frag2}
-	\includegraphics[scale=0.35]{fragment3}
-	\caption{Regroup and merge.}
-	\label{fig:frag3}
+
+\begin{figure}[t] 
+	\centering
+	\includegraphics[scale=0.5]{frag_wholetree}
+	\caption{An example tree and the PRE values along with nodes}
+	\label{fig:frag_wholetree}
+	
+	\includegraphics[scale=0.45]{frag_fragmentation}
+	\caption{Fragmentation based on maxsize = 5.}
+	\label{fig:frag_fragmentation}	
+	
+	\includegraphics[scale=0.45]{frag_prunedtree}
+	\caption{Pruned tree.}
+	\label{fig:frag_prunedtree}	
+	
+	\includegraphics[scale=0.45]{frag_anchortrees}
+	\caption{Anchor trees.}
+	\label{fig:frag_anchortrees}	
+	
+	\includegraphics[scale=0.5]{frag_mergedtrees}
+	\caption{Root-merged trees.}
+	\label{fig:frag_mergedtrees}
 \end{figure}
 
 
@@ -220,7 +252,8 @@ subscripted numbers are the fragment ids. Then, by applying Algorithm 2 that add
 the path from the subtrees to the root of the whole tree, we obtain the final
 recontructed fragment as shown in Fig.~\ref{fig:frag2}.
 
-\section{Our Ditributed XPath Query Framework}
+
+\section{Our Distributed XPath Query Framework}
 
 We design an XPath query framework using horizontal fragmentation with data
 partitioning strategy on top of BaseX over a distributed-memory environment. 
@@ -240,11 +273,7 @@ It consists of the following four stages:\\
 	\item Results Merging\\ To merge the results of fragents to form the final result.
 \end{itemize}
 
-
-
 We give the detailed introduction in the following sections.
-
-
 
 \subsection{Allocation}
 
@@ -296,15 +325,14 @@ $links$ =
 where $links[0] \rightarrow f_0$, $links[1] \rightarrow f_1$, ...,  $links[7]
 \rightarrow f_7$.
 
-\section{Query evaluation}
+\subsection{Query Rewriting}
 
-\subsection{Rewriting An XPath Query In XQuery}
-
+ 
 An input XPath query is rewritten into an XQuery expression to be then processed
 by BaseX servers. The rewriting is different depending on whether data
 partitioning strategy is used or not.
 
-\subsection{Without Data Partitioninng Strategy}
+\subsubsection{Without Data Partitioninng Strategy}
 \label{no-dps}
 
 Since the nodes in the results will no long follow the original order in the
@@ -321,7 +349,7 @@ extra linebreak among resultant nodes\footnote{According to my previous
 	implementation and tests, it worked.}.
 
 
-\subsection{With Data Partitioning Strategy}
+\subsubsection{With Data Partitioning Strategy}
 
 When applying data Partitioning, we use the server-side implementation. In
 order to maintain the order of resultant nodes, we make some change to the
@@ -334,12 +362,10 @@ i.e. the same as the XQuery expression described in~\ref{no-dps}.
 
  
 
-\section{Evaluating Queries}
+\subsection{Evaluating Queries}
 
 The evaluation an XPath queries consists of two steps: sending query and
-processing results.
-
-\subsection{Sending query}
+processing results. 
 
 After an input query being rewritten, it will be sent form the client to all
 srevers for executing. After sending, the client will be idle waiting for
@@ -356,7 +382,7 @@ returned from all servers are not in the original order. Thus, we have to
 recover the original order of results when processing. It is different to deal
 with the order depending on whether data partitioninng strategy is used.
 
-\subsection{Without Data Partitioning Strategy}
+\subsubsection{Without Data Partitioning Strategy}
 
 First, since we have the PRE values of resultant nodes, we can use them to
 determine which fragment a resultant node belongs to by comparing with the
@@ -380,7 +406,7 @@ reading the files ordered by their names
 Through the above method, since all the fragment can be processed separately, we
 can receive the results and save them to disk in parallel.
 
-\subsection{With Data Partitioninng Strategy}
+\subsubsection{With Data Partitioninng Strategy}
 
 Since data partitioninng strategy uses multiple processors, results of the same
 fragment may be processed by two processors. For example, when we use two
