@@ -224,3 +224,4 @@ TSWLatexianTemp*
 # standalone packages
 *.sta
 basex/fortest.pdf
+thesis.pdf
