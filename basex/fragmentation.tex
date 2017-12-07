@@ -1,6 +1,6 @@
 
 
-\section{From Shared-Memory to Distributed-Memory}
+\section{From Shared-Memory to Distributed-\\Memory Environments}
 
 In the previous sections, we have introduced our implementations on top of BaseX
 and the evaluation with a single BaseX server on a dual-CPU system. As
@@ -14,10 +14,10 @@ previous study, the strategies  are applied both in a shared-memory environment.
 
 Based on our previous experiment results, it would also be promising to use
 multiple BaseX servers on multiple CPUs in distributed-memory environments over
-large XML documents. Moreover, with more BaseX servers running on a computer
-cluster, it is feasible to efficiently process larger XML documents. Then, here
-comes a question:  how we can apply it in a distributed-memory environment? In
-this study, by exploiting horizontal fragmentation on XML data, we present our
+large XML documents so that we can exploiting computer clusters to process 
+them more efficiently. Then, here comes a question:  how we can apply it in a
+distributed-memory environment over a number of computers? 
+In this study, by exploiting horizontal fragmentation on XML data, we present our
 study on applying data partitioning in a distributed-memory  environment to
 experimentally show how it improves the scalability.
 
@@ -43,83 +43,140 @@ be allocated to computing node for querying. To make the fragments
 well balanced, we introduce a fragmentation algorithm. We introduce 
 the algorithm with an example in this section.
 
-
-
-We first define horizontal fragmentation.  Let $D$ = \{$d_1$, $d_2$, ...,
-$d_n$\} be a collection of document trees such that each $d_i \in D$ conforms
-the same XML schema~\cite{xmlschema}.  Let $\mathit{FS}$ = \{$F_1$, $F_2$,...,
-$F_m$\}  be a collection of fragments such that for each $F_i \subset D$. If
-$\bigcup\limits_{i=1}^{m} F_{i} = F$ and $\bigcap\limits_{i=1}^{m} F_{i} =
-\emptyset$, then $\mathit{FS}$ is a horizontal fragmentation of $D$.
-
-
-Let us take the tree in Fig.~\ref{fig:hfrag_example} as an example. There are
-five document trees in Fig.~\ref{fig:hfrag_example}(a), i.e. we have $D$ =
-\{$d_1$, $d_2$, $d_3$, $d_4$, $d_5$\}, where $d_1$ is  the first subtree rooted
-at $b$ (from left to right), $d_2$ be the second and so on. All the subtrees
-follow the schema in Fig.~\ref{fig:hfrag_example}(b). We can make three
-horizontal fragments $FS$ = \{$F_1$, $F_2$, $F_3$\} as shown in the three dotted
-rectangles, where $F_1$ = \{$d_1$, $d_2$\}, $F_2$ = \{$d_3$\} and  $F_3$ =
-\{$d_4$, $d_5$\}.
-
-
-\begin{figure}[t]
-	\centering
-	\begin{subfigure}{.6\textwidth}
-		\centering
-		\includegraphics[width=.99\linewidth]{figures/hfrag_example}
-		\caption{An example of horizontal fragmentation}
-		\label{fig:sub1}
-	\end{subfigure}%
-	\begin{subfigure}{.4\textwidth}
-		\centering
-		\vspace{12mm}
-		\begin{tabular}{|l|}
-			\hline
-			schema\\
-			\hline
-			a(b*, c*, d) \\
-			b(e, f?) \\
-			c(e) \\
-			d(g*) \\
-			\hline
-		\end{tabular}
-		\vspace{12mm}
-		\caption{The schema of the example}
-		\label{fig:sub2}
-	\end{subfigure}
-	\caption{An example of horizontal fragmentation and the schema.}
-	\label{fig:hfrag_example}
-\end{figure}
-
-\subsection{Applying Fragmentation}
-
-In our study, we first apply horizontal fragmentation to the input XML data,
-through which an XML tree is divided into a set of fragments. To make the 
-fragmentation works well in combination with data partitioning strategy. We
-have the following requirements.
-
-\subsubsection{Fragments are size-balanced}
-
+\subsubsection{Fragment}
+We first define horizontal fragmentation. In this study, a \emph{fragment} 
+is a collection of subtrees.
 Since the mainpurpose of fragmentation is to achieve good scalability, we
 attempt to make our fragmentation algorithm size-balanced, i.e. to make each
 fragment have nearly the same amount of node. 
+Therefore, a fragment satisfies two condictions. Firstly,
+the roots of subtrees in a fragment are consecutive children of a single 
+node in the input tree. Secondly, the number of elements in a fragment is 
+less than or equal to a given integer \emph{maxsize}. 
+Let us take the tree in Fig.~\ref{fig:frag_wholetree} as an example. Let 
+maxsize be 5, then we have the fragments shown in Figure~\ref{fig:frag_fragmentation}.
+After applying horizontal fragmentation to the example XML tree,
+we obtain eight fragments enclosed in dotted rectangles.
 
-\subsubsection{Path to the root is added}
+%Let $D$ = \{$d_1$, $d_2$, ..., $d_n$\} be a collection of document trees such
+%that each $d_i \in D$ conforms the same XML schema~\cite{xmlschema}.   Let
+%$\mathit{FS}$ = \{$F_1$, $F_2$,..., $F_m$\}  be a collection of fragments such
+%that for each $F_i \subset D$. If $\bigcup\limits_{i=1}^{m} F_{i} = F$ and
+%$\bigcap\limits_{i=1}^{m} F_{i} = \emptyset$, then $\mathit{FS}$ is a
+%\emph{horizontal fragmentation} of $D$.
 
-In our design desire of fragmentation algorithm, we also intent to ease the
-querying. Thus, we require that each fragment is a set of consecutive
-sibling subtrees augmented with the path to the root. Note that two
-subtrees are sibling subtrees if the roots of the subtrees are siblings of each
-other.
+\begin{figure}[t] 
+	\centering
+	\includegraphics[scale=0.5]{frag_wholetree}
+	\caption{An example tree and the PRE values along with nodes}
+	\label{fig:frag_wholetree}
+	
+	\includegraphics[scale=0.45]{frag_fragmentation}
+	\caption{Fragmentation based on maxsize = 5.}
+	\label{fig:frag_fragmentation}	
+\end{figure}
 
-\subsubsection{Correctness}
+
+
+\subsubsection{Anchored Fragment}
+
+In order to ease performing top-down XPath queries, we augment
+each fragment with the path from the root of the whole tree to the
+subtrees.  We call this augmented fragment  \emph{anchored
+fragment}. In the running example, we have eight anchored fragments as shown in Figure~\ref{fig:frag_anchortrees}.
+ 
+
+\subsubsection{Root-merged Tree}
+
+In most existing XML database management systems, such as BaseX, takes a 
+single XML tree to create an XML database instance. Since a large number of 
+databases instance arises overheads, we reduce the number of database 
+instances by merging some of anchored fragments to \emph{root-merged tree}.
+A root-merged tree is a number of anchored fragments merged at the root.
+Note that we merge the root node of anchored fragments only, which is
+enough to make list of fragments into a tree. 
+For the running example, we can construct four root-merged trees from eight
+fragments as shown in Figure~\ref{fig:frag_mergedtrees}.
+
+
+\begin{figure}[t]   
+	\includegraphics[scale=0.45]{frag_anchortrees}
+	\caption{Anchor trees.}
+	\label{fig:frag_anchortrees}	
+	
+	\includegraphics[scale=0.5]{frag_mergedtrees}
+	\caption{Root-merged trees.}
+	\label{fig:frag_mergedtrees}
+\end{figure}
+
+\subsubsection{Pruned Tree}
+ 
+We can perform any XPath queries inside of a fragment, but we need
+careful computation for XPath queries that may go out of the fragment.
+In order to perform those XPath queries, we need to know the global
+tree structure in which fragments are located.
+
+For this purpose, we construct a "pruned tree" by replacing the subtrees
+with a single node for each fragment.
+
+In our running example, we have a pruned tree as shown in Figure~\ref{fig:frag_prunedtree}. 
+
+In order to compute the pre-index in the input tree easily, we add
+"gpre" for each node.  For the nodes representing pruned parts,
+we add "fid" to link to the fragmentation index.
+
+\begin{figure}[t]  
+	\centering
+	\includegraphics[scale=0.45]{frag_prunedtree}
+	\caption{Pruned tree.}
+	\label{fig:frag_prunedtree}	
+\end{figure}
+
+
+\subsection{Fragment Index}
+
+The "fragment index" is the information required or useful for managing
+fragments.  It has the following items for each fragment.
+- fid: fragment ID
+- mid: the root-merged tree that has the fragment
+- mrank: the rank (position) of the fragment in the root-merged tree
+- size: the size of fragments
+- gpre: pre-index (in the input tree) of the first element
+- mpre: pre-index (in the root-merged tree) of the first element
+
+\begin{table}[t]
+	
+	\begin{tabular}{c|c|c|c|c|c}
+			\caption{Fragment index.}
+		\label{tab:fragmentindex}	
+		\centering
+		\hline
+		 fid & mid    & mrank & size & gpre & mpre \\
+		 \hline
+		0   & mt0 & 0     &   5  & 2    & 2    \\
+		1   & mt1 & 0     &   4  & 7    & 2    \\
+		2   & mt2 & 0     &   3  & 12   & 3    \\
+		3   & mt3 & 0     &   5  & 15   & 3    \\
+		4   & mt4 & 1     &   4  & 18   & 4    \\
+		5   & mt5 & 1     &   4  & 21   & 7    \\
+		6   & mt6 & 1     &   2  & 24   & 7    \\
+		7   & mt7 & 1     &   4  & 30   & 9    \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+\subsection{Fragmentation Algorithm}
 
 We assume that all the results lie in the subtrees on the fragment. Thus,
 to guarantee the correctness of query results, we need to guarantee the
 completeness and uniqueness of nodes such that each node in the input XML tree
 is included in at least a fragment. If a node is included a subtree part of a
-fragment, then it is not included in any other fragment.
+fragment, then it is not included in any other fragment. 
+
+
 
 
 \begin{figure}[]
@@ -186,28 +243,6 @@ fragment, then it is not included in any other fragment.
 \end{figure}
 
 
-\begin{figure}[t] 
-	\centering
-	\includegraphics[scale=0.5]{frag_wholetree}
-	\caption{An example tree and the PRE values along with nodes}
-	\label{fig:frag_wholetree}
-	
-	\includegraphics[scale=0.45]{frag_fragmentation}
-	\caption{Fragmentation based on maxsize = 5.}
-	\label{fig:frag_fragmentation}	
-	
-	\includegraphics[scale=0.45]{frag_prunedtree}
-	\caption{Pruned tree.}
-	\label{fig:frag_prunedtree}	
-	
-	\includegraphics[scale=0.45]{frag_anchortrees}
-	\caption{Anchor trees.}
-	\label{fig:frag_anchortrees}	
-	
-	\includegraphics[scale=0.5]{frag_mergedtrees}
-	\caption{Root-merged trees.}
-	\label{fig:frag_mergedtrees}
-\end{figure}
 
 
 
