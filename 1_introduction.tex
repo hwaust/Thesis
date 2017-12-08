@@ -179,6 +179,10 @@ XQuery expressions. We conduct experiments to evaluate our implementations and
 the results showed that these implementations achieved significant speedups over
 XML documents sized several gigabytes. Besides the experiment results, we also
 present significant observations and perspectives from the experiment results.
+For processing larger XML documents, we extend the study to distributed-memory
+environment by introducing fragmentation that divides an input XML document 
+into multiple fragment containing information for later querying. We then apply
+data partitioning on the fragments in an XML database engine called BaseX. 
 
 The second contribution is the design of a novel tree structure, called partial
 tree, for parallel XML processing. With this tree structure, we can split an XML
