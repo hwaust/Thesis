@@ -228,9 +228,8 @@ instances. A database was created from xmark160 by the BaseX server. The server
 was set in main memory mode and turned text indexing off for the creation to
 make both BaseX and ours in the same setting.
 
-To evaluate queries, we used the following XQuery expression for BaseX:  
-\verb|for $node in db:open('xmark160')&query|\\
-\verb|return db:node-pre($node)|, where  \verb|&query|
+To evaluate queries, we used the following XQuery expression for BaseX:  \\
+\verb|for $node in db:open('xmark160')&query return db:node-pre($node)|, where \\ \verb|&query|
 represents an XPath query. This expression returns a list of PRE-values and may
 take a lot of time for sending and receiving among the BaseX server and a BaseX
 client. Since network part is not what we are interested, we apply count() to
