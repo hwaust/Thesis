@@ -200,10 +200,10 @@ with predicate as shown in Table~\ref{tab:queries}.
 		Q4       & /site//text{[}./keyword{]}                                                             & 6503643   \\ \hline
 		Q5       & /site/people/person{[}./profile/gender{]}/name                                         & 1022629   \\ \hline
 		Q6       & /site/people/person/name/following-sibling::emailaddress                               & 4080000   \\ \hline
-		Q7       & /site/open\_auctions/open\_auction{[}./bidder/following-sibling::annotation{]}/reserve & 1734198   \\ \hline
+		Q7       & /site/open\_auctions/open\_auction{[}./bidder                                          & 1734198   \\ 
+		& /following-sibling::annotation{]}/reserve                                              &           \\ \hline
 	\end{tabular}
 \end{table*}
-
 
 \subsection{Hardware} 
 
