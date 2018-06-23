@@ -1,0 +1,224 @@
+\section{Evaluation}
+\label{sec:evaluation}
+
+In this evaluation to our indexing, we conducted experiments for two aims: \\
+1) to investigate the query performance of indexing on a large XML dataset 
+in comparison with the state-of-the-art XML database engine, BaseX\\ 
+2) to explore the scalability of our implementation on processing 
+a large XML documents over a number of computing nodes.
+
+\subsection{Dataset and XPath Queries} 
+
+We used an XML generator \emph{xmlgen} from XMark
+project\footnote{\url{http://www.xml-benchmark.org/}} generate XML document for
+the experiment. The XMark xmlgen takes an float number \emph{f} to determine the
+size of output dataset. In our experiment, we set f to 160 and generated an
+18.54 GiB XML document xmark160, which has 267 M element nodes, 61.3 M attribute
+nodes and 188 M content nodes, totally 516.3 M nodes. We used 7 queries Q1 -- Q7
+to evaluate our implementation, including commonly used axes with predicate as 
+shown in Table~\ref{tab:queries}.
+
+
+\begin{table*}[ht]
+\centering
+\caption{Queries used for xmark160 dataset.}
+\label{tab:queries}
+\begin{tabular}{|l|l|l|}
+\hline
+querykey & query                                                                                  & hit nodes \\ \hline
+Q1       & /site/open\_auctions/open\_auction/bidder/increase                                     & 9577159   \\ \hline
+Q2       & /site//keyword                                                                         & 11271671  \\ \hline
+Q3       & /site//keyword/parent::text                                                            & 6503643   \\ \hline
+Q4       & /site//text{[}./keyword{]}                                                             & 6503643   \\ \hline
+Q5       & /site/people/person{[}./profile/gender{]}/name                                         & 1022629   \\ \hline
+Q6       & /site/people/person/name/following-sibling::emailaddress                               & 4080000   \\ \hline
+Q7       & /site/open\_auctions/open\_auction{[}./bidder/following-sibling::annotation{]}/reserve & 1734198   \\ \hline
+\end{tabular}
+\end{table*}
+
+
+\subsection{Hardware} 
+
+The hardware we used were Amazon Elastic Compute Cloud (EC2) M5
+Instances\footnote{\url{http://www.xml-benchmark.org/}}. M5 Instances are
+general purpose compute instances that are powered by 2.5 GHz Intel Xeon
+Scalable processors and offer a balance of compute, memory, and networking
+resources for a broad range of workloads.  We used m5.2xlarge in our experiment,
+which has 8 virtual cores, equipped with 32 GB of memory and supported with
+solid state drives.  The instance runs Amazon Linux AMI 2018.03.0 (HVM) that
+supports Java by default. The Java version we used was "1.7.0\_181", OpenJDK
+Runtime Environment (amzn-2.6.14.8.80.amzn1-x86\_64 u181-b00) OpenJDK 64-Bit
+Server VM (build 24.181-b00, mixed mode). The network among EC2 instances was a
+local network and the network speed is 1 gbps.
+ 
+
+\subsection{Comparison with BaseX}
+
+The version of BaseX we used was 8.6.7 implemented on java 1.7. We ran it in
+server/client mode. A BaseX server and a BaseX client were running on two EC2
+instances. A database was created from xmark160 by the BaseX server. The server
+was set in main memory mode and turned text indexing off for the creation to
+make both BaseX and BFS in the same setting.
+
+To evaluate queries, we used the following XQuery expression for BaseX:  
+\verb|for $node in db:open('xmark160')&query|\\
+\verb|return db:node-pre($node)|, where  \verb|&query|
+represents an XPath query. This expression returns a list of PRE-values and may
+take a lot of time for sending and receiving among the BaseX server and a BaseX
+client. Since network part is not what we are interested, we apply count() to
+the results of the XPath query to both BaseX and BFS so that the final outcome
+will be only an integer to be returned over network, greatly removing the effect
+of network.
+
+As shown in Figure~\ref{fig:compare}, our indexing outperformances BaseX for all
+the queries. Most of the queries takes only one half or one third time compared
+with that of BaseX. The most significant one is Q2, for which ours is over 13
+timers faster than BaseX. This is because in the two steps of Q2, \texttt{/site}
+returns only 1 node, taking negligible time, while the second step,
+\texttt{//keyword}, can greatly utilize the grouped-array to skip evaluating
+most irrelevant nodes with different tag names as \texttt{keyword}, thus
+achieving the best performance.
+
+
+\begin{figure}[thb]
+    \centering
+	\includegraphics[width=0.9\linewidth]{compare}
+	% figure caption is below the figure
+	\label{fig:compare}       % Give a unique label
+	\caption{Execution time (ms) compared with BaseX.}
+\end{figure}
+
+\begin{figure}[thb]
+    \centering
+	\includegraphics[width=0.9\linewidth]{speedups}
+	\caption{Speedups with up to 64 workers.}
+	\label{fig:speedups}    
+\end{figure}
+
+
+
+
+
+
+
+\subsection{Processing Queries in Parallel With BFS}
+
+This experiment is to test the speedups using our indexing on multiple EC2
+instances. In this experiment, we use 1 instance for the master to control
+query processing and 8 instances for workers to execute queries. Since the
+instance m5.2xlarge has 8 cores, we arranged at most 8 workers on a single
+instance. Given 8 instances, there are totally 64 workers involved in the
+computation, as well as 64 chunks we divided at most. Due to the imbalance of
+xmark160, not all the worker may have hit nodes of running queries. Thus, we
+call workers that have hit nodes active workers, while for the rest idle
+worker. 
+
+The XML dataset xmark160 is divided into different number of chunks, to be
+processed by different numbers of workers on up to 8 instances. From each chunk,
+a partial tree will be created. It will be possessed and processed by a single
+worker (we assign only one chunk to a worker in this experiment). 
+
+To achieve better load balance, we used cyclic distribution to assign chunks to
+instances. This means that we assign chunks to each instance, making consecutive
+chunks be assigned to different instances. For example, given 8 chunks, $chunk_1$,
+$chunk_2$, ..., $chunk_9$,  and 4 computing nodes, $com_1$, $com_2$, ..., $com_4$, 
+we assign them as 
+$com_1$($chunk_1$, $chunk_5$), 
+$com_2$($chunk_2$, $chunk_6$), 
+$com_3$($chunk_3$, $chunk_7$), 
+$com_4$($chunk_4$, $chunk_8$). 
+In such order, we can make the workers utilize the resources of computing nodes. 
+
+We record the wall-clock time form the master's side. The timing starts from the
+master sending a message to all workers to start a query, and ends at the moment
+when the master receives the work-done message from the last worker, denoting
+querying work is complete. The execution times are listed in
+Table~\ref{tab:exetimes}.
+
+
+\begin{table*}[ht]
+\centering
+\caption{Execution time (ms).}
+\label{tab:exetimes}
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+Number of workers & 1       & 2       & 4       & 8       & 16      & 32      & 64      \\ \hline
+Q1                & 1774    & 1789    & 968     & 905     & 352     & 177     & 104 \\ \hline
+Q2                & 661     & 410     & 219     & 101     &  49     & 31      & 26 \\ \hline
+Q3                & 3630    & 2120    & 1090    & 518     & 263     & 136     & 102 \\ \hline
+Q4                & 5604    & 3467    & 1695    & 855     & 375     & 221     & 153 \\ \hline
+Q5                & 1692    & 1685    & 1709    & 1731    & 841     & 475     & 252 \\ \hline
+Q6                & 794     & 800     & 803     & 834     & 388     & 214     & 112 \\ \hline
+Q7                & 2862    & 2817    & 1595    & 1369    & 502     & 259     & 149 \\ \hline
+\end{tabular}
+\end{table*}
+
+From the results, we observed that
+
+\subsection{Execution Time Reduced with More Workers}
+
+From the results in the table, it is clear that with the number of workers
+increased, the execution times of most queries are reduced. For
+example, the execution time is nearly halves every time when the number of
+workers doubled for Q3. It clearly showed that the parallel processing of
+XPath queries using our index is efficient to reduce execution time by using 
+more workers.
+
+\subsection{Imbalance of XML Document Can Prevent Speedups}
+
+As we can also notice, however, there are some cases execution times do not
+reduce at all even with more workers. For example, no matter the number of
+workers increased is 1, 2, 8 or 8, the execution times of all the cases are
+still basically the same.  We analyzed the number of active workers and found
+that this is caused by the imbalance of XMark datasets. In the xmark160, the hit
+nodes of queries may only reside on a consecutive part of the XML document.
+Then, after being divided, the hit nodes may be distributed in a small number of
+chunks. Thus, only the workers that possess these chunks can be active, while
+the rest workers just stay idle. Let us continue to take Q5 as an example. When
+the number of workers increases from 1 to 8, the number of active nodes,
+however, does not increase and still stays 1, i.e. there was only one active
+worker for the query. Therefore, with only one worker, it takes nearly the same
+amount of time to process the same amount of hit nodes regardless how many
+workers were totally used. 
+
+\subsection{Imbalance of XML Document Can Spoil Speedups}
+
+We also notice that some execution times are not reduced much when even when
+more active workers involve. For example, Q2 takes 661 ms by one active worker
+and 410 ms for two active workers, the execution is not halved. This is because
+the hit nodes did not evenly distributed over the two active workers. As we
+investigated, one worker took 406 ms to collect 6785094 hit nodes, while another
+worker took 256 ms for 4486577 hit nodes. Therefore, the speedup is degraded due
+to the imbalanced distribution of hit nodes over chunks. We can learn that the
+imbalance can not only prevent the speedup, but also can degrade the speedup.
+
+To understand how much speedup BFS can achieve, we use the execution time done
+by a single worker as baseline. The results are shown in
+Figure~\ref{fig:speedups}.  From the figure, it shows that BFS can achieve
+better speedup when using more workers. The best speed up is done from Q3 by a
+factor of 36.63. We also notice that when the number of workers are large than
+8, the speedup becomes dramatical, which means with more chunks divided, the
+imbalance can be smoothed and it can be more effective for better speedups. This
+is because  with smaller chunks, hit nodes can be distributed to more chunks;
+meanwhile,  with the cyclic distribution of these small chunks, we can have more
+active workers to participate in the querying process, thus achieving better
+speedups. 
+
+ 
+\subsection{Observation}
+
+From the experiment results and our analysis in previous sub section, we suggest
+that it is better to assign more chunks to a worker rather than one as what we
+conducted in the experiment. In such case, more workers will possess chunks that
+contain hit nodes. In ideal case, hit nodes consecutively contained in a part of
+the XML document can be divided into more chunks, and these chunks can be
+distributed to each of workers.  Then, all the workers become active and we can
+achieve better speedups. However, with too many chunks, it is not clear how
+much overhead on memory, thread or network etc will be involved. We need to find
+a trade-off about the maxamum number of chunks to reach the best performance.
+Thus, it is worth studying for the future work.
+
+
+
+
+ 
