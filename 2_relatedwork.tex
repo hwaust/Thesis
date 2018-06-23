@@ -124,14 +124,15 @@ processing in this section.
 
 \subsection{Tree Accumulation and Reduction}
 
-There are some exsisting ideas of dividing the XML documents and running the
-computation for trees called tree reduction. Kakehi et al.~\cite{KaME07} showed
-a parallel tree reduction algorithm to the nodes in chunks. Based on the idea
-given by Kakehi et al., Emoto and Imachi~\cite{EmIm12} developed a parallel tree
-reduction algorithm on Hadoop, and Matsuzaki and Miyazaki~\cite{MaMi16}
-developed a parallel tree accumulation algorithm. A similar approach was taken
-by Sevilgen et al.~\cite{SAFu05} who developed a simpler version of tree
-accumulations over the serialized representation of XML trees.
+There are some exsisting ideas about tree reduction, which simplifies the XML
+documents and runs computations on the simplfied trees. Kakehi et
+al.~\cite{KaME07} showed a parallel tree reduction algorithm to the nodes in
+chunks. Based on the idea given by Kakehi et al., a parallel tree reduction
+algorithm was developed by Emoto and Imachi~\cite{EmIm12}. Moreover, Matsuzaki
+and Miyazaki~\cite{MaMi16} developed a parallel tree accumulation algorithm. A
+similar approach was taken by Sevilgen et al.~\cite{SAFu05} who developed a
+simpler version of tree accumulations over the serialized representation of XML
+trees.
 
 \subsection{XML Streaming}
 
@@ -139,11 +140,11 @@ Stream processing is a possible approach for (parallel) online data analysis.
 Parallel algorithms have been studied to accelerate stream processing of large
 XML data. For example, XMLTK~\cite{AGGR02} is an XML stream processing tool
 designed for scalable XML querying. Y-Filter~\cite{ZhPC10} applies multiple
-queries in parallel for a stream of XML data. Among these studies, Ogden et
+queries in parallel to a stream of XML data. Among these studies, Ogden et
 al.~\cite{OgTP13} achieved the highest throughput, 2.5 GB/s, based on the
-parallel pushdown transducer. Although it is the fastest oen and thus is faster
-than our implementation of partial tree, which is 1 GB/s, the class of queries
-we support is still more expressive than that of PP-transducer, which does not
+parallel pushdown transducer. Although it is the fastest and thus is faster than
+our implementation of partial tree, which was 1 GB/s, the class of queries we
+support is still more expressive than that of PP-transducer, which does not
 support order-aware queries. In parallel pushdown transducers \cite{LiZZ17}, a
 given document is modeled as a sequence of matched brackets and a fragment is
 represented as a sequence of unmatched brackets.
