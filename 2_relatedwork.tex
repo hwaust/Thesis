@@ -1,46 +1,47 @@
+\chapter{Related Work} 
+\label{cht:relatedwork}
 
-
-\chapter{Related Work} \label{sec:relatedwork}
-
-We discuss related work in the following related fields, XML fragmentation,
+We discuss related work in three related fields, XML fragmentation,
 parallel XML processing and XML database Techniques.
 
 \section{XML Fragmentation}
 
-Fragmentation is a way of dividing XML documents into multiple smaller fragments
-by physical changes so that they can be allocated to multiple computational
-nodes~\cite{BrMa14}. It is worth noting that the term $fragment$ refers to a
-piece of XML document containing well-formed strucutre, which allows us to
-perform faster or more efficient XML processing. It is generally the premise of
-data-parallel computation algorithms. When process large XML documents, it is a
-natural way to reduce the sizes of XML documents processed at a time, so that we
-can process them in parallel to boost the perform of parsing and querying. For
-these reasons, fragmentation has been intensively studied~\cite{ARBM06,DaGP14,
-	CFKL12,NEMH07, OgTP13,LiZZ17, CFKL12,DaGP14}. In this section, we discuss 
-two fragmentations that closely relate to our study.
+Fragmentation is a way of dividing an XML document into multiple smaller
+fragments by physical changes so that these fragments can be allocated to
+multiple computational nodes~\cite{BrMa14}. It is worth noting that the term
+$fragment$ refers to a piece of XML document containing well-formed strucutre,
+which allows us to perform faster or more efficient XML processing. It is
+generally the premise of data-parallel computation algorithms. When process
+large XML documents, it is a natural way to reduce the size of XML documents
+processed at a time, so that we can process them with more computational nodes
+in parallel to boost the perform of parsing and querying. For these reasons,
+fragmentation has been intensively studied~\cite{ARBM06,DaGP14, CFKL12,NEMH07,
+OgTP13,LiZZ17, CFKL12,DaGP14}. In this section, we discuss  two fragmentations
+that closely relate to our study.
 
 
 \subsection{Horizontal and Vertical Fragmentation}
 \label{sec:hfragment}
 
-There are two fragmentations defined by Kling et
-al.~\cite{kling11:dist_xml}, who modeled fragmentation as horizontal and
-vertical in terms of XML schema~\cite{schema}, which is a language for defnining
-the strucutre of XML documents by using constraints.
+There are two fragmentations defined by Kling et al.~\cite{kling11:dist_xml},
+who modeled fragmentation as horizontal and vertical in terms of XML
+schema~\cite{schema} that is a language for defnining the strucutre of XML
+documents by constraints.
 
 \subsubsection{Horizontal Fragmentation}
 \label{sec:vfragment}
 
-Horizontal fragmentation is to divide a document tree into multiple fragments
-and each fragment follows the same schema of the original XML document. When
+Horizontal fragmentation divides a document tree into multiple fragments and
+each fragment follows the same schema as that of the original XML document. When
 fragments follow the same schema, they usually have similar structure.  Let us
-take the tree in Fig.~\ref{fig:hfrag_example} as an example. We fragment the
-tree into five subtrees, i.e. $d_1$, $d_2$,..., $d_5$ in the dotted rectangleds.
-According to the schema, node `b' has a single `e' followed by one or zeor  `f';
-node `c' has exact one `e'; node `d' can have zero or multiple node `g's. Thus,
-all the subtrees follow the schema in Fig.~\ref{fig:hfrag_example}(b). Note that
-all the root nodes of fragments are at the same level, which is a intuitive 
-reason why the fragmetation is called horizontal fragmetation.
+take the tree in Fig.~\ref{fig:hfrag_example} as an example. We divide the tree
+into five subtrees, i.e. $d_1$, $d_2$,..., $d_5$ in the dotted rectangles.
+According to the schema, a node `b' has a single `e' followed by one or zeor
+`f'; a node `c' has exact one `e'; a node `d' can have zero or multiple node
+`g's. Thus, all the subtrees follow the schema in
+Fig.~\ref{fig:hfrag_example}(b). Note that all the root nodes of fragments are
+at the same level, which is an intuitive reason why the fragmetation is called
+horizontal fragmetation.
 
 
 \begin{figure}[t]
@@ -79,37 +80,38 @@ thus widely used in parallel XML processing~\cite{DaGP14,BoLS09,AfDG15,CCMN15}.
 In our study, we exploit and extend the horizontal fragmentation to process
 large  XML document in distributed-memory environments.
 
-\subsubsection{Vertical Fragmentation} \label{sec:vfragment}
+\subsubsection{Vertical Fragmentation} 
+\label{sec:vfragment}
 
-Vertical fragmentation, on the other hand, is a fragmentation that divide XML
-documents into multiple fragments at different levels, where these fragments
-does not follow the same schemas. This fragmentation is specially useful and
-works well for parallel XML processing in case XML data are integrated from
-different sites or organizations~\cite{CFKL12,KlOD10}.
+Vertical fragmentation, on the other hand, is a fragmentation that also divides
+an XML document into multiple fragments but at different levels, where these
+fragments does not need to follow the same schemas. This fragmentation is
+specially useful and works well for parallel XML processing in case XML data are
+integrated from different sites or organizations~\cite{CFKL12,KlOD10}.
 
 
 \subsection{Ad-hoc Fragmentation}
 
 In comprison with horizontal and vertical fragmentation, ad-hoc fragmetation
 does not consider the schema of XML documents. The partial tree (see Chapter 5)
-in our study is a fragmetation that does not use shcema, thus we consider this
-study can be categorized as ad-hoc fragmetation.
+in our study is a fragmetation that does not need the shcema of XML documents,
+thus we consider this study can be categorized as ad-hoc fragmetation.
 
-A common ad-hoc fragmentation is called hole-filler model, in which holes 
-are portals used for connection 
-and fillers are fragments that can connect to holes according to the structure 
-of the original whole tree. Bose et al. proposed a fragmentation model for steam
-data~\cite{bose2003query} and a system called Xfrag~\cite{bose2005xfrag}. In
-their studies, an document is divided into multiple sub documents. Each one sub
-documents have one or more holes that are used to connect other sub document
-according to the strucutre of the original XML document. Another related
-work~\cite{lee2012memory}  proposed an improved hole-filler model over streamed
-XML fragments, which is particularly designed for memory-efficiency. Nomura et
-al. \cite{NEMH07} and Cong et al.~\cite{CFKL12} adopted a tree-shaped fragment
-that contains original nodes and hole nodes, where a hole node represents a link
-to a missing subtree, and represented the whole document as a tree of fragments.
-Their approaches decouple dependencies between evaluations on fragments so as to
-perform them in parallel.
+A common ad-hoc fragmentation is called /emph{hole-filler} model, where holes
+are portals used for connection of fragments and fillers are fragments that can
+connect to holes according to the structure of the original whole tree. Bose et
+al. proposed a fragmentation model for steam data~\cite{bose2003query} and a
+system called Xfrag~\cite{bose2005xfrag}. In their studies, an XML document is
+divided into multiple sub documents, each of which has one or more holes  to
+connect other sub document by the fillers that have some structrual information
+to indicate the relationships to which a filler and a hole should be connected.
+Another related work~\cite{lee2012memory}  proposed an improved hole-filler
+model over streamed XML fragments, which is particularly designed for good 
+memory-efficiency. Nomura et al. \cite{NEMH07} and Cong et al.~\cite{CFKL12}
+adopted a tree-shaped fragment that contains original nodes and hole nodes,
+where a hole node represents a link to a missing subtree, and represented the
+whole document as a tree of fragments. Their approaches decouple dependencies
+between evaluations on fragments so as to perform queries on them in parallel.
 
 
 
@@ -124,12 +126,12 @@ processing in this section.
 
 There are some exsisting ideas of dividing the XML documents and running the
 computation for trees called tree reduction. Kakehi et al.~\cite{KaME07} showed
-a parallel tree reduction algorithm from the nodes in chunks. Based on the idea
+a parallel tree reduction algorithm to the nodes in chunks. Based on the idea
 given by Kakehi et al., Emoto and Imachi~\cite{EmIm12} developed a parallel tree
 reduction algorithm on Hadoop, and Matsuzaki and Miyazaki~\cite{MaMi16}
 developed a parallel tree accumulation algorithm. A similar approach was taken
 by Sevilgen et al.~\cite{SAFu05} who developed a simpler version of tree
-accumulations over the serialized representation of trees.
+accumulations over the serialized representation of XML trees.
 
 \subsection{XML Streaming}
 
@@ -139,28 +141,29 @@ XML data. For example, XMLTK~\cite{AGGR02} is an XML stream processing tool
 designed for scalable XML querying. Y-Filter~\cite{ZhPC10} applies multiple
 queries in parallel for a stream of XML data. Among these studies, Ogden et
 al.~\cite{OgTP13} achieved the highest throughput, 2.5 GB/s, based on the
-parallel pushdown transducer. Although it is faster than our implementation of
-partial tree, which is 1 GB/s, the class of queries we support is more
-expressive than that of PP-transducer, which does not support order-aware
-queries. In parallel pushdown transducers \cite{LiZZ17}, a given document is
-modeled as a sequence of matched brackets and a fragment is represented as a
-sequence of unmatched brackets.
+parallel pushdown transducer. Although it is the fastest oen and thus is faster
+than our implementation of partial tree, which is 1 GB/s, the class of queries
+we support is still more expressive than that of PP-transducer, which does not
+support order-aware queries. In parallel pushdown transducers \cite{LiZZ17}, a
+given document is modeled as a sequence of matched brackets and a fragment is
+represented as a sequence of unmatched brackets.
 
 \subsection{XML Parsing}
 
 XML Parsing is a process of creating an XML tree from reading an XML document.
 \cite{PLZC07,WZYu08} focused on XML parsing, which is related to our parsing
 algorithm. Yinfei et al.~\cite{PaZC08} developed an algorithm for parsing the
-XML data in parallel without any sequential preparsing phase. 
-Based on parallel XML parsing, we propose partial tree that is a size-balanced
-tree. A similar idea was introduced by Choi et al.~\cite{ChLL14} in which they 
-added labels to make every chunk a well-formed tree in a preparsing phase.
-Compared to fragmentation techniques on trees, the parallel XML parsing in 
-this study is based on serialized text, which means we divide the
-plain text of an XML document into multiple chunks in stead of fragmenting the 
-XML trees that are parsed from the document. 
-The main advantage of our text-based fragmentation is that we can easily achieve
-size-balance chunks and then process them over distributed file systems~\cite{dfs}. 
+XML data in parallel without any sequential preparsing phase.  Based on parallel
+XML parsing, we propose partial tree that can achieve good load-balance by
+dividing an XML document into many smaller fragments in similar sizes. A
+similar idea was introduced by Choi et al.~\cite{ChLL14} in which they added
+labels to construct a well-formed tree from a chunk in a preparsing phase. Compared to
+fragmentation techniques on trees, the parallel XML parsing in  this study is
+based on serialized text, which means we divide the plain text of an XML
+document into multiple chunks in stead of fragmenting the  XML trees that are
+parsed from the document.  The main advantage of our text-based fragmentation is
+that we can easily achieve size-balance chunks and then process them over
+distributed file systems~\cite{dfs}. 
 
 \subsection{MapReduce-based XML Processing} \label{sec:mapreduce}
 
