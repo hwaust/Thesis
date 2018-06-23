@@ -1,14 +1,18 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-In this evaluation to our indexing, we conducted experiments for two aims: \\
-1) to investigate the absolute query time with 100s GB of XML data.\\
-2) to explore the scalability of our implementation on processing 
-a large XML documents over a number of computing nodes.\\
-We also compare ours with BaseX, the state-of-the-art XML database engine, in 
+In this evaluation to our indexing scheme, we conducted two sets of experiments
+for two purposes: \\ 
+1) to investigate the absolute query time with 100s GB of XML data.\\ 
+2) to explore the scalability of our implementation on processing  a large XML 
+documents over a number of computing nodes.\\ 
+We also compare ours with BaseX,  the state-of-the-art XML database engine, in
 order to understand the performance of our indexing.
 
 \subsection{Absolute Query Time} 
+
+We conducted experiments to investigate the best absolute query time in
+comparison with BaseX in this experiment.
 
 \subsubsection{Hardware Settings}
 
@@ -21,7 +25,6 @@ experiment, The network among EC2 instances was a local network and the network
 speed is 1 gbps. The java running on m3.2xlarge was 64-Bit JVM (build
 25.91-b14).
 
-
 \subsubsection{Datasets and XPath Queries}
 
 There were three datasets used in this experiment, the statistics of which are
@@ -29,9 +32,9 @@ shown in Table~\ref{tab:datasets}. For XMark datasets, we used the XML document
 generator \emph{xmlgen} from XMark
 project\footnote{\url{http://www.xml-benchmark.org/}}. The XMark xmlgen takes an
 float number \emph{f} to determine the size of output dataset. 
-For the experiments on a single EC2 instance,  we used two typical datsets: DBLP
-and XMark~\cite{XMark} (with factor 100). For parallel processing, we used
-XMark(with factor 2000) and UniProtKB. The UniProtKB dataset has a root element
+For the experiments on a single EC2 instance, we used two typical datsets: DBLP
+and XMark~\cite{XMark} ($f$ = 100). For parallel processing, we used
+XMark($f$ = 2000) and UniProtKB. The UniProtKB dataset has a root element
 with a large number of children with the same tag name and thus can be easily
 well-formed  to be processed by multiple processors.  In contrast, XMark
 datasets whose root has only six children  with different tag names, each
@@ -141,10 +144,10 @@ backward axes;  and the rest to test order-aware queries.
 \subsection{Evaluate Queries on a Single EC2 Instance}
 
 This experiment is to investigate the query performance on a single EC2
-instance. In this case, we use the whole input XML document as a chunk and only
-one partial tree generated from the chunk. Thus the queries are evaluated in
-serial. The results show that for both datasets, it can process the queries
-in 100s ms to several seconds. These reaults is helpful for us to understand
+instance. In this setting, we used the whole input XML document as a chunk and
+only one partial tree was generated from the chunk. Thus, queries are evaluated
+in serial. The results show that for both datasets, it can process the queries
+in 100s ms up to several seconds. These reaults is helpful for us to understand
 the query performance of partial tree in serial.
 
 
@@ -152,7 +155,9 @@ the query performance of partial tree in serial.
 
 In this experiment, we investigate the query performance processing 100s GB of
 XML document on 32 EC2 instances. We use UniProtKB and XMark2000(f = 2000) as
-experimental data. The results are shown in Table~\ref{tab:multieval}. 
+experimental data. The results are shown in Table~\ref{tab:multieval}. Each
+instance holds only one work and each worker was in charge of a single partial
+tree.
 
 In the parsing phase, for 0.545 billion and 1.86 billion elements, each of which
 takes 31 bytes, the memory consumption should 157 GB and 537 GB respectively.
@@ -167,19 +172,19 @@ throughput of 2.5 GB/s by using 64 cores. Although it is faster than ours, the
 queries we can process are more expressive than PP-transducer, which does not
 support order-aware queries.
 
-
-
 \subsection{Scalability}
-This experiment is used to explore the scalability of our indexing with up to 
-64 workers.
+
+This experiment is used to explore the scalability of our indexing shcme with up
+to 64 workers on 8 computing intances, each of which has 8 virtual cores and
+thus runs 8 workers.
 
 \subsubsection{Dataset and XPath Queries} 
 
-In our experiment, we set f to 160 and generated an 18.q54 GiB XML document
+In our experiment, we set $f$ to 160 and generated an 18.54 GiB XML document
 xmark160, which has 267 M element nodes, 61.3 M attribute nodes and 188 M
-content nodes, totally 516.3 M nodes. We used 7 queries Q1 -- Q7 to evaluate our
-implementation, including commonly used axes with predicate as  shown in
-Table~\ref{tab:queries}.
+content nodes, totally 516.3 M nodes. We used 7 queries QS1 -- QS7 to evaluate
+scalability of our indexing scheme. These queries include commonly used axes
+with predicate as shown in Table~\ref{tab:queries}.
 
 
 \begin{table*}[ht]
