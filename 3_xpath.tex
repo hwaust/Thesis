@@ -1,20 +1,19 @@
 \chapter{XML and Query Languages}
 
-In this chapter, we introduce XML and two query languages: XPath
-and XQuery, used in this study.
+In this chapter, we introduce XML and two query languages: XPath and XQuery,
+used in this study.
 
 
 \section{XML}
 
 XML~\cite{XML} is a standard data describing language used for representing
-arbitrary data in a hierarchical structure. As introduced, XML
-documents are increasing dramatically in size over time. Large XML documents in
-this thesis refer to XML documents whose sizes are greater than 1 gigabytes.
+arbitrary data in a hierarchical structure. As introduced, XML documents are
+increasing dramatically in size over time. Large XML documents in this thesis
+refer to XML documents whose sizes are greater than 1 gigabyte.
 
-Each XML document corresponds to a logical XML tree (or simply tree) that
-contains one or more elements.  There are several types of elements in the tree
-of an XML document. In this study, we focus on the following three element
-types.
+Each XML document contains a logical XML tree (or simply tree) that contains one
+or more elements.  There are several types of elements in the tree of an XML
+document. In this study, we focus on the following three element types.
 
 \begin{itemize}
 	\item Element node \\
@@ -79,11 +78,10 @@ right  one is a value node with the string value `TXT1'.
 \end{figure}
 
 
-
-\section{XPath Language}
+\section{XPath}
 \label{sec:xpath}
 
-\subsection{Definition of XPath}
+\subsection{Definition}
 
 XPath is an XML query language used for selecting parts of an XML
 document~\cite{xpath}. XPath queries are represented in path expressions. Each
@@ -156,12 +154,12 @@ Figure~\ref{fig:grammar}.
 
 \section{XQuery}
 
-XQuery is also a language for querying XML documents. It for XML is like SQL for
-databases. It integrates with XPath language and an XPath query in an XQuery
-expression returns exactly the same result as in XPath language. XQuery is more
-expressive and powerful (also more complicated) than XPath.  Now, let use
-consider the following expression as an example. In this study, we used XQuery
-3.1~\cite{XQuery3_1}.
+XQuery is also a language for querying XML documents. It can integrate XPath
+language into its SQL-like expressions. When an XPath query is integrated in an
+XPath expression, the XPath query still returns exactly the same result as in
+XPath language. Thus, XQuery is more expressive and powerful (also more
+complicated) than XPath. Let use consider the following expression as an
+example. Note that, we used XQuery 3.1~\cite{XQuery3_1} in this study.
 
 \begin{lstlisting}
 for $x in doc("books.xml")/bookstore/book
@@ -175,14 +173,8 @@ the selected \texttt{book}.
 
 \section{Summary}
 
-In this chapter, we have introduced three languages used in this thesis: XML,
+In this chapter, we have introduced three languages related to this study: XML,
 XPath and XQuery. XML is used to represent arbitrary data. Data stored in XML
 format are called XML document. XPath and XQuery are languages for querying XML
 documents. XQuery integreates with XPath and thus is more powerful and
 expressive.
-
-% as the XML query language  for maniulating XPth queries on top of
-% BaseX~\cite{basex864} by utilizing some features and functions of XQuery 3.1,
-% such as arrays and XQuery Update Facility. Moreover, we exploit XQuery
-% extension for full-text operations, particularly the function
-% \texttt{ft:tokenize} for converting a string into a string array.
