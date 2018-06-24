@@ -2,8 +2,8 @@
 \label{sect:dpsimpl}
 
 In this section, we describe our two implementations for data partitioning
-strategy, namely the client-side implementation and the server-side
-implementation, on top of BaseX.
+strategy on top of BaseX, namely the client-side implementation and the
+server-side implementation.
 
 Data partitioning is to split a given query into a prefix query and a suffix
 query, e.g., from \texttt{$q_1$/$q_2$} to prefix $q_1$ and suffix $q_2$, and to
@@ -11,34 +11,32 @@ run the suffix query in parallel on each node of the result of the prefix query.
 The results of suffix queries are concatenated in document order to form the 
 final result.
 
-
-Our implementations are Java programs that involve a BaseX client. They
-spawn $P$ threads (usually P is no more than the number of physical cores) and 
-create a connection to a BaseX server for each thread so
-as to run multiple queries in parallel after a prefix query. Merging $P$ partial
-results in the form of string is sequentially implemented. The main difference
-between the client-side and the server-side implementations is the way how the results of prefix
-queries are handled. In the rest of this section, we describe them by using
-XM3(a) shown in Table~\ref{tab:dpsqueries} as a running example, assuming input
-database to be named \Src{`xmark.xml'}.
+Our implementations are Java programs that involve a BaseX client. They spawn
+$P$ threads (usually P is no more than the number of physical cores) and  create
+a connection to a BaseX server for each thread so as to run multiple queries in
+parallel after a prefix query. Merging $P$ partial results in the form of string
+is sequentially implemented. The main difference between the client-side and the
+server-side implementations is the way how the results of prefix queries are
+handled. In the rest of this section, we describe them by using XM3(a) shown in
+Table~\ref{tab:dpsqueries} as a running example, assuming input database to be
+named \Src{`xmark.xml'}.
 
 \subsection{Client-side Implementation}
 
 The client-side implementation is a simple implementation of data partitioning
-strategy with database operations on BaseX. It sends the server a prefix query 
-to be executed and the PRE values of matched nodes are returned. The
-following XQuery expression is used for the prefix query of XM3(a).
+strategy with database operations on BaseX. It sends the server a prefix query
+to be executed and the PRE values of matched nodes are returned. The following
+XQuery expression is used for the prefix query of XM3(a).
 
 \begin{lstlisting}
 for $x in db:open(``xmark'')/site//open_auction
 return db:node-pre($x)
 \end{lstlisting}
 
-Let this prefix query return sequence \Src{(2, 5, 42, 81, 109, 203)}. 
-Letting $P = 3$, it is block-partitioned to \Src{(2, 5)}, \Src{(42,
-81)}, and \Src{(109, 203)}, each of which is assigned to a thread. To avoid
-repetitive ping-pong between a client and the server, we use the following
-suffix query template:
+Let this prefix query return sequence \Src{(2, 5, 42, 81, 109, 203)}.  Letting
+$P = 3$, it is block-partitioned to \Src{(2, 5)}, \Src{(42, 81)}, and \Src{(109,
+203)}, each of which is assigned to a thread. To avoid repetitive ping-pong
+between a client and the server, we use the following suffix query template:
 
 \vspace{10mm}
 \begin{lstlisting}[escapechar=\@]
@@ -52,15 +50,15 @@ with its own partition and sends the server the instantiated query.
 
 \subsection{Server-side Implementation}
 
-A necessary task on the results of a prefix query is to block-partition them.
-The client-side implementation simply processes it on the client side. In fact,
-we can also implement it efficiently on the server side by utilizing BaseX's
-features.
+A necessary task on processing the results of a prefix query is to
+block-partition them. The client-side implementation simply processes it on the
+client side. In fact, we can also implement it efficiently on the server side by
+utilizing BaseX's features.
 
-First, we prepare an in-memory database named \Src{``tmp''} and initialized with
-\Src{<root> </root>}, which is a temporary database for storing the results of a
-prefix query.  The prefix query is \texttt{/site//open\_auction} and it selects 
-all \texttt{open\_auction} and return the PRE values of matched nodes. 
+Firstly, we prepare an in-memory database named \Src{``tmp''} and initialized
+with \Src{<root> </root>}, which is a temporary database for storing the results
+of a prefix query. The prefix query is \texttt{/site//open\_auction}, which
+selects all \texttt{open\_auction} and returns the PRE values of matched nodes.
 It is implemented as follows:
 
 \begin{lstlisting}[escapechar=\@]
@@ -71,33 +69,39 @@ for $i in 1 to $P
 return insert node element part { $block_part($i, $P, $arr) }
          as last into db:open('tmp')/root@\textrm{~,}@
 \end{lstlisting}
+
 where \Placeholder{number of partitions} denotes a placeholder to be replaced
 with a concrete value of $P$ and \verb|$block_part($i, $P, $arr)| denotes the
 \verb|$i|-th subarray of \verb|$P|-block partitioned \verb|$arr|. With the array
 operations of extracting length and subarray, \verb|$block_part| is implemented
 in logarithmic time.
 
-In the example case used earlier, \Src{``tmp''} database results in the following:
+In the example case used earlier, \Src{``tmp''} database results in the
+following:
+
 \newpage
 \begin{lstlisting}[escapechar=\@]
 @$^1$@<root>
   @$^2$@<part>@$^3$@2 5</part>@$^4$@<part>@$^5$@42 81</part>@$^6$@<part>@$^7$@109 203</part>
 @$^{\phantom{1}}$@</root>@\textrm{~,}@
 \end{lstlisting}
+
 where a left superscript denotes a PRE value. Note that its document structure
 determines the PRE value of $i$th partition to be $2i+1$.
 
 A suffix query is implemented with deserialization of a partition as follows:
+
 \begin{lstlisting}[escapechar=\@]
 for $x in ft:tokenize(db:open-pre(``tmp'', @\Placeholder{PRE of partition}@))
 return db:open-pre('xmark', xs:integer($x))/bidder[last()])@\textrm{~,}@
 \end{lstlisting}
+
 where \Placeholder{PRE of partition} denotes a placeholder to be replaced with
 the PRE value of a target partition.
 
-In most case, the server-side implementation is more efficient because communication data
-between clients and a server except for output is reduced to a constant size.
-
+In most case, the server-side implementation is more efficient because
+communication data between clients and a server except for output is reduced to
+a constant size.
 
 \begin{figure}[tbp]
 	\centering

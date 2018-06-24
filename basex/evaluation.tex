@@ -8,19 +8,15 @@ evaluating the performance of our implementations. We report the experiment
 results and present our observations and perceptives based on the results.
 
 
-
-
-
-% --------------------------------------------------
-\subsection{Experimental Setting}
+\subsection{Experiment Settings}
 
 We have conducted several experiments to evaluate the performance of our
 implementations of parallel XPath queries. All the experiments were conducted on
 a computer that equipped with two Intel Xeon E5-2620 v3 CPUs (6 cores, 2.4GHz,
-Hyper-Threading off) and 32-GB memory (DDR4-1866). Software we used ware Java
-OpenJDK ver. 9-internal (64-Bit Server VM) and BaseX ver. 8.6.4 with minor
-modifications to enable TCP\textunderscore NODELAY, which is
-used to improve tcp/ip networks and decrease the number of packets.
+Hyper-Threading off) and 32-GB memory (DDR4-1866). The software we used ware
+Java OpenJDK ver. 9-internal (64-Bit Server VM) and BaseX ver. 8.6.4 with minor
+modifications to enable TCP\textunderscore NODELAY, which is used to improve
+TCP/IP networks and decrease the number of packets.
 
 We used two larege XML documents for the experiments: \texttt{xmark10.xml} and
 \texttt{dblp.xml}. The dataset \texttt{xmark10.xml} is an XMark
@@ -46,8 +42,6 @@ before the execution of queries. To reduce the effect of fluctuations, we
 measured execution time for 51 times, and calculated their average after
 removing top-10 and bottom-10 results.
 
-
-% --------------------------------------------------
 \subsection{Evaluation on Implementations of Data Partitioning Strategy}
 
 In this section, we evaluate two of our implementations of data partitioning
@@ -61,11 +55,11 @@ Table~\ref{Table:summary} summarizes the execution times of the queries. The
 ``orig $t_o$''column shows the time for executing original queries XM1--XM6 and
 DBLP1--DBLP2 with BaseX's \verb|xquery| command. The ``seq $t_s$'' columns show
 the time for executing the prefix query and the suffix query with a single
-thread. The ``par $t_p$'' columns show the time for executing the prefix query
-with one thread and the suffix query with 12 threads (6 threads for XM1(a) and 8
-threads for DBLP2(a)).  The table also includes for reference the speedup of
-parallel queries with respect to original queries and the size of results of the
-prefix queries and the whole queries.
+thread respectively. The ``par $t_p$'' columns show the time for executing the
+prefix query with one thread and the suffix query with 12 threads (6 threads for
+XM1(a) and 8 threads for DBLP2(a)).  The table also includes reference for the
+speedup of parallel queries with respect to original queries and the size of
+results of the prefix queries and the whole queries.
 
 By using the pair of the prefix and suffix queries split at an appropriate step,
 we obtained speedups of factor two for XM1 and XM3, and factor of more than 3.5

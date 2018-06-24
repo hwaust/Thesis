@@ -9,12 +9,12 @@
 
 \chapter{Parallelization Of XPath Queries on Top of BaseX}
 
-On the topic of parallelelization of XPath queires, one practical and promising
-approach was proposed by Bordawekar et al.~\cite{Bord10} in 2009. In this study,
-three partitioning strategies were presented, i.e. data partitioning, query
-partitiooning  and hybrid partitioing startegies,  making it possible to
-parallelize XPath queries by partitioning an XPath query into subqueries and
-evaluating them in parallel on XML trees.
+There was a practical and promising study proposed by Bordawekar et
+al.~\cite{Bord10} for the parallelelization of XPath queires in 2009. In this
+study, three partitioning strategies were presented: data partitioning, query
+partitiooning and hybrid partitioing startegies, which allows us to parallelize
+XPath queries by partitioning an XPath query into subqueries and evaluating them
+in parallel on XML trees.
 
 However, since this study was based on an XSLT processing, it is thus not clear
 to the following questions: \textit{(1) Whether and how can we apply their
@@ -22,17 +22,17 @@ partitioning strategies to XML database engines? (2) What speedup can we achieve
 on large XML documents?}.
 
 To answer the above two questions, we introduce our implementations on top of a
-state-of-the-art XML database engine BaseX with two large XML documents sized 
-1.1 GB and 1.85 GB by reviving and extending Bordawekar et al's study. We propose
-three implementations on the base of the original idea from the paper and we also
-extended our implementations in term of BaseX by exploiting its optimizations.
-We experimentally demonstrate the performance on top of BaseX with two large 
-XML documents. The experiment results proved that it is
+state-of-the-art XML database engine BaseX with two large XML documents sized
+1.1 GB and 1.85 GB by reviving and extending Bordawekar et al's study. We
+propose three implementations on the base of the original idea from the paper
+and we also extended our implementations in term of BaseX by exploiting its
+optimizations. We experimentally demonstrate the performance on top of BaseX
+with the two large  XML documents. The experiment results showed that it is
 possible to obtain significant speedups by simply rewriting queries into
 subqueries and parallelizing the evaluation of them on top of an XML database
-engine over gigabytes of XML documents, without need to modify source code of the engine.
+engine over gigabytes of XML documents, without needs to modify source code of
+the engine.
 
-%\input{basex/partitions}
 
 \input{basex/basex}
 

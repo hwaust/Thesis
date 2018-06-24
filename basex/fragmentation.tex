@@ -1,6 +1,4 @@
-
-
-\section{From Shared-Memory to Distributed-\\Memory Environments}
+\section{A Proposal To Extend to Distributed-\\Memory Environments}
 
 In the previous sections, we have introduced our implementations on top of BaseX
 and the evaluation with a single BaseX server on a dual-CPU system. As
@@ -14,47 +12,45 @@ previous study, the strategies  are applied both in a shared-memory environment.
 
 Based on our previous experiment results, it would also be promising to use
 multiple BaseX servers on multiple CPUs in distributed-memory environments over
-large XML documents so that we can exploiting computer clusters to process 
-them more efficiently. Then, here comes a question:  how we can apply it in a
-distributed-memory environment over a number of computers? 
-In this study, by exploiting horizontal fragmentation on XML data, we present our
-study on applying data partitioning in a distributed-memory  environment to
-experimentally show how it improves the scalability.
-
+large XML documents so that we can exploiting computer clusters to process  them
+more efficiently. Then, here comes a question: how we can apply it in a
+distributed-memory environment over a number of computers?  In this study, by
+exploiting horizontal fragmentation on XML data, we present a  proposal to apply
+data partitioning to distributed-memory environments with XML  fragmentation.
 
 \section{Fragmentation}
-
 \subsection{Introduction}
+
 Fragmentation is an effective way to improve scalability of database
 systems~\cite{navathe1995mixed, hauglid2010dyfram, khan2010new}.  In the field
 of parallel XML processing, there are also some studies on  fragmentation of XML
 data~\cite{kling11:dist_xml, KlOD10}.  The most common XML fragmentations are
 horizontal fragmentation and vertical fragmentation~\cite{kling11:dist_xml}. Due
-to the nature of horizontal fragments that are  relatively independent, it is a
-more direct and practical way to work together with data partitioning. We thus
-focus on only horizontal fragmentation in this study.
+to the independence nature of horizontal fragments, it is reletively a more
+direct and practical way to work together with data partitioning. We thus focus
+on only horizontal fragmentation.
 
 \subsection{Definitions}
 
-To process a large XML document in a distrubed-memory environment, 
-we first need to fragment the XML into multiple fragment that will
-be allocated to computing node for querying. To make the fragments
-well balanced, we introduce a fragmentation algorithm. We introduce 
-the algorithm with an example in this section.
+To process a large XML document in a distrubed-memory environment,  we first
+need to divide an XML document into multiple fragments to be allocated to
+multiple computing node for querying. To make the fragments well balanced, we
+introduce a fragmentation algorithm with an example in this section.
 
 \subsubsection{Fragment}
 
-We first give definition to fragment. In this study, a \emph{fragment}  is a
-collection of subtrees. Since the main purpose of fragmentation is to achieve
-good scalability, we attempt to make our fragmentation algorithm size-balanced,
-i.e. to make each fragment have nearly the same amount of node.  Therefore, a
-fragment satisfies two condictions. Firstly, the roots of subtrees in a fragment
-are consecutive children of a single  node in the input tree. Secondly, the
-number of elements in a fragment is  less than or equal to a given integer
-\emph{maxsize}.  Let us take the tree in Fig.~\ref{fig:frag_wholetree} as an
-example. Let  maxsize be 5, then we have the fragments shown in
-Figure~\ref{fig:frag_fragmentation}. After applying horizontal fragmentation to
-the example XML tree, we obtain eight fragments enclosed in dotted rectangles.
+To begin with, we give definition to fragment first. In this study, a
+\emph{fragment} is a collection of subtrees. Since the main purpose of
+fragmentation is to achieve good scalability, we attempt to make our
+fragmentation algorithm size-balanced, i.e. to make each fragment have nearly
+the same amount of node.  Therefore, a fragment satisfies two condictions.
+Firstly, the roots of subtrees in a fragment are consecutive children of a
+single  node in the input tree. Secondly, the number of elements in a fragment
+is  less than or equal to a given integer \emph{maxsize}.  Let us take the tree
+in Fig.~\ref{fig:frag_wholetree} as an example. Let maxsize be 5, then we have
+the fragments shown in Figure~\ref{fig:frag_fragmentation}. After applying
+horizontal fragmentation to the example XML tree, we obtain eight fragments
+enclosed in dotted rectangles.
 
 %Let $D$ = \{$d_1$, $d_2$, ..., $d_n$\} be a collection of document trees such
 %that each $d_i \in D$ conforms the same XML schema~\cite{xmlschema}.   Let
@@ -74,37 +70,34 @@ the example XML tree, we obtain eight fragments enclosed in dotted rectangles.
 \end{figure}
 
 
-
-
 \subsubsection{Anchored Fragment}
 
 In order to ease performing top-down XPath queries, we augment each fragment
-with the path from the root of the whole tree to the subtrees. We call this
-augmented fragment  \emph{anchored fragment}. In the running example, we have
+with a path from the root of the whole tree to the subtrees. We call this
+augmented fragment \emph{anchored fragment}. In the running example, we have
 eight anchored fragments as shown in Figure~\ref{fig:frag_anchortrees}.
-
-
 
 \subsubsection{Root-merged Tree}
 
-In most existing XML database management systems, such as BaseX, takes a  single
-XML tree to create an XML database instance. Since a large number of  databases
-instance arises overheads, we reduce the number of database  instances by
-merging some of anchored fragments to \emph{root-merged tree}. A root-merged
+In most existing XML database management systems, such as BaseX, it takes a
+single XML tree to create an XML database instance. Since a large number of
+databases instance arises overheads, we reduce the number of database  instances
+by merging some of anchored fragments to \emph{root-merged tree}. A root-merged
 tree is a number of anchored fragments merged at the root. we merge the root
 node of anchored fragments only, which is enough to make a list of fragments
 into a tree. 
 
 To make the merged trees work more size-balanced, we apply the following two
-rules to anchored fragments when merging. Firstly, anchored fragments are randomly
-grouped. Each group contains a similar number of anchored fragments and. Then,
-from each group, a single root-merged tree is created by mering the root node 
-of the anchored fragment in the group. Secondly,
-the anchored fragments of a root-merged tree are ordered in the original order
-e.g. document oder, on purpose of simplifying the process of reordering results.
+rules to anchored fragments when merging. Firstly, anchored fragments are
+randomly grouped. Each group contains a similar number of anchored fragments
+and. Then, from each group, a single root-merged tree is created by mering the
+root node  of the anchored fragment in the group. Secondly, the anchored
+fragments of a root-merged tree are ordered in the original order e.g. document
+oder, on purpose of simplifying the process of reordering results.
 
 For the running example, we construct four root-merged trees from eight
-fragments with randomization and reodring as shown in Figure~\ref{fig:frag_mergedtrees}. 
+fragments with randomization and reodring as shown in
+Figure~\ref{fig:frag_mergedtrees}. 
 
 \begin{figure}[t]   
 	\includegraphics[scale=0.45]{frag_anchortrees}
@@ -119,9 +112,9 @@ fragments with randomization and reodring as shown in Figure~\ref{fig:frag_merge
 
 \subsubsection{Fragment Index}
 
-In order to facilitate query evaluation, we design \emph{fragment index} that 
-is the information required or useful for managing fragments.  
-It has the following items for each fragment.
+In order to facilitate query evaluation, we design \emph{fragment index} that
+is the information required or useful for managing fragments. It has the
+following items for each fragment.
 
 \begin{itemize}
 	\item fid: fragment ID.
@@ -132,7 +125,8 @@ It has the following items for each fragment.
 	\item mpre: pre-index (in the root-merged tree) of the first element
 \end{itemize}
 
-For the running example, the fragment index of is created as shown in Table~\ref{tab:fragmentindex}. 
+For the running example, the fragment index of is created as shown in
+Table~\ref{tab:fragmentindex}. 
 
 \begin{table}[t]
 	\centering 
@@ -156,17 +150,17 @@ For the running example, the fragment index of is created as shown in Table~\ref
 
 \subsubsection{Pruned Tree}
 
-In our design, we can perform any XPath queries inside of a fragment, 
-but we need careful computation for XPath queries that may go out of the 
-fragment. In order to perform those XPath queries, we need to know the 
-global tree structure in which fragments are located.
-For this purpose, we construct a \emph{pruned tree} by replacing the 
-subtrees with a single node for each fragment.
-In our running example, we have a pruned tree as shown in Figure~\ref{fig:frag_prunedtree}. 
+In our design, we can perform any XPath queries inside of a fragment,  but we
+need careful computation for XPath queries that may go out of the  fragment. In
+order to perform those XPath queries, we need to know the  global tree structure
+in which fragments are located. For this purpose, we construct a \emph{pruned
+tree} by replacing the  subtrees with a single node for each fragment. In our
+running example, we have a pruned tree as shown in
+Figure~\ref{fig:frag_prunedtree}. 
 
-In order to compute the PRE index of the input tree easily, we add
-\emph{gpre} for each node.  For the nodes representing pruned parts,
-we add \emph{fid} to link to the fragmentation index.
+In order to compute the PRE index of the input tree easily, we add \emph{gpre}
+for each node. For the nodes representing pruned parts, we add \emph{fid} to
+link to the fragmentation index.
 
 \begin{figure}[t]  
 	\centering
@@ -176,20 +170,13 @@ we add \emph{fid} to link to the fragmentation index.
 \end{figure}
 
 
-
-
-
-
 \subsection{Fragmentation Algorithm}
 
-We assume that all the results lie in the subtrees on the fragment. Thus,
-to guarantee the correctness of query results, we need to guarantee the
+We assume that all the results lie in the subtrees on the fragment. Thus, to
+guarantee the correctness of query results, we need to guarantee the
 completeness and uniqueness of nodes such that each node in the input XML tree
 is included in at least a fragment. If a node is included a subtree part of a
 fragment, then it is not included in any other fragment. 
-
-
-
 
 \begin{figure}[]
 	\centering
@@ -276,9 +263,6 @@ adding the path from the current subtrees to the root of the original tree (Line
 18--20). In Algorithm 2, we basically keep looking upward, to add all the
 ancestor nodes to the current fragment.
 
-
-
-
 There are also several functions used in Algorithms 1 and 2. We describe 
 them as below:
 
@@ -293,13 +277,6 @@ them as below:
 	an empty node and copy the name and attributes from $node$.
 \end{itemize}
 
-
-
-
-
-
-
-
 \section{Our Distributed XPath Query Framework}
 
 We design an XPath query framework using horizontal fragmentation with data
@@ -311,10 +288,10 @@ them. A worker is a computer that runs a BaseX server in charge of evaluating
 received queries.  After fragmentation, the fragments are mapped to workers. For
 each workers, a root-merged tree is assigned and accordingly a database instance
 will be created on every worker. Then, queried are evaluated on them  and the
-results returned from all the workers will be merged on the master.
-To compare with, we introduce both cases that the data partiationing starategies
-is used or not. The one with our data partitioning is the regular query and the
-other is with data partitioning. 
+results returned from all the workers will be merged on the master. To compare
+with, we introduce both cases that the data partiationing starategies is used or
+not. The one with our data partitioning is the regular query and the other is
+with data partitioning. 
 
 \subsection{Query Rewriting}
 
@@ -336,7 +313,6 @@ identifying and reordering by using the following expression.
 
 We separate the PRE value and the content of a node by a linebreak and add an
 extra linebreak among resultant nodes.
-
 
 \subsubsection{Query with Data Partitioning}
 
@@ -416,9 +392,3 @@ In this way, we can still process the results in parallel. But in some extreme
 case when the results of a fragment is very larger, the concatenation may bring
 significant overhead.
 
-
-
-
-\section{Experiments}
-
-(This part is still in process and will be updated soon before the final defense.)
