@@ -1,8 +1,9 @@
 \chapter{Conclusion and Future Work}
 
 This thesis has investigated the parallelization of XPath queries on large XML
-documents in two ways: a distributed data partition strategy and a data 
-structure partial tree. We conclude our thesis in this chapter.
+documents in two ways, a data partition strategy on top of mordern XPath
+processors and a novel data structure partial tree. We conclude our thesis in
+this chapter.
 
 \section{Conclusion}
 
@@ -17,7 +18,7 @@ processor and has already been out of date now because the hardware and software
 have both changed. We presented our three implementations on top of a
 state-of-the-art XML databasex engine BaseX over XML documents sized server
 gigabytes. Since BaseX provides full support for XQuery/XQuery 3.1, we can
-harness this feature to process subqueries from the division of target XPath
+harness this feature to process sub-queries from the division of target XPath
 queries. 
 
 Through our implementations, we are the first to experimentally prove that it is
@@ -27,41 +28,37 @@ engine over gigabytes of XML documents, without need to modify source code of
 the engine. From the experimental evaluation, our implementations exhibited a
 great advantage that we are able to use off-the-shelf XML database engines to
 parallelize the evalaution of XPath queries over gigabytes XML documents, which
-is very convinient and practical.
+is very convinient and practical. For processing larger XML documents, we
+presented a proposal to extend the study to distributed-memory environment by
+introducing fragmentation that divides an input XML document  into multiple
+fragment containing information for later querying.
 
-For processing larger XML documents, we extend the study to distributed-memory
-environment by introducing fragmentation that divides an input XML document 
-into multiple fragment containing information for later querying. We then apply
-data partitioning on the fragments in an XML database engine called BaseX. 
-
-For processing larger XML documents with more expressive expressions, 
-we proposed a novel tree, called partial
-tree. With partial tree, we extend the processing of XML documents from
-shared-memory environments to distributed-memory environments, making it
-possible to utilize computer clusters. We also proposed an efficient BFS-array
-based implementation of partial tree. The experiment results showed the
-efficiency of our framework that the implementation are able to process 100s GB
-of XML documents with 32 EC2 computers. The execution times were only seconds
-for most queries used in the experiments and the throughput was approximately 1
-GB/s. There is only one known study that reached faster throughput than ours,
-which was 2.5 GB/s with 64 cores. However, ours can support more complicated
-queries, such as order-aware queries, thus making our approach more expressive.
+For processing larger XML documents with more expressive expressions,  we
+proposed a novel tree, called partial tree. With partial tree, we extend the
+processing of XML documents from shared-memory environments to
+distributed-memory environments, making it possible to utilize computer
+clusters. We also proposed an efficient BFS-array based implementation of
+partial tree. The experiment results showed the efficiency of our framework that
+the implementation are able to process 100s GB of XML documents with 32 EC2
+computers. The execution times were only seconds for most queries used in the
+experiments and the throughput was approximately 1 GB/s. There is only one known
+study that reached faster throughput than ours, which was 2.5 GB/s with 64
+cores. However, ours can support more complicated queries, such as order-aware
+queries, thus making our approach more expressive.
 
 Besides the throughput, partial tree also has the following two good features.
 First, it is practical to evenly divide an large XML document and create partial
-trees out of the similar size so that we can reach good load-balancing. Second,
-partial trees are portable in both shared-/distributed- memory environemts. This
-means that we can make them work in both distributed-memory environments and
-shared-memory environments, without changing the setting of partial tree.
-Therefore, partial tree is a promising data structure and helpful for parallel
-XML processing, especially for large XML documents in distributed-memory
-environments.
+trees out of the similar sized chunks so that we can reach good load-balance.
+Second, partial trees are portable in both shared-memory environments and
+distributed-memory environemts. This means that we can make them work in both
+environments without changing the setting of partial tree. Therefore, partial
+tree is a promising data structure and helpful for parallel XML processing,
+especially for large XML documents in distributed-memory environments.
 
 \section{Future Work}
 
-Based on the studies of BaseX and the partial tree, there are three works that
+Based on the studies of BaseX and the partial tree, there are several works that
 are worthing doing in the future.
-
 
 Firstly , although partial trees are suitable for processing XPath queires over
 large XML documents, the functionality and fault tolerance, which are both
@@ -78,8 +75,13 @@ features of partial tree, such as handling imbalanced trees. In this way, it is
 high likely to achieve good scalability, especially in case of the
 implementation of BaseX in distributed-memory environments.
 
-Lastly, the optimization of both studies for the performance is worth intensively
-studying. There are some factors that limit their performance, such as network,
-I/O, software/hardware settings, etc. By investing them, new approaches or better
-algorithms should be designed and proposed.
+Third, although we have presneted a proposal about the parallelizaton of XPath 
+quereis by horizontal fragmentation on BaseX, we have not experimentally studied 
+the performance of the approach. It is thus worth conducting experiment for this 
+purpose.
+
+Lastly, the optimization of both studies for the performance is worth
+intensively studying. There are some factors that limit their performance, such
+as network, I/O, software/hardware settings, etc. By investing them, new
+approaches or better algorithms should be designed and proposed.
 
