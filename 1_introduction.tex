@@ -4,59 +4,65 @@
 
 \section{Background}
 
-XML processing as a common and popularly used technology studies how to process 
-XML documents and has been intensively studied. 
-In recent decades, with the dramatical growth of the volume of information, 
-there is an urgent demand for high-performance data processing technologies. 
-This change also has a great  influence to XML processing
-technology when the sizes of XML documents are also increasing dramatically. 
-For example, Wikipedia~\cite{wiki} provides a dump service~\cite{wikipediadump} that
-exports wikitext source and metadata embedded in XML documents. The sizes of the
-data was less than one gigabyte before 2006. In just 10 years, it increased to
-over 100 gigabytes nowadays~\cite{wikisize}. Some XML documents even reach
-hundreds of gigabyte. For example, an online database of protein sequence
+XML processing is a popularly used technology that studies how to process  XML
+documents and has been intensively studied.  In recent decades, with the
+dramatical growth of the volume of information,  there is an urgent demand for
+high-performance data processing technologies. This change brings a great
+influence to XML processing technology as the size of XML documents is
+increasing dramatically.  For example, Wikipedia~\cite{wiki} provides a dump
+service~\cite{wikipediadump} that exports wikitext source and metadata embedded
+in XML documents. The sizes of the data were no more than one gigabyte before
+2006. Just 10 years later, it increased to over 100 gigabytes
+nowadays~\cite{wikisize}. Some XML documents have even execeeded over a hundred
+of gigabyte. For example, an online database of protein sequence
 UniProtKB~\cite{UniProtKB} can store all the data in a single XML document sized
 358 GB.
 
-Up to the dawn of this century, studies of XML processing mainly focused
-on sequential processing~\cite{Skil97,AlJYK02,Ne02,ToGr02,HAJR03},  due to that
-commonly used CPUs were mostly single-core processors. As the multiple-core CPUs
-gradually became dominant gradually,  more researches shifted to parallel XML
-processing  and thus more related studies were
+Up to the dawn of this century, studies of XML processing mainly focused on
+sequential processing~\cite{Skil97,AlJYK02,Ne02,ToGr02,HAJR03} due to the fact
+that commonly used CPUs were mostly single-core processors. As the multiple-core
+CPUs became dominant gradually,  more researches shifted to parallel XML
+processing  and thus many related studies were
 proposed~\cite{SAFu05,PaZC08,LFLQ08,ZhPC10}.
 
-One common topic in the field of parallel XML processing is the parallelization
-of XPath~\cite{xpath} queries over XML documents. The basic idea of parallelize
-is to divide an XML document into multiple parts and process queries separately
-in parallel. One key problem of the parallelization is how to deal with the
-hierarchical structure that is the intrinsic characteristic of each XML
-document. This characteristic plays a very important role in parallel XML
-document processing, forcing us to deal with the connections of the divided
-parts after splitting. 
 
-To address the above difficulty, many approaches had been proposed~\cite{JLWO03,
-	SAFu05,NEMH07,BuLM08,Mats09, ZhPC10,ChLW13,HaMa16}. Most of these approaches
-tend to represent XML document as trees that are preserved in memory, then
-parallelizing XML processing on these trees, which usually utilize multi-thread
-techniques processed in shared memories where all the threads are able to access
-the shared XML data. However, these studies discuss the parallelization of XPath
-queries only on the a whole tree (or a number of whole trees) without
-considering how to divide them. Thus, they are not suitable for distributed XML
-document processing.
+
+One common topic in the field of parallel XML processing is the parallelization
+of XPath~\cite{xpath} queries over XML documents. The idea of parallelization is
+to divide an XML document into multiple pieces to process queries on the divided
+pieces separately in parallel with multiple cores or computers, and to merge the
+sub results from the parts to form the final result. 
+
+Many approaches were proposed~\cite{JLWO03, SAFu05,NEMH07,BuLM08,Mats09,
+ZhPC10,ChLW13,HaMa16}. Most of these approaches tend to represent XML document
+as trees persisted in memory, then to parallelize XML processing on these trees,
+which usually utilize multi-thread techniques processed in shared memories where
+all the threads  have access to the XML data persisted in the shared memory.
+However, these studies discussed the parallelization of XPath queries only on
+the a whole tree (or a number of whole trees) and did not relate to how to
+divide a tree. The key problem of the parallelization is how to deal with the
+hierarchical (or tree-shaped) structure inside an XML document, which is the
+intrinsic characteristic of each XML document.  This characteristic brings a
+significant challenge of parallel XML document processing, because the
+hierarchical strcutre is more complicated than a list or an array to be divided
+and processed in parallel, forcing us to deal with the connections of this
+structural information among the divided XML pieces. Thus, these above
+approaches are not suitable for XML processing in  distribted-memory
+environment.
 
 Another common approach of XML processing is to exploit database techniques. XML
 processing in databases has also been widely studied~\cite{fong2001converting,
-	meier2002exist, jagadish2002timber,jiang2002xparent,PCSS04}. Common database
+meier2002exist, jagadish2002timber,jiang2002xparent,PCSS04}. Common database
 techniques, such as indexing~\cite{kha2001xml, wang2005sequencing,
-	popovici2005sirius}, join algorithms~\cite{liang2005lax,liang2006slax,
-	guha2003index}, are also valid to be applied to XML processing. Although
-concurrent transactions are available in modern database engines, making it
-possible and available to be applied in distribued settings, there is, to the
-best of our knowledge, no existing work that studies the parallelization of
-XPath queries based on XML databases in a distribued-memory environment.
-Therefore, it is not clear how to utilize the power of XML databases in
-evaluating of XPath queries over large XML documents in distributed-memory
-environments.
+popovici2005sirius}, join algorithms~\cite{liang2005lax,liang2006slax,
+guha2003index}, are also valid to be applied to XML processing. Nowadays,
+concurrent transactions are available in modern database engines, which makes it
+possible and available to be applied in distribued settings. However, to the
+best of our knowledge, there is still no existing work that studies the
+parallelization of XPath queries based on XML databases in a distribued-memory
+environment. Therefore, it is not clear how to utilize the power of XML
+databases in evaluating of XPath queries over large XML documents in
+distributed-memory environments.
 
 In this study, we address the following two challenges for processing large
 XML documents in distributed-memory environments.
@@ -92,14 +98,14 @@ our two approaches with several examples.
 The first approach involves an implmentation work of~\cite{BoLS09} proposed by
 Bordawekar et al., which presented approaches to easily exploit esxisting XML
 processors, such as Xalan~\cite{xalan}, to parallelize XPath queires with no
-need to modify  the processors. Their approach was to partition queries in an ad
-hoc manner and to merge the results of partitioned queries. Specifically, they
-proposed three strategies: query partitioning, data partitioning and hybrid
+need to modify  the processors. Their approach was to partition queries in an
+ad-hoc manner and to merge the results of partitioned queries. Specifically,
+they proposed three strategies: query partitioning, data partitioning and hybrid
 partitioning. Query partitioning is to split a given query into independent
 queries by using predicates, e.g., from \texttt{$q_1$[$q_2$ or $q_3$]} to
 \texttt{$q_1$[$q_2$]} and \texttt{$q_1$[$q_3$]}, and from \texttt{$q_1$/$q_2$}
 to \texttt{$q_1$[position() <= n]/$q_2$} and \texttt{$q_1$[position() >
-	n]/$q_2$}. Data partitioning is to split a given query into a prefix query and a
+n]/$q_2$}. Data partitioning is to split a given query into a prefix query and a
 suffix query, e.g., from \texttt{$q_1$/$q_2$} to prefix $q_1$ and suffix $q_2$,
 and to run the suffix query in parallel on each node of the result of the prefix
 query. How to merge depends on the partitioning strategies.  Since hybrid
@@ -111,7 +117,10 @@ For data partitioning, if we perform position-based query partitioning and data
 partitioning, we have only to concatenate results in order. In our study, we
 have developed two implementations of data-partitioning parallelization and a
 implementation of query-partitioning parallelization on top of
-BaseX~\cite{basex864}, which is a state-of-the-art XML database engine.
+BaseX~\cite{basex864}, which is a state-of-the-art XML database engine. We also
+give a proposal for distribued XML processing based on our observations from the
+experiment results.
+
 
 The second approach is based on a novel tree structure, called partial tree. A
 partital tree is a tree strcutre for representing a chunk of an XML document so
@@ -129,8 +138,9 @@ representing the given XML document. Note that each node in the tree structure
 is formed by parsing a pair of tags, the start tag and the end tag. The tags in
 between a pair of tags form nodes as children or descendants of the node formed
 by the pair of tags. As we know, a node in the tree structure should come from a
-pair of tags, but not a single tag. Thus, here comes a question: \emph{What
-	structure can a single tag represent in the tree\/}?
+pair of tags, but not a single tag. Thus, here comes a question: \emph{How to
+represent a start tag or end tag in a chunk of XML documnet if its other half is
+missing?}.
 
 For example, consider the underlined part of the document in
 Figure~\ref{fig:exampletree}. The corresponding nodes of tags in the underlined
@@ -159,10 +169,10 @@ By adding the nodes on the path from the root to the current chunk part, we are
 now able to apply the queries to this partial tree based on the parent-child
 relationships. We will discuss the query algorithms in
 Section~\ref{sec:queryalgo}. Although partial tree is available in both
-shared-/distributed- memory environments, it is more specially designed for
-distributed-memory environments. This is becuase chunks of an XML documents can
-distribted to multiple computers and then be parsed into partial trees for
-further parallel processing.
+shared-memory environments and distributed-memory environment, it is more
+specially designed for distributed-memory environments. This is becuase chunks
+of an XML documents can distribted to multiple computers and then be parsed into
+partial trees for further parallel processing.
 
 \section{Contributions}
 
@@ -182,7 +192,7 @@ present significant observations and perspectives from the experiment results.
 For processing larger XML documents, we extend the study to distributed-memory
 environment by introducing fragmentation that divides an input XML document 
 into multiple fragment containing information for later querying. We then apply
-data partitioning on the fragments in an XML database engine called BaseX. 
+data partitioning on the fragments in an XML database engine BaseX. 
 
 The second contribution is the design of a novel tree structure, called partial
 tree, for parallel XML processing. With this tree structure, we can split an XML
@@ -202,7 +212,7 @@ the throughput was approximately 1 GB/s.
 \section{Outline}
 
 The thesis is organized in six chapters. An introduction to this study is given
-in Chapter 1. We  review the  related work in Chapter 2 and give definitions of
+in Chapter 1. We  review the related work in Chapter 2 and give definitions of
 XML query languages in Chapter 3. We propose the idea of XPath queries on top of
 BaseX in Chapter 4. We propose the new tree structure, partial tree in Chapter 5
 and  we conclude the whole thesis in Chapter 6. Here are the detailed
@@ -224,20 +234,20 @@ understand bases of this study.
 
 Chapter 4
 
-We introduce our approach of \cite{BoLS09} with the XML
-processing engine BaseX. we also present our implementations and evaluate our
-implementations on two data sets. Then, we propose our observations and 
-perspectives from the experiment results. Based on them, we extend the study
-to distributed-memory environment by introducing a fragmentation approach that
-divides an XML document into fragments for parallel querying. 
+We introduce our approach of \cite{BoLS09} with an XML processing engine BaseX.
+we also present our implementations and evaluate our implementations on two data
+sets. Then, we propose our observations and perspectives from the experiment
+results. Based on them, we extend the study to distributed-memory environment by
+introducing a fragmentation approach that divides an XML document into fragments
+for parallel querying. 
 
 Chapter 5
 
-Firstly, we propose a noval tree structure called partial tree and give the 
-definitions of partial tree and related items, discuss the characteristics 
-and design querying algorithms over partial trees. Then, we propose an 
-efficient BFS-index based implementation for partial tree. Lastly, we report 
-and analyze the experiment results.
+Firstly, we propose a noval tree structure called partial tree and give the
+definitions of partial tree and related items, discuss the characteristics  and
+design querying algorithms over partial trees. Then, we propose an  efficient
+index scheme for partial tree. Lastly, we report  and analyze the experiment
+results.
 
 Chapter 6
 
