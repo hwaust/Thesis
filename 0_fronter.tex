@@ -18,7 +18,7 @@
 
 
 \vspace{40mm}
-Day of the defense: Febrary 2X, 2018.
+Day of the defense: August 23, 2018.
 
 \vspace{20mm}\hspace{70mm}
 
@@ -51,77 +51,81 @@ Signature from head of PhD committee:
 %: ----------------------------- abstract -----------------------------
 \begin{abstracts}
 	
-	In recent decades, the volume of information increases dramatically, leading to
-	an urgent demand for high-performance data processing technologies. XML document
-	processing as a common and popularly used information processing technique has
-	been intensively studied.
-	
-	About 20 years ago at the very early stage of XML processing, studies mainly
-	focused on the sequential ways,  which were limited by the fact that CPUs at
-	the time were commonly single-core processors. In the recent decade, with the
-	development of multiple-core CPUs, it provides not only more cores we can use
-	in a sinlge CPU, but also better availability with cheaper prices.  Therefore,
-	parallization become popular in information processing.
-	
-	Parallelization of XPath queries over XML documents became popular started from
-	the recnet decade. At the time, studies focused on a small set of XPath queires
-	and were designed to process XML documents in a shared-memory environment.
-	Therefore, they are not practical for processing large XML documents, making
-	them difficult to meet the requirements of processing rapidly grown large XML
-	documents.
-	
-	To overcome the difficulties, we first revived an existing study proposed by
-	Bordawekar et al. in 2008. Their work was implemented on an XSLT processor Xalan
-	and has already been out of date now due to the developments of hardware and
-	software. We presented our three implementations on top of a state-of-the-art
-	XML databases engine BaseX over XML documents sized server gigabytes. Since
-	BaseX provides full support for XQuery/XQuery 3.1, we can harness this feature
-	to process subqueries from the division of target XPath queries.
-	
-	This pre-hand study establishes the availability of Bordawekar et al's work.
-	Then, we propose a fragmentation approach that divides an XML document into
-	node-balanced subtrees with randomization for achieving better load-balance.
-	Combined with the previous data partitioning strategy, we can process large XML
-	documents efficiently in distribute-memory environments.
-	
-	The previous partition and fragmentation based study enables us to easily
-	process large XML documents in distribute-memory environments. However, it
-	still has its flaw that is limited to top-down queries. Therefore, to
-	enrich the expressiveness of our study, we then proposed a novel tree, called
-	partial tree. With partial tree, we can make the XML processing support more
-	types of queries, making it more feasible to process large XML documents 
-	by utilizing computer clusters. We also propose an efficient BFS-array based 
-	implementation of partial tree.
-	
-	There are two important contributions proposed in the thesis.
-	
-	The first contribution involves three implementations of Bordawekar et al's
-	partitioning strategies, and our observations and perspectives from the
-	experiment results. Our implementations are designed for the parallelization of
-	XPath queries on top of BaseX. With these implementations, XPath queries can be
-	easily parallelized by simply rewriting XPath queries with XQuery expressions.
-	We conduct experiments to evaluate our implementations and the results showed
-	that these implementations achieved significant speedups over two large XML
-	documents. Besides the experiment results, we also present significant
-	observations and perspectives from the experiment results. Then, based on them,
-	we extend the fragmentation algorithms to exploit data partitioning strategy in
-	distributed-memory environments.
-	
-	The second contribution is the design of a novel tree structure, called partial
-	tree, for parallel XML processing. With this tree structure, we can split an XML
-	document into multiple chunks and represent each of the chunks with partial
-	trees. We also design a series of algorithms for evaluating queries over these
-	partial trees. Since the partial trees are created from separated chunks, we can
-	distribute these chunks to computer clusters. In this way, we can run queries on
-	them in distributed memory environments. Then, we propose an efficient
-	implementation of partial tree. Based on indexing techniques, we developed an
-	indexing scheme, called BFS-array index along with grouped index. With this
-	indexing scheme, we can implement partial tree efficiently, in both memory
-	consumption and absolute query performance. The experiments showed that the
-	implementation can process 100s GB of XML documents with 32 EC2 computers. The
-	execution times were only seconds for most queries used in the experiments and
-	the throughput was approximately 1 GB/s.
-	
+In recent decades, the volume of information increases dramatically, leading to
+an urgent demand for high-performance data processing technologies. XML document
+processing as a common and popularly used information processing technique has
+been intensively studied.
+
+About 20 years ago at the early stage of XML processing, studies mainly focused
+on the sequential approaches, which were limited by the fact that CPUs at the
+time were commonly single-core processors. In the recent decade, with the
+development of multiple-core CPUs, it provides not only more cores we can use in
+a sinlge CPU, but also better availability with cheaper prices. Therefore,
+parallization become popular in information processing.
+
+Parallelization of XPath queries over XML documents became popular since the
+recnet decade. At the time, studies focused on a small set of XPath queires and
+were designed to process XML documents in shared-memory environments. Therefore,
+they were not practical for processing large XML documents and it was difficult
+for them to meet the requirements of processing rapidly grown large XML
+documents.
+
+To overcome the difficulties, we first revived an existing study proposed by
+Bordawekar et al. in 2008. Their work was implemented on an XSLT processor Xalan
+and has already been out of date now due to the developments of hardware and
+software. We presented our three implementations on top of a state-of-the-art
+XML databases engine BaseX over XML documents sized server gigabytes. Since
+BaseX provides full support for XQuery/XQuery 3.1, we can harness this feature
+to process subqueries from the division of target XPath queries.
+
+This pre-hand study establishes the availability of Bordawekar et al's work.
+Then, we propose a fragmentation approach that divides an XML document into
+node-balanced subtrees with randomization for achieving better load-balance.
+Combined with the previous data partitioning strategy, we show a promissing
+approach for processing large XML documents efficiently in distribute-memory
+environments.
+
+The previous partition and fragmentation based study enables us to easily
+process large XML documents in distribute-memory environments. However, it still
+has its flaw that is limited to top-down queries. Therefore, to enrich the
+expressiveness of queries that can be processed in our study, we then proposed a
+novel tree, called partial tree. With partial tree, we can make the XML
+processing support more types of queries, making it more feasible to process
+large XML documents  by utilizing computer clusters. We also propose an
+efficient indexing scheme for representing partial tree so that we can achieve
+better querying performance.
+
+There are two important contributions proposed in the thesis.
+
+The first contribution involves three implementations of Bordawekar et al's
+partitioning strategies, and our observations and perspectives from the
+experiment results. Our implementations are designed for the parallelization of
+XPath queries on top of BaseX. With these implementations, XPath queries can be
+easily parallelized by simply rewriting XPath queries with XQuery expressions.
+We conduct experiments to evaluate our implementations and the results showed
+that these implementations achieved significant speedups over two large XML
+documents. Besides the experiment results, we also present significant
+observations and perspectives from the experiment results. Then, we present a
+proposal to extend the fragmentation algorithms to exploit data partitioning
+strategy in distributed-memory environments.
+
+The second contribution is the design of a novel tree structure, called partial
+tree, for parallel XML processing. With this tree structure, we can split an XML
+document into multiple chunks and represent each of the chunks with partial
+trees. We also designed a series of algorithms for evaluating queries over these
+partial trees. Since the partial trees are created from separated chunks, we can
+distribute these chunks to computer clusters. In this way, we can run queries on
+them in distributed-memory environments. Then, we propose an efficient
+implementation of partial tree by index, which is an indexing scheme, called
+BFS-array index along with grouped index. With this indexing scheme, we can
+implement partial tree efficiently, in both memory consumption and absolute
+query performance. The experiments showed that the implementation can process
+100s GB of XML documents with 32 EC2 computers. The execution times were only
+seconds for most queries used in the experiments and the throughput was
+approximately 1 GB/s. The experiment also showed that with partial tree we can
+achieve a speedup of up to 36.6 with 64 workers on 8 computers for the queries
+used in the experiment.
+
 \end{abstracts}
 
 %: -------------------------- front matter ---------------------------
